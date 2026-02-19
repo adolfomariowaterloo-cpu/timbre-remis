@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Timbre Remis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  font-family: Arial;
+  color: white;
+  text-align: center;
+}
+
+img {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: none;
+  font-size: 28px;
+  font-weight: bold;
+  background: black;
+  color: white;
+  cursor: pointer;
+  border: 4px solid white;
+}
+
+button:active {
+  background: red;
+}
+
+#estado {
+  margin-top: 30px;
+  font-size: 20px;
+}
+</style>
+</head>
+<body>
+
+<img src="logo.png" alt="Logo">
+
+<button onclick="enviarPedido()">TIMBRE REMIS</button>
+
+<div id="estado"></div>
+
+<script>
+function enviarPedido() {
+
+  document.getElementById("estado").innerText = "Enviando pedido...";
+
+  navigator.geolocation.getCurrentPosition(function(pos) {
+
+    let lat = pos.coords.latitude;
+    let lon = pos.coords.longitude;
+
+    let numeroEmpresa = "5493442641200";
+
+    let mensaje = "Pedido Timbre Remis\nUbicación:\nhttps://maps.google.com/?q=" + lat + "," + lon;
+
+    let url = "https://wa.me/" + numeroEmpresa + "?text=" + encodeURIComponent(mensaje);
+
+    window.location.href = url;
+
+  }, function() {
+    document.getElementById("estado").innerText = "No se pudo obtener ubicación.";
+  });
+}
+</script>
+
+</body>
+</html>
 
