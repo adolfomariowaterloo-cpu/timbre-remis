@@ -3,192 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Consulta de Precio</title>
+<title>Timbre Remis</title>
 
 <style>
 body{
+    margin:0;
     font-family: Arial, sans-serif;
-    background:#f2f2f2;
-    padding:20px;
-    max-width:500px;
-    margin:auto;
-}
-
-h2{
-    margin-top:30px;
-}
-
-.opcion{
-    display:flex;
-    align-items:center;
-    padding:12px;
-    margin:8px 0;
-    border-radius:10px;
+    background:black;
     color:white;
-    font-weight:bold;
-    cursor:pointer;
+    text-align:center;
 }
 
-input[type="radio"]{
-    margin-right:10px;
-    transform:scale(1.2);
+.logo{
+    margin-top:20px;
+}
+
+.logo img{
+    width:160px;
+}
+
+h1{
+    margin:10px 0 30px 0;
+}
+
+.boton{
+    width:85%;
+    margin:12px auto;
+    padding:18px;
+    border-radius:15px;
+    font-size:20px;
+    border:none;
+    color:white;
+    cursor:pointer;
+    display:block;
 }
 
 .casa{
-    background:linear-gradient(145deg,#ff3b3b,#c40000);
+    background:linear-gradient(to bottom,#ff2a2a,#b30000);
 }
 
 .trabajo{
-    background:linear-gradient(145deg,#800020,#4b0012);
+    background:linear-gradient(to bottom,#e60000,#8f0000);
 }
 
 .favorito{
-    background:linear-gradient(145deg,#ff8c00,#cc6a00);
+    background:linear-gradient(to bottom,#cc0000,#6f0000);
 }
 
-.otro{
-    background:linear-gradient(145deg,#1e90ff,#005bbb);
+.mapa{
+    background:linear-gradient(to bottom,#0077cc,#003f73);
 }
 
-input[type="text"]{
-    width:100%;
-    padding:8px;
-    margin-top:5px;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
-
-button{
-    margin-top:25px;
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:12px;
+.consulta{
+    background:linear-gradient(to bottom,#666,#333);
     font-size:16px;
-    background:#25d366;
+    padding:14px;
+}
+
+.config{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#444;
     color:white;
-    font-weight:bold;
-    cursor:pointer;
+    font-size:24px;
+    border:none;
+}
+
+.mensaje{
+    margin-top:20px;
+    font-size:18px;
+    display:none;
 }
 </style>
 </head>
 
 <body>
 
-<h2>¿Desde dónde salís?</h2>
-
-<label class="opcion casa">
-<input type="radio" name="origen" value="casa" onclick="origenSeleccionado('casa')">
-Casa
-</label>
-
-<label class="opcion trabajo">
-<input type="radio" name="origen" value="trabajo" onclick="origenSeleccionado('trabajo')">
-Trabajo
-</label>
-
-<label class="opcion favorito">
-<input type="radio" name="origen" value="favorito" onclick="origenSeleccionado('favorito')">
-Favorito
-</label>
-
-<label class="opcion otro">
-<input type="radio" name="origen" value="otro" onclick="mostrarInput('origen')">
-Otra ubicación
-</label>
-
-<div id="origenManual" style="display:none;">
-<input type="text" id="origenTexto" placeholder="Escribí dirección de origen">
+<div class="logo">
+<img src="logo.png">
 </div>
 
-<h2>¿Hacia dónde vas?</h2>
+<h1>Timbre Remis</h1>
 
-<label class="opcion casa">
-<input type="radio" name="destino" value="casa" onclick="destinoSeleccionado('casa')">
-Casa
-</label>
+<button class="boton casa" onclick="pedirViaje('casa')">Casa 🏡</button>
+<button class="boton trabajo" onclick="pedirViaje('trabajo')">Trabajo 🛠️</button>
+<button class="boton favorito" onclick="pedirViaje('favorito')">Favorito ⭐</button>
+<button class="boton mapa" onclick="ubicacionActual()">Ubicación actual 🗺️</button>
 
-<label class="opcion trabajo">
-<input type="radio" name="destino" value="trabajo" onclick="destinoSeleccionado('trabajo')">
-Trabajo
-</label>
+<button class="boton consulta" onclick="consultaTarifa()">💲 Consulta tarifa</button>
 
-<label class="opcion favorito">
-<input type="radio" name="destino" value="favorito" onclick="destinoSeleccionado('favorito')">
-Favorito
-</label>
+<button class="config" onclick="configurar()">⚙️</button>
 
-<label class="opcion otro">
-<input type="radio" name="destino" value="otro" onclick="mostrarInput('destino')">
-Otra ubicación
-</label>
-
-<div id="destinoManual" style="display:none;">
-<input type="text" id="destinoTexto" placeholder="Escribí dirección de destino">
-</div>
-
-<button onclick="enviarWhatsApp()">Enviar consulta</button>
+<div id="mensaje" class="mensaje">Enviando pedido...</div>
 
 <script>
 
-// Direcciones prefijadas
-const direcciones = {
-    casa: "Tu dirección de Casa",
-    trabajo: "Tu dirección de Trabajo",
-    favorito: "Tu dirección Favorita"
-};
+const numeroEmpresa="5493442641200";
 
-let origenFinal = "";
-let destinoFinal = "";
-
-function origenSeleccionado(tipo){
-    document.getElementById("origenManual").style.display="none";
-    origenFinal = direcciones[tipo];
+function obtenerDireccion(tipo){
+    return localStorage.getItem(tipo);
 }
 
-function destinoSeleccionado(tipo){
-    document.getElementById("destinoManual").style.display="none";
-    destinoFinal = direcciones[tipo];
+function pedirViaje(tipo){
+    let direccion=obtenerDireccion(tipo);
+    if(!direccion){
+        configurar();
+        return;
+    }
+    enviarWhatsApp("Hola, quiero un remis desde "+direccion);
 }
 
-function mostrarInput(tipo){
-    if(tipo==="origen"){
-        document.getElementById("origenManual").style.display="block";
+function ubicacionActual(){
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(function(pos){
+            let lat=pos.coords.latitude;
+            let lon=pos.coords.longitude;
+            let link="https://maps.google.com/?q="+lat+","+lon;
+            enviarWhatsApp("Hola, quiero un remis desde mi ubicación: "+link);
+        });
+    }
+}
+
+function consultaTarifa(){
+    let origen=prompt("¿Desde dónde parte? Escriba: casa, trabajo, favorito o mapa");
+    if(!origen) return;
+
+    let direccion="";
+    if(origen==="mapa"){
+        navigator.geolocation.getCurrentPosition(function(pos){
+            let lat=pos.coords.latitude;
+            let lon=pos.coords.longitude;
+            direccion="https://maps.google.com/?q="+lat+","+lon;
+            pedirDestino(direccion);
+        });
     }else{
-        document.getElementById("destinoManual").style.display="block";
+        direccion=obtenerDireccion(origen);
+        if(!direccion){
+            alert("Primero configure esa dirección.");
+            return;
+        }
+        pedirDestino(direccion);
     }
 }
 
-function enviarWhatsApp(){
+function pedirDestino(origen){
+    let destino=prompt("¿Cuál es el destino?");
+    if(!destino) return;
+    enviarWhatsApp("Consulta tarifa desde "+origen+" hasta "+destino);
+}
 
-    const origenRadio = document.querySelector('input[name="origen"]:checked');
-    const destinoRadio = document.querySelector('input[name="destino"]:checked');
+function enviarWhatsApp(texto){
+    document.getElementById("mensaje").style.display="block";
+    let url="https://wa.me/"+numeroEmpresa+"?text="+encodeURIComponent(texto);
+    setTimeout(()=>{
+        window.location.href=url;
+    },1000);
+}
 
-    if(!origenRadio || !destinoRadio){
-        alert("Seleccioná origen y destino");
-        return;
-    }
+function configurar(){
+    let casa=prompt("Ingrese dirección de CASA", obtenerDireccion("casa")||"");
+    if(casa) localStorage.setItem("casa",casa);
 
-    if(origenRadio.value==="otro"){
-        origenFinal = document.getElementById("origenTexto").value;
-    }
+    let trabajo=prompt("Ingrese dirección de TRABAJO", obtenerDireccion("trabajo")||"");
+    if(trabajo) localStorage.setItem("trabajo",trabajo);
 
-    if(destinoRadio.value==="otro"){
-        destinoFinal = document.getElementById("destinoTexto").value;
-    }
-
-    if(!origenFinal || !destinoFinal){
-        alert("Completá las direcciones");
-        return;
-    }
-
-    const mensaje = `Hola, quiero consultar precio desde ${origenFinal} hasta ${destinoFinal}`;
-
-    const telefono = "549XXXXXXXXXX"; // CAMBIAR POR TU NUMERO
-
-    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
-
-    window.open(url, "_blank");
+    let favorito=prompt("Ingrese dirección FAVORITA", obtenerDireccion("favorito")||"");
+    if(favorito) localStorage.setItem("favorito",favorito);
 }
 
 </script>
