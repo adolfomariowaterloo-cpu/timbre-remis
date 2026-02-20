@@ -8,171 +8,202 @@
 <style>
 body{
     margin:0;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     background:black;
     color:white;
     text-align:center;
 }
 
-.logo{
-    margin-top:20px;
-}
-
-.logo img{
-    width:160px;
+.container{
+    padding:20px;
+    max-width:420px;
+    margin:auto;
 }
 
 h1{
-    margin:10px 0 30px 0;
+    margin-bottom:30px;
 }
 
-.boton{
-    width:85%;
-    margin:12px auto;
-    padding:18px;
-    border-radius:15px;
-    font-size:20px;
+button{
     border:none;
+    border-radius:40px;
+    padding:18px;
+    margin:10px 0;
+    font-size:18px;
     color:white;
     cursor:pointer;
-    display:block;
+    box-shadow:0 4px 10px rgba(0,0,0,0.5);
+    transition:0.2s;
 }
 
-.casa{
-    background:linear-gradient(to bottom,#ff2a2a,#b30000);
+button:active{
+    transform:scale(0.97);
 }
 
-.trabajo{
-    background:linear-gradient(to bottom,#e60000,#8f0000);
+.btn-casa{
+    width:100%;
+    background:linear-gradient(145deg,#ff3b3b,#b30000);
 }
 
-.favorito{
-    background:linear-gradient(to bottom,#cc0000,#6f0000);
+.btn-trabajo{
+    width:92%;
+    background:linear-gradient(145deg,#800000,#400000);
 }
 
-.mapa{
-    background:linear-gradient(to bottom,#0077cc,#003f73);
+.btn-favorito{
+    width:84%;
+    background:linear-gradient(145deg,#ff7b00,#b35400);
 }
 
-.consulta{
-    background:linear-gradient(to bottom,#666,#333);
-    font-size:16px;
-    padding:14px;
+.btn-mapa{
+    width:84%;
+    background:linear-gradient(145deg,#2196f3,#0d47a1);
 }
 
-.config{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    background:#444;
-    color:white;
-    font-size:24px;
+.btn-secundario{
+    width:90%;
+    background:#333;
+}
+
+input{
+    width:90%;
+    padding:12px;
+    border-radius:20px;
     border:none;
+    margin:8px 0;
+    font-size:16px;
+}
+
+.section{
+    display:none;
 }
 
 .mensaje{
-    margin-top:20px;
-    font-size:18px;
-    display:none;
+    margin-top:10px;
+    font-size:14px;
+    color:#ff5252;
 }
 </style>
 </head>
 
 <body>
 
-<div class="logo">
-<img src="logo.png">
-</div>
+<div class="container">
 
 <h1>Timbre Remis</h1>
 
-<button class="boton casa" onclick="pedirViaje('casa')">Casa 🏡</button>
-<button class="boton trabajo" onclick="pedirViaje('trabajo')">Trabajo 🛠️</button>
-<button class="boton favorito" onclick="pedirViaje('favorito')">Favorito ⭐</button>
-<button class="boton mapa" onclick="ubicacionActual()">Ubicación actual 🗺️</button>
+<!-- MENU PRINCIPAL -->
+<div id="menu">
 
-<button class="boton consulta" onclick="consultaTarifa()">💲 Consulta tarifa</button>
+<button class="btn-casa" onclick="pedirViaje('Casa')">Casa</button>
+<button class="btn-trabajo" onclick="pedirViaje('Trabajo')">Trabajo</button>
+<button class="btn-favorito" onclick="pedirViaje('Favorito')">Favorito</button>
+<button class="btn-mapa" onclick="mostrarSeccion('viajeManual')">Ubicación actual</button>
 
-<button class="config" onclick="configurar()">⚙️</button>
+<button class="btn-secundario" onclick="mostrarSeccion('tarifa')">Consultar tarifa</button>
 
-<div id="mensaje" class="mensaje">Enviando pedido...</div>
+</div>
+
+
+<!-- PEDIDO MANUAL -->
+<div id="viajeManual" class="section">
+<h2>Pedido de viaje</h2>
+
+<p>Desde:</p>
+<input id="origenManual" placeholder="Escribir dirección">
+
+<p>Hasta:</p>
+<input id="destinoManual" placeholder="Escribir destino">
+
+<button class="btn-casa" onclick="enviarViajeManual()">Enviar a WhatsApp</button>
+<button class="btn-secundario" onclick="volver()">Volver</button>
+
+<p id="mensajeViaje" class="mensaje"></p>
+</div>
+
+
+<!-- CONSULTA TARIFA -->
+<div id="tarifa" class="section">
+<h2>Consulta de tarifa</h2>
+
+<p>Desde:</p>
+<input id="tarifaDesde" placeholder="Dirección de salida">
+
+<p>Hasta:</p>
+<input id="tarifaHasta" placeholder="Dirección de destino">
+
+<button class="btn-favorito" onclick="enviarTarifa()">Consultar por WhatsApp</button>
+<button class="btn-secundario" onclick="volver()">Volver</button>
+
+<p id="mensajeTarifa" class="mensaje"></p>
+</div>
+
+</div>
+
 
 <script>
 
-const numeroEmpresa="5493442641200";
+// DIRECCIONES PREFIJADAS
+const direcciones = {
+    Casa: "Tu dirección de casa",
+    Trabajo: "Tu dirección de trabajo",
+    Favorito: "Tu dirección favorita"
+};
 
-function obtenerDireccion(tipo){
-    return localStorage.getItem(tipo);
+// NUMERO WHATSAPP
+const numero = "549XXXXXXXXXX"; // REEMPLAZAR
+
+
+function mostrarSeccion(id){
+    document.getElementById("menu").style.display="none";
+    document.getElementById(id).style.display="block";
+}
+
+function volver(){
+    document.getElementById("menu").style.display="block";
+    document.getElementById("viajeManual").style.display="none";
+    document.getElementById("tarifa").style.display="none";
 }
 
 function pedirViaje(tipo){
-    let direccion=obtenerDireccion(tipo);
-    if(!direccion){
-        configurar();
+    let destino = prompt("¿A dónde vas?");
+    if(!destino){
         return;
     }
-    enviarWhatsApp("Hola, quiero un remis desde "+direccion);
+
+    let origen = direcciones[tipo];
+
+    let texto = "Hola, quiero un móvil desde " + origen + " hasta " + destino;
+    let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto);
+    window.open(url, "_blank");
 }
 
-function ubicacionActual(){
-    if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(function(pos){
-            let lat=pos.coords.latitude;
-            let lon=pos.coords.longitude;
-            let link="https://maps.google.com/?q="+lat+","+lon;
-            enviarWhatsApp("Hola, quiero un remis desde mi ubicación: "+link);
-        });
+function enviarViajeManual(){
+    let origen = document.getElementById("origenManual").value;
+    let destino = document.getElementById("destinoManual").value;
+
+    if(origen=="" || destino==""){
+        document.getElementById("mensajeViaje").innerText="Completá origen y destino";
+        return;
     }
+
+    let texto = "Hola, quiero un móvil desde " + origen + " hasta " + destino;
+    let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto);
+    window.open(url, "_blank");
 }
 
-function consultaTarifa(){
-    let origen=prompt("¿Desde dónde parte? Escriba: casa, trabajo, favorito o mapa");
-    if(!origen) return;
+function enviarTarifa(){
+    let desde = document.getElementById("tarifaDesde").value;
+    let hasta = document.getElementById("tarifaHasta").value;
 
-    let direccion="";
-    if(origen==="mapa"){
-        navigator.geolocation.getCurrentPosition(function(pos){
-            let lat=pos.coords.latitude;
-            let lon=pos.coords.longitude;
-            direccion="https://maps.google.com/?q="+lat+","+lon;
-            pedirDestino(direccion);
-        });
-    }else{
-        direccion=obtenerDireccion(origen);
-        if(!direccion){
-            alert("Primero configure esa dirección.");
-            return;
-        }
-        pedirDestino(direccion);
+    if(desde=="" || hasta==""){
+        document.getElementById("mensajeTarifa").innerText="Completá origen y destino";
+        return;
     }
-}
 
-function pedirDestino(origen){
-    let destino=prompt("¿Cuál es el destino?");
-    if(!destino) return;
-    enviarWhatsApp("Consulta tarifa desde "+origen+" hasta "+destino);
-}
-
-function enviarWhatsApp(texto){
-    document.getElementById("mensaje").style.display="block";
-    let url="https://wa.me/"+numeroEmpresa+"?text="+encodeURIComponent(texto);
-    setTimeout(()=>{
-        window.location.href=url;
-    },1000);
-}
-
-function configurar(){
-    let casa=prompt("Ingrese dirección de CASA", obtenerDireccion("casa")||"");
-    if(casa) localStorage.setItem("casa",casa);
-
-    let trabajo=prompt("Ingrese dirección de TRABAJO", obtenerDireccion("trabajo")||"");
-    if(trabajo) localStorage.setItem("trabajo",trabajo);
-
-    let favorito=prompt("Ingrese dirección FAVORITA", obtenerDireccion("favorito")||"");
-    if(favorito) localStorage.setItem("favorito",favorito);
+    let texto = "Hola, quiero consultar tarifa desde " + desde + " hasta " + hasta;
+    let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto);
+    window.open(url, "_blank");
 }
 
 </script>
