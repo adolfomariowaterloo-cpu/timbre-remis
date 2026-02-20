@@ -8,143 +8,149 @@
 <link rel="manifest" href="manifest.json">
 
 <style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:black;
-    color:white;
-    text-align:center;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f1ec;
+    text-align: center;
 }
 
-h1{
-    margin-top:20px;
+.container {
+    padding: 20px;
 }
 
-.logo{
-    width:140px;
-    margin-top:20px;
+.logo {
+    width: 120px;
+    margin-top: 20px;
 }
 
-.boton{
-    display:block;
-    width:85%;
-    margin:15px auto;
-    padding:18px;
-    font-size:18px;
-    border-radius:12px;
-    border:none;
-    background:#c40000;
-    color:white;
+h1 {
+    color: #a80000;
+    margin-bottom: 5px;
 }
 
-.boton:active{
-    background:#ff0000;
+.subtitle {
+    color: #555;
+    margin-bottom: 25px;
 }
 
-.mensaje{
-    margin-top:20px;
-    font-size:16px;
+.btn {
+    display: block;
+    width: 85%;
+    max-width: 350px;
+    margin: 12px auto;
+    padding: 18px;
+    font-size: 18px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+}
+
+.casa { background: #c8e6c9; }
+.trabajo { background: #bbdefb; }
+.favorito { background: #ffe0b2; }
+.otro { background: #e0e0e0; }
+.accion { background: #d32f2f; color: white; }
+
+.small-buttons {
+    margin-top: 25px;
+}
+
+.small-btn {
+    display: inline-block;
+    margin: 5px;
+    padding: 10px 14px;
+    border-radius: 50px;
+    border: none;
+    font-size: 14px;
+    background: #dcdcdc;
+    cursor: pointer;
+}
+
+.message {
+    margin-top: 15px;
+    color: #a80000;
+    font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <img src="logo.png" class="logo">
-
 <h1>Timbre Remis</h1>
+<div class="subtitle">Tu remis de confianza</div>
 
-<button class="boton" onclick="enviarDireccion('Casa', localStorage.getItem('casa'))">
-🏡 Casa
-</button>
+<button class="btn casa" onclick="pedir('casa')">🏡 Casa</button>
+<button class="btn trabajo" onclick="pedir('trabajo')">🛠️ Trabajo</button>
+<button class="btn favorito" onclick="pedir('favorito')">⭐ Favorito</button>
+<button class="btn otro accion" onclick="pedirOtro()">🗺️ Otro lugar</button>
 
-<button class="boton" onclick="enviarDireccion('Trabajo', localStorage.getItem('trabajo'))">
-🛠️ Trabajo
-</button>
+<div class="small-buttons">
+<button class="small-btn" onclick="configurar()">⚙️ Configuración</button>
+<button class="small-btn" onclick="borrarDatos()">🗑️ Borrar</button>
+<button class="small-btn" onclick="tarifa()">💰 Tarifa</button>
+</div>
 
-<button class="boton" onclick="enviarDireccion('Favorito', localStorage.getItem('favorito'))">
-⭐ Favorito
-</button>
+<div class="message" id="mensaje"></div>
 
-<button class="boton" onclick="ubicacionActual()">
-🗺️ Otro lugar (ubicación actual)
-</button>
-
-<p class="mensaje" id="mensaje"></p>
+</div>
 
 <script>
+const telefono = "5493442641200";
 
-const telefonoEmpresa = "5493442641200";
-
-function configurar(){
-    if(!localStorage.getItem('casa')){
-        let casa = prompt("Ingrese dirección de CASA (ej: Urquiza 465)");
-        if(casa) localStorage.setItem('casa', casa);
-    }
-
-    if(!localStorage.getItem('trabajo')){
-        let trabajo = prompt("Ingrese dirección de TRABAJO (ej: Belgrano 674)");
-        if(trabajo) localStorage.setItem('trabajo', trabajo);
-    }
-
-    if(!localStorage.getItem('favorito')){
-        let fav = confirm("¿Desea agregar un lugar FAVORITO?");
-        if(fav){
-            let favorito = prompt("Ingrese dirección FAVORITO");
-            if(favorito) localStorage.setItem('favorito', favorito);
-        }
-    }
-}
-
-function enviarDireccion(tipo, direccion){
-    if(!direccion){
-        alert("No configurado aún.");
+function pedir(tipo) {
+    const direccion = localStorage.getItem(tipo);
+    if (!direccion) {
+        alert("Primero configurá la dirección.");
         return;
     }
-
-    let mensaje = "Hola, necesito un remis desde:\n" + direccion;
-
-    let url = "https://wa.me/" + telefonoEmpresa + "?text=" + encodeURIComponent(mensaje);
-
-    document.getElementById("mensaje").innerText = "Pedido enviado";
-
-    setTimeout(() => {
-        window.location.href = url;
-    }, 800);
-
-    setTimeout(() => {
-        window.close();
-    }, 3000);
+    enviarWhatsApp(direccion);
 }
 
-function ubicacionActual(){
-    if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(function(pos){
-            let lat = pos.coords.latitude;
-            let lon = pos.coords.longitude;
-
-            let mensaje = "Hola, necesito un remis desde mi ubicación:\nhttps://maps.google.com/?q=" + lat + "," + lon;
-
-            let url = "https://wa.me/" + telefonoEmpresa + "?text=" + encodeURIComponent(mensaje);
-
-            document.getElementById("mensaje").innerText = "Pedido enviado";
-
-            setTimeout(() => {
-                window.location.href = url;
-            }, 800);
-
-            setTimeout(() => {
-                window.close();
-            }, 3000);
-
+function pedirOtro() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            const link = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+            enviarWhatsApp("Mi ubicación: " + link);
         });
-    }else{
-        alert("El celular no permite ubicación.");
     }
 }
 
-configurar();
+function enviarWhatsApp(texto) {
+    document.getElementById("mensaje").innerText = "Enviando pedido...";
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(texto)}`;
+    setTimeout(() => {
+        window.location.href = url;
+    }, 700);
+}
 
+function configurar() {
+    const casa = prompt("Dirección de CASA:");
+    const trabajo = prompt("Dirección de TRABAJO:");
+    const favorito = prompt("Dirección FAVORITA (opcional):");
+
+    if (casa) localStorage.setItem("casa", casa);
+    if (trabajo) localStorage.setItem("trabajo", trabajo);
+    if (favorito) localStorage.setItem("favorito", favorito);
+
+    alert("Direcciones guardadas.");
+}
+
+function borrarDatos() {
+    localStorage.clear();
+    alert("Datos borrados.");
+}
+
+function tarifa() {
+    const origen = prompt("¿Desde dónde salís?");
+    const destino = prompt("¿A dónde vas?");
+    if (origen && destino) {
+        enviarWhatsApp(`Hola, estoy en ${origen} y quiero ir a ${destino}. ¿Me dicen tarifa aproximada?`);
+    }
+}
 </script>
 
 </body>
