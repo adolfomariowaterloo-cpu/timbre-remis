@@ -3,163 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timbre Remis</title>
+<title>Consulta de Precio</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial, Helvetica, sans-serif;
-background:#111;
-color:white;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-height:100vh;
-text-align:center;
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    text-align: center;
+    padding: 20px;
 }
 
-.logo{
-width:130px;
-margin-bottom:10px;
+h2 {
+    margin-bottom: 20px;
 }
 
-h1{
-margin-bottom:20px;
+.opcion {
+    display: block;
+    margin: 10px auto;
+    padding: 15px;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    transition: 0.2s;
 }
 
-.boton{
-width:85%;
-max-width:400px;
-padding:18px;
-margin:10px 0;
-font-size:20px;
-border:none;
-border-radius:18px;
-background:linear-gradient(to bottom,#7a0000,#ff0000);
-color:white;
-box-shadow:0 4px 10px rgba(0,0,0,0.4);
+.opcion:hover {
+    transform: scale(1.03);
 }
 
-.boton-gris{
-width:85%;
-max-width:400px;
-padding:18px;
-margin:10px 0;
-font-size:18px;
-border:none;
-border-radius:18px;
-background:#333;
-color:white;
+/* Jerarquía visual */
+.casa {
+    width: 100%;
+    background: linear-gradient(145deg, #ff3b3b, #c40000);
 }
 
-.tarifa{
-margin-top:15px;
-font-size:14px;
-background:#222;
-color:#ccc;
-border:1px solid #444;
-padding:8px 18px;
-border-radius:20px;
+.trabajo {
+    width: 90%;
+    background: linear-gradient(145deg, #800020, #4b0012);
 }
 
-.config{
-position:fixed;
-bottom:20px;
-right:20px;
-width:55px;
-height:55px;
-border-radius:50%;
-border:none;
-background:#444;
-color:white;
-font-size:20px;
+.favorito {
+    width: 80%;
+    background: linear-gradient(145deg, #ff8c00, #cc6a00);
 }
 
-.mensaje{
-margin-top:12px;
-font-size:15px;
-color:#bbb;
+.ubicacion {
+    width: 70%;
+    background: linear-gradient(145deg, #1e90ff, #005bbb);
+}
+
+input {
+    margin-top: 15px;
+    padding: 10px;
+    width: 90%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+#confirmacion {
+    margin-top: 20px;
+    font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<img src="logo.png" class="logo">
-<h1>Timbre Remis</h1>
+<h2>¿Desde dónde salís?</h2>
 
-<button class="boton" onclick="pedir('casa')">🏡 Casa</button>
-<button class="boton" onclick="pedir('trabajo')">🛠️ Trabajo</button>
-<button class="boton" onclick="pedir('favorito')">⭐ Favorito</button>
-<button class="boton-gris" onclick="pedir('mapa')">🗺️ Ubicación actual</button>
+<button class="opcion casa" onclick="seleccionarOrigen('Casa')">Casa</button>
+<button class="opcion trabajo" onclick="seleccionarOrigen('Trabajo')">Trabajo</button>
+<button class="opcion favorito" onclick="seleccionarOrigen('Favorito')">Favorito</button>
+<button class="opcion ubicacion" onclick="mostrarInput()">Otra ubicación</button>
 
-<button class="tarifa" onclick="consultaTarifa()">💲 Solo consulta de tarifa</button>
+<div id="inputDireccion" style="display:none;">
+    <input type="text" id="direccionManual" placeholder="Escribí la dirección">
+</div>
 
-<div class="mensaje" id="mensaje"></div>
-
-<button class="config" onclick="configurar()">⚙</button>
+<div id="confirmacion"></div>
 
 <script>
+let origen = "";
 
-const numeroEmpresa = "3442641200";
-let direccionActual = "";
-
-function pedir(tipo){
-
-let direccion = localStorage.getItem(tipo);
-
-if(tipo !== "mapa" && !direccion){
-direccion = prompt("Ingresá dirección para " + tipo + ":");
-if(!direccion) return;
-localStorage.setItem(tipo, direccion);
+function seleccionarOrigen(tipo) {
+    origen = tipo;
+    document.getElementById("confirmacion").innerHTML =
+        "Origen seleccionado: " + origen + "<br><br>Ahora elegir destino.";
 }
 
-if(tipo === "mapa"){
-direccion = "Te envío mi ubicación actual";
+function mostrarInput() {
+    document.getElementById("inputDireccion").style.display = "block";
 }
-
-direccionActual = direccion;
-
-let texto = "Hola, quiero pedir un remis desde " + direccion;
-
-document.getElementById("mensaje").innerText = "Avisando a Acción...";
-
-setTimeout(function(){
-window.location.href = "https://wa.me/549" + numeroEmpresa + "?text=" + encodeURIComponent(texto);
-},1000);
-
-}
-
-function consultaTarifa(){
-
-let origen = prompt("¿Desde dónde salís? (Casa / Trabajo / Favorito o escribir dirección)");
-if(!origen) return;
-
-let destino = prompt("¿Cuál es el destino?");
-if(!destino) return;
-
-let texto = "Hola, quisiera consultar tarifa desde " + origen + " hasta " + destino;
-
-window.location.href = "https://wa.me/549" + numeroEmpresa + "?text=" + encodeURIComponent(texto);
-
-}
-
-function configurar(){
-
-let casa = prompt("Dirección Casa:", localStorage.getItem("casa") || "");
-if(casa !== null) localStorage.setItem("casa", casa);
-
-let trabajo = prompt("Dirección Trabajo:", localStorage.getItem("trabajo") || "");
-if(trabajo !== null) localStorage.setItem("trabajo", trabajo);
-
-let favorito = prompt("Dirección Favorito:", localStorage.getItem("favorito") || "");
-if(favorito !== null) localStorage.setItem("favorito", favorito);
-
-alert("Datos guardados");
-
-}
-
 </script>
 
 </body>
