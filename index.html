@@ -5,152 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Timbre Remis</title>
 
-<link rel="manifest" href="manifest.json">
-
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f1ec;
-    text-align: center;
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:#1f1f1f;
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+height:100vh;
+text-align:center;
 }
 
-.container {
-    padding: 20px;
+h1{
+margin:10px 0 20px 0;
+font-size:28px;
 }
 
-.logo {
-    width: 120px;
-    margin-top: 20px;
+.logo{
+width:120px;
+margin-bottom:10px;
 }
 
-h1 {
-    color: #a80000;
-    margin-bottom: 5px;
+.boton{
+width:85%;
+max-width:400px;
+padding:18px;
+margin:10px 0;
+font-size:20px;
+border:none;
+border-radius:15px;
+background:linear-gradient(45deg,#b30000,#ff1a1a);
+color:white;
 }
 
-.subtitle {
-    color: #555;
-    margin-bottom: 25px;
+.boton-sec{
+width:50%;
+padding:10px;
+margin-top:15px;
+font-size:14px;
+border:none;
+border-radius:20px;
+background:#3a3a3a;
+color:white;
 }
 
-.btn {
-    display: block;
-    width: 85%;
-    max-width: 350px;
-    margin: 12px auto;
-    padding: 18px;
-    font-size: 18px;
-    border-radius: 15px;
-    border: none;
-    cursor: pointer;
+.opcional{
+margin-top:10px;
+font-size:14px;
+color:#cccccc;
 }
 
-.casa { background: #c8e6c9; }
-.trabajo { background: #bbdefb; }
-.favorito { background: #ffe0b2; }
-.otro { background: #e0e0e0; }
-.accion { background: #d32f2f; color: white; }
-
-.small-buttons {
-    margin-top: 25px;
-}
-
-.small-btn {
-    display: inline-block;
-    margin: 5px;
-    padding: 10px 14px;
-    border-radius: 50px;
-    border: none;
-    font-size: 14px;
-    background: #dcdcdc;
-    cursor: pointer;
-}
-
-.message {
-    margin-top: 15px;
-    color: #a80000;
-    font-weight: bold;
+.mensaje{
+margin-top:20px;
+font-size:18px;
+color:#ffffff;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
 <img src="logo.png" class="logo">
 <h1>Timbre Remis</h1>
-<div class="subtitle">Tu remis de confianza</div>
 
-<button class="btn casa" onclick="pedir('casa')">🏡 Casa</button>
-<button class="btn trabajo" onclick="pedir('trabajo')">🛠️ Trabajo</button>
-<button class="btn favorito" onclick="pedir('favorito')">⭐ Favorito</button>
-<button class="btn otro accion" onclick="pedirOtro()">🗺️ Otro lugar</button>
+<button class="boton" onclick="pedir('casa')">🏡 Casa</button>
+<button class="boton" onclick="pedir('trabajo')">🛠️ Trabajo</button>
+<button class="boton" onclick="pedir('favorito')">⭐ Favorito</button>
+<button class="boton" onclick="pedir('mapa')">🗺️ Ubicación actual</button>
 
-<div class="small-buttons">
-<button class="small-btn" onclick="configurar()">⚙️ Configuración</button>
-<button class="small-btn" onclick="borrarDatos()">🗑️ Borrar</button>
-<button class="small-btn" onclick="tarifa()">💰 Tarifa</button>
-</div>
+<button class="boton-sec" onclick="configurar()">⚙ Configuración</button>
 
-<div class="message" id="mensaje"></div>
-
-</div>
+<div class="mensaje" id="mensaje"></div>
 
 <script>
-const telefono = "5493442641200";
 
-function pedir(tipo) {
-    const direccion = localStorage.getItem(tipo);
-    if (!direccion) {
-        alert("Primero configurá la dirección.");
-        return;
-    }
-    enviarWhatsApp(direccion);
+const numeroEmpresa = "3442641200";
+
+function pedir(tipo){
+
+let direccion = localStorage.getItem(tipo);
+
+if(tipo !== "mapa" && !direccion){
+direccion = prompt("Ingresá la dirección para " + tipo + ":");
+if(!direccion) return;
+localStorage.setItem(tipo, direccion);
 }
 
-function pedirOtro() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            const link = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-            enviarWhatsApp("Mi ubicación: " + link);
-        });
-    }
+if(tipo === "mapa"){
+direccion = "Te envío mi ubicación actual";
 }
 
-function enviarWhatsApp(texto) {
-    document.getElementById("mensaje").innerText = "Enviando pedido...";
-    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(texto)}`;
-    setTimeout(() => {
-        window.location.href = url;
-    }, 700);
+let destino = confirm("¿Querés agregar destino para tarifa estimada?");
+let texto = "Hola, quiero pedir un remis desde " + direccion;
+
+if(destino){
+let dirDestino = prompt("Ingresá dirección de destino:");
+if(dirDestino){
+texto += " hasta " + dirDestino;
+}
 }
 
-function configurar() {
-    const casa = prompt("Dirección de CASA:");
-    const trabajo = prompt("Dirección de TRABAJO:");
-    const favorito = prompt("Dirección FAVORITA (opcional):");
+document.getElementById("mensaje").innerText = "Ya avisamos. En breve te respondemos.";
 
-    if (casa) localStorage.setItem("casa", casa);
-    if (trabajo) localStorage.setItem("trabajo", trabajo);
-    if (favorito) localStorage.setItem("favorito", favorito);
+setTimeout(function(){
+window.location.href = "https://wa.me/549" + numeroEmpresa + "?text=" + encodeURIComponent(texto);
+},1200);
 
-    alert("Direcciones guardadas.");
 }
 
-function borrarDatos() {
-    localStorage.clear();
-    alert("Datos borrados.");
+function configurar(){
+
+let casa = prompt("Dirección Casa:", localStorage.getItem("casa") || "");
+if(casa !== null) localStorage.setItem("casa", casa);
+
+let trabajo = prompt("Dirección Trabajo:", localStorage.getItem("trabajo") || "");
+if(trabajo !== null) localStorage.setItem("trabajo", trabajo);
+
+let favorito = prompt("Dirección Favorito:", localStorage.getItem("favorito") || "");
+if(favorito !== null) localStorage.setItem("favorito", favorito);
+
+alert("Configuración guardada");
+
 }
 
-function tarifa() {
-    const origen = prompt("¿Desde dónde salís?");
-    const destino = prompt("¿A dónde vas?");
-    if (origen && destino) {
-        enviarWhatsApp(`Hola, estoy en ${origen} y quiero ir a ${destino}. ¿Me dicen tarifa aproximada?`);
-    }
-}
 </script>
 
 </body>
