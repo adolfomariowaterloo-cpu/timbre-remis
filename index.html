@@ -1,112 +1,141 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Timbre Remis</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #000;
-      color: white;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acción - Timbre Remis</title>
 
-    img {
-      width: 140px;
-      margin-bottom: 10px;
-    }
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#111;
+  text-align:center;
+  color:white;
+}
 
-    .frase {
-      font-size: 18px;
-      margin-bottom: 30px;
-      opacity: 0.9;
-    }
+.logo img{
+  width:180px;
+  margin-top:20px;
+}
 
-    button {
-      width: 80%;
-      max-width: 350px;
-      height: 90px;
-      font-size: 26px;
-      border: none;
-      border-radius: 12px;
-      background-color: black;
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 15px rgba(255,255,255,0.2);
-    }
+h1{
+  margin:10px 0 20px 0;
+  font-size:26px;
+}
 
-    button.accion {
-      background-color: red;
-    }
+.boton{
+  display:block;
+  width:85%;
+  margin:15px auto;
+  padding:20px;
+  font-size:20px;
+  border-radius:12px;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
 
-    .mensaje {
-      margin-top: 25px;
-      font-size: 20px;
-    }
+.casa{ background:#c40000; }
+.trabajo{ background:#900000; }
+.otros{ background:#333; }
+.config{ background:#555; font-size:16px; }
 
-    .oculto {
-      display: none;
-    }
-  </style>
+input{
+  width:80%;
+  padding:10px;
+  margin:10px;
+  font-size:16px;
+}
+</style>
 </head>
+
 <body>
 
-  <img src="logo.png" alt="Logo">
+<div class="logo">
+  <img src="logo.png">
+</div>
 
-  <div class="frase">
-    Tu remis de confianza
-  </div>
+<h1>Timbre Remis</h1>
 
-  <button id="btn">TIMBRE REMIS</button>
+<div id="principal">
+  <button class="boton casa" onclick="enviarDireccion('casa')">
+    Casa 🏡
+  </button>
 
-  <div class="mensaje oculto" id="confirmacion">
-    <strong>PEDIDO ENVIADO</strong><br>
-    Estamos en contacto por WhatsApp
-  </div>
+  <button class="boton trabajo" onclick="enviarDireccion('trabajo')">
+    Trabajo 🛠️
+  </button>
 
-  <script>
-    const telefonoEmpresa = "5493442641200";
-    const btn = document.getElementById("btn");
-    const confirmacion = document.getElementById("confirmacion");
+  <button class="boton otros" onclick="enviarUbicacion()">
+    Otros 🗺️ (Ubicación actual)
+  </button>
 
-    btn.addEventListener("click", () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
+  <button class="boton config" onclick="configurar()">
+    ⚙ Configurar / Cambiar datos
+  </button>
+</div>
 
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
+<script>
 
-          const texto = `Hola, solicito un remis.\nUbicación: https://maps.google.com/?q=${lat},${lon}`;
-          const url = `https://wa.me/${telefonoEmpresa}?text=${encodeURIComponent(texto)}`;
+let numero = "5493442641200";
 
-          // Cambio visual inmediato
-          btn.classList.add("accion");
-          btn.innerText = "ACCIÓN";
+function pedirNombre(){
+  let nombre = localStorage.getItem("nombre");
+  if(!nombre){
+    nombre = prompt("Ingrese su nombre:");
+    if(nombre){
+      localStorage.setItem("nombre", nombre);
+    }
+  }
+  return nombre;
+}
 
-          setTimeout(() => {
-            btn.classList.add("oculto");
-            confirmacion.classList.remove("oculto");
-          }, 800);
+function enviarDireccion(tipo){
+  let direccion = localStorage.getItem(tipo);
+  if(!direccion){
+    direccion = prompt("Ingrese la dirección para " + tipo + ":");
+    if(direccion){
+      localStorage.setItem(tipo, direccion);
+    } else {
+      return;
+    }
+  }
 
-          window.location.href = url;
+  let nombre = pedirNombre();
+  if(!nombre) return;
 
-        }, () => {
-          alert("No se pudo obtener la ubicación.");
-        });
-      } else {
-        alert("Tu dispositivo no permite ubicación.");
-      }
+  let mensaje = encodeURIComponent(
+    "Acción 🚗\nNombre: " + nombre +
+    "\nDirección: " + direccion
+  );
+
+  window.location.href = "https://wa.me/" + numero + "?text=" + mensaje;
+}
+
+function enviarUbicacion(){
+  let nombre = pedirNombre();
+  if(!nombre) return;
+
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      let lat = pos.coords.latitude;
+      let lon = pos.coords.longitude;
+      let mensaje = encodeURIComponent(
+        "Acción 🚗\nNombre: " + nombre +
+        "\nUbicación: https://maps.google.com/?q=" + lat + "," + lon
+      );
+      window.location.href = "https://wa.me/" + numero + "?text=" + mensaje;
     });
-  </script>
+  }
+}
+
+function configurar(){
+  localStorage.clear();
+  alert("Datos borrados. Se volverán a pedir al usar los botones.");
+}
+
+</script>
 
 </body>
 </html>
