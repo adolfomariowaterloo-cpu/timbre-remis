@@ -46,13 +46,15 @@
 
     button.accion {
       background-color: red;
-      color: white;
     }
 
     .mensaje {
-      margin-top: 20px;
-      font-size: 16px;
-      height: 20px;
+      margin-top: 25px;
+      font-size: 20px;
+    }
+
+    .oculto {
+      display: none;
     }
   </style>
 </head>
@@ -66,12 +68,15 @@
 
   <button id="btn">TIMBRE REMIS</button>
 
-  <div class="mensaje" id="mensaje"></div>
+  <div class="mensaje oculto" id="confirmacion">
+    <strong>PEDIDO ENVIADO</strong><br>
+    Estamos en contacto por WhatsApp
+  </div>
 
   <script>
     const telefonoEmpresa = "5493442641200";
     const btn = document.getElementById("btn");
-    const mensaje = document.getElementById("mensaje");
+    const confirmacion = document.getElementById("confirmacion");
 
     btn.addEventListener("click", () => {
       if (navigator.geolocation) {
@@ -83,16 +88,14 @@
           const texto = `Hola, solicito un remis.\nUbicación: https://maps.google.com/?q=${lat},${lon}`;
           const url = `https://wa.me/${telefonoEmpresa}?text=${encodeURIComponent(texto)}`;
 
-          // Cambio visual
+          // Cambio visual inmediato
           btn.classList.add("accion");
           btn.innerText = "ACCIÓN";
-          mensaje.innerText = "Ya estamos recibiendo tu pedido";
 
           setTimeout(() => {
-            btn.classList.remove("accion");
-            btn.innerText = "TIMBRE REMIS";
-            mensaje.innerText = "";
-          }, 2000);
+            btn.classList.add("oculto");
+            confirmacion.classList.remove("oculto");
+          }, 800);
 
           window.location.href = url;
 
