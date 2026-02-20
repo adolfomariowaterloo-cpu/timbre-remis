@@ -13,20 +13,19 @@ background:#1f1f1f;
 color:white;
 display:flex;
 flex-direction:column;
-justify-content:center;
 align-items:center;
+justify-content:center;
 height:100vh;
 text-align:center;
-}
-
-h1{
-margin:10px 0 20px 0;
-font-size:28px;
 }
 
 .logo{
 width:120px;
 margin-bottom:10px;
+}
+
+h1{
+margin-bottom:20px;
 }
 
 .boton{
@@ -37,31 +36,49 @@ margin:10px 0;
 font-size:20px;
 border:none;
 border-radius:15px;
-background:linear-gradient(45deg,#b30000,#ff1a1a);
+background:linear-gradient(45deg,#a00000,#ff1a1a);
 color:white;
 }
 
-.boton-sec{
-width:50%;
-padding:10px;
-margin-top:15px;
-font-size:14px;
+.boton-gris{
+width:85%;
+max-width:400px;
+padding:18px;
+margin:10px 0;
+font-size:18px;
 border:none;
-border-radius:20px;
+border-radius:15px;
 background:#3a3a3a;
 color:white;
 }
 
-.opcional{
+.config{
+position:fixed;
+bottom:20px;
+right:20px;
+width:55px;
+height:55px;
+border-radius:50%;
+border:none;
+background:#555;
+color:white;
+font-size:20px;
+}
+
+.tarifa{
 margin-top:10px;
 font-size:14px;
-color:#cccccc;
+background:#2f2f2f;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:20px;
 }
 
 .mensaje{
-margin-top:20px;
-font-size:18px;
-color:#ffffff;
+margin-top:15px;
+font-size:16px;
+color:#ccc;
 }
 </style>
 </head>
@@ -74,15 +91,18 @@ color:#ffffff;
 <button class="boton" onclick="pedir('casa')">🏡 Casa</button>
 <button class="boton" onclick="pedir('trabajo')">🛠️ Trabajo</button>
 <button class="boton" onclick="pedir('favorito')">⭐ Favorito</button>
-<button class="boton" onclick="pedir('mapa')">🗺️ Ubicación actual</button>
+<button class="boton-gris" onclick="pedir('mapa')">🗺️ Ubicación actual</button>
 
-<button class="boton-sec" onclick="configurar()">⚙ Configuración</button>
+<button class="tarifa" onclick="pedirTarifa()">💲 Tarifa estimada</button>
 
 <div class="mensaje" id="mensaje"></div>
+
+<button class="config" onclick="configurar()">⚙</button>
 
 <script>
 
 const numeroEmpresa = "3442641200";
+let ultimaDireccion = "";
 
 function pedir(tipo){
 
@@ -98,21 +118,31 @@ if(tipo === "mapa"){
 direccion = "Te envío mi ubicación actual";
 }
 
-let destino = confirm("¿Querés agregar destino para tarifa estimada?");
+ultimaDireccion = direccion;
+
 let texto = "Hola, quiero pedir un remis desde " + direccion;
 
-if(destino){
-let dirDestino = prompt("Ingresá dirección de destino:");
-if(dirDestino){
-texto += " hasta " + dirDestino;
-}
-}
-
-document.getElementById("mensaje").innerText = "Ya avisamos. En breve te respondemos.";
+document.getElementById("mensaje").innerText = "Avisando a Acción...";
 
 setTimeout(function(){
 window.location.href = "https://wa.me/549" + numeroEmpresa + "?text=" + encodeURIComponent(texto);
-},1200);
+},1000);
+
+}
+
+function pedirTarifa(){
+
+if(!ultimaDireccion){
+alert("Primero elegí desde dónde salís.");
+return;
+}
+
+let destino = prompt("Ingresá dirección de destino:");
+if(!destino) return;
+
+let texto = "Hola, quiero saber la tarifa desde " + ultimaDireccion + " hasta " + destino;
+
+window.location.href = "https://wa.me/549" + numeroEmpresa + "?text=" + encodeURIComponent(texto);
 
 }
 
@@ -127,7 +157,7 @@ if(trabajo !== null) localStorage.setItem("trabajo", trabajo);
 let favorito = prompt("Dirección Favorito:", localStorage.getItem("favorito") || "");
 if(favorito !== null) localStorage.setItem("favorito", favorito);
 
-alert("Configuración guardada");
+alert("Datos guardados");
 
 }
 
