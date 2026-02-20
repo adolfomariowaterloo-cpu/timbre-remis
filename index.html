@@ -9,7 +9,7 @@
 body{
 margin:0;
 font-family:Arial, Helvetica, sans-serif;
-background:#1f1f1f;
+background:#111;
 color:white;
 display:flex;
 flex-direction:column;
@@ -20,7 +20,7 @@ text-align:center;
 }
 
 .logo{
-width:120px;
+width:130px;
 margin-bottom:10px;
 }
 
@@ -35,9 +35,10 @@ padding:18px;
 margin:10px 0;
 font-size:20px;
 border:none;
-border-radius:15px;
-background:linear-gradient(45deg,#a00000,#ff1a1a);
+border-radius:18px;
+background:linear-gradient(to bottom,#7a0000,#ff0000);
 color:white;
+box-shadow:0 4px 10px rgba(0,0,0,0.4);
 }
 
 .boton-gris{
@@ -47,9 +48,19 @@ padding:18px;
 margin:10px 0;
 font-size:18px;
 border:none;
-border-radius:15px;
-background:#3a3a3a;
+border-radius:18px;
+background:#333;
 color:white;
+}
+
+.tarifa{
+margin-top:15px;
+font-size:14px;
+background:#222;
+color:#ccc;
+border:1px solid #444;
+padding:8px 18px;
+border-radius:20px;
 }
 
 .config{
@@ -60,25 +71,15 @@ width:55px;
 height:55px;
 border-radius:50%;
 border:none;
-background:#555;
+background:#444;
 color:white;
 font-size:20px;
 }
 
-.tarifa{
-margin-top:10px;
-font-size:14px;
-background:#2f2f2f;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:20px;
-}
-
 .mensaje{
-margin-top:15px;
-font-size:16px;
-color:#ccc;
+margin-top:12px;
+font-size:15px;
+color:#bbb;
 }
 </style>
 </head>
@@ -93,7 +94,7 @@ color:#ccc;
 <button class="boton" onclick="pedir('favorito')">⭐ Favorito</button>
 <button class="boton-gris" onclick="pedir('mapa')">🗺️ Ubicación actual</button>
 
-<button class="tarifa" onclick="pedirTarifa()">💲 Tarifa estimada</button>
+<button class="tarifa" onclick="consultaTarifa()">💲 Solo consulta de tarifa</button>
 
 <div class="mensaje" id="mensaje"></div>
 
@@ -102,14 +103,14 @@ color:#ccc;
 <script>
 
 const numeroEmpresa = "3442641200";
-let ultimaDireccion = "";
+let direccionActual = "";
 
 function pedir(tipo){
 
 let direccion = localStorage.getItem(tipo);
 
 if(tipo !== "mapa" && !direccion){
-direccion = prompt("Ingresá la dirección para " + tipo + ":");
+direccion = prompt("Ingresá dirección para " + tipo + ":");
 if(!direccion) return;
 localStorage.setItem(tipo, direccion);
 }
@@ -118,7 +119,7 @@ if(tipo === "mapa"){
 direccion = "Te envío mi ubicación actual";
 }
 
-ultimaDireccion = direccion;
+direccionActual = direccion;
 
 let texto = "Hola, quiero pedir un remis desde " + direccion;
 
@@ -130,17 +131,15 @@ window.location.href = "https://wa.me/549" + numeroEmpresa + "?text=" + encodeUR
 
 }
 
-function pedirTarifa(){
+function consultaTarifa(){
 
-if(!ultimaDireccion){
-alert("Primero elegí desde dónde salís.");
-return;
-}
+let origen = prompt("¿Desde dónde salís? (Casa / Trabajo / Favorito o escribir dirección)");
+if(!origen) return;
 
-let destino = prompt("Ingresá dirección de destino:");
+let destino = prompt("¿Cuál es el destino?");
 if(!destino) return;
 
-let texto = "Hola, quiero saber la tarifa desde " + ultimaDireccion + " hasta " + destino;
+let texto = "Hola, quisiera consultar tarifa desde " + origen + " hasta " + destino;
 
 window.location.href = "https://wa.me/549" + numeroEmpresa + "?text=" + encodeURIComponent(texto);
 
