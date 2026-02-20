@@ -1,84 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Timbre Remis</title>
+  <meta charset="UTF-8">
+  <title>Timbre Remis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body {
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: #000;
-  font-family: Arial;
-  color: white;
-  text-align: center;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: white;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-img {
-  width: 120px;
-  margin-bottom: 20px;
-}
+    img {
+      width: 140px;
+      margin-bottom: 10px;
+    }
 
-button {
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  border: none;
-  font-size: 28px;
-  font-weight: bold;
-  background: black;
-  color: white;
-  cursor: pointer;
-  border: 4px solid white;
-}
+    .frase {
+      font-size: 18px;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
 
-button:active {
-  background: red;
-}
+    button {
+      width: 80%;
+      max-width: 350px;
+      height: 90px;
+      font-size: 26px;
+      border: none;
+      border-radius: 12px;
+      background-color: black;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
 
-#estado {
-  margin-top: 30px;
-  font-size: 20px;
-}
-</style>
+    button.accion {
+      background-color: red;
+      color: white;
+    }
+
+    .mensaje {
+      margin-top: 20px;
+      font-size: 16px;
+      height: 20px;
+    }
+  </style>
 </head>
 <body>
 
-<img src="logo.png" alt="Logo">
+  <img src="logo.png" alt="Logo">
 
-<button onclick="enviarPedido()">TIMBRE REMIS</button>
+  <div class="frase">
+    Tu remis de confianza
+  </div>
 
-<div id="estado"></div>
+  <button id="btn">TIMBRE REMIS</button>
 
-<script>
-function enviarPedido() {
+  <div class="mensaje" id="mensaje"></div>
 
-  document.getElementById("estado").innerText = "Enviando pedido...";
+  <script>
+    const telefonoEmpresa = "5493442641200";
+    const btn = document.getElementById("btn");
+    const mensaje = document.getElementById("mensaje");
 
-  navigator.geolocation.getCurrentPosition(function(pos) {
+    btn.addEventListener("click", () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
 
-    let lat = pos.coords.latitude;
-    let lon = pos.coords.longitude;
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
 
-    let numeroEmpresa = "5493442641200";
+          const texto = `Hola, solicito un remis.\nUbicación: https://maps.google.com/?q=${lat},${lon}`;
+          const url = `https://wa.me/${telefonoEmpresa}?text=${encodeURIComponent(texto)}`;
 
-    let mensaje = "Pedido Timbre Remis\nUbicación:\nhttps://maps.google.com/?q=" + lat + "," + lon;
+          // Cambio visual
+          btn.classList.add("accion");
+          btn.innerText = "ACCIÓN";
+          mensaje.innerText = "Ya estamos recibiendo tu pedido";
 
-    let url = "https://wa.me/" + numeroEmpresa + "?text=" + encodeURIComponent(mensaje);
+          setTimeout(() => {
+            btn.classList.remove("accion");
+            btn.innerText = "TIMBRE REMIS";
+            mensaje.innerText = "";
+          }, 2000);
 
-    window.location.href = url;
+          window.location.href = url;
 
-  }, function() {
-    document.getElementById("estado").innerText = "No se pudo obtener ubicación.";
-  });
-}
-</script>
+        }, () => {
+          alert("No se pudo obtener la ubicación.");
+        });
+      } else {
+        alert("Tu dispositivo no permite ubicación.");
+      }
+    });
+  </script>
 
 </body>
 </html>
-
