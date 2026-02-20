@@ -6,66 +6,69 @@
 <title>Consulta de Precio</title>
 
 <style>
-body {
+body{
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    text-align: center;
-    padding: 20px;
+    background:#f2f2f2;
+    padding:20px;
+    max-width:500px;
+    margin:auto;
 }
 
-h2 {
-    margin-bottom: 20px;
+h2{
+    margin-top:30px;
 }
 
-.opcion {
-    display: block;
-    margin: 10px auto;
-    padding: 15px;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-    transition: 0.2s;
+.opcion{
+    display:flex;
+    align-items:center;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.opcion:hover {
-    transform: scale(1.03);
+input[type="radio"]{
+    margin-right:10px;
+    transform:scale(1.2);
 }
 
-/* Jerarquía visual */
-.casa {
-    width: 100%;
-    background: linear-gradient(145deg, #ff3b3b, #c40000);
+.casa{
+    background:linear-gradient(145deg,#ff3b3b,#c40000);
 }
 
-.trabajo {
-    width: 90%;
-    background: linear-gradient(145deg, #800020, #4b0012);
+.trabajo{
+    background:linear-gradient(145deg,#800020,#4b0012);
 }
 
-.favorito {
-    width: 80%;
-    background: linear-gradient(145deg, #ff8c00, #cc6a00);
+.favorito{
+    background:linear-gradient(145deg,#ff8c00,#cc6a00);
 }
 
-.ubicacion {
-    width: 70%;
-    background: linear-gradient(145deg, #1e90ff, #005bbb);
+.otro{
+    background:linear-gradient(145deg,#1e90ff,#005bbb);
 }
 
-input {
-    margin-top: 15px;
-    padding: 10px;
-    width: 90%;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+input[type="text"]{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+    border-radius:8px;
+    border:1px solid #ccc;
 }
 
-#confirmacion {
-    margin-top: 20px;
-    font-weight: bold;
+button{
+    margin-top:25px;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    background:#25d366;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -74,29 +77,120 @@ input {
 
 <h2>¿Desde dónde salís?</h2>
 
-<button class="opcion casa" onclick="seleccionarOrigen('Casa')">Casa</button>
-<button class="opcion trabajo" onclick="seleccionarOrigen('Trabajo')">Trabajo</button>
-<button class="opcion favorito" onclick="seleccionarOrigen('Favorito')">Favorito</button>
-<button class="opcion ubicacion" onclick="mostrarInput()">Otra ubicación</button>
+<label class="opcion casa">
+<input type="radio" name="origen" value="casa" onclick="origenSeleccionado('casa')">
+Casa
+</label>
 
-<div id="inputDireccion" style="display:none;">
-    <input type="text" id="direccionManual" placeholder="Escribí la dirección">
+<label class="opcion trabajo">
+<input type="radio" name="origen" value="trabajo" onclick="origenSeleccionado('trabajo')">
+Trabajo
+</label>
+
+<label class="opcion favorito">
+<input type="radio" name="origen" value="favorito" onclick="origenSeleccionado('favorito')">
+Favorito
+</label>
+
+<label class="opcion otro">
+<input type="radio" name="origen" value="otro" onclick="mostrarInput('origen')">
+Otra ubicación
+</label>
+
+<div id="origenManual" style="display:none;">
+<input type="text" id="origenTexto" placeholder="Escribí dirección de origen">
 </div>
 
-<div id="confirmacion"></div>
+<h2>¿Hacia dónde vas?</h2>
+
+<label class="opcion casa">
+<input type="radio" name="destino" value="casa" onclick="destinoSeleccionado('casa')">
+Casa
+</label>
+
+<label class="opcion trabajo">
+<input type="radio" name="destino" value="trabajo" onclick="destinoSeleccionado('trabajo')">
+Trabajo
+</label>
+
+<label class="opcion favorito">
+<input type="radio" name="destino" value="favorito" onclick="destinoSeleccionado('favorito')">
+Favorito
+</label>
+
+<label class="opcion otro">
+<input type="radio" name="destino" value="otro" onclick="mostrarInput('destino')">
+Otra ubicación
+</label>
+
+<div id="destinoManual" style="display:none;">
+<input type="text" id="destinoTexto" placeholder="Escribí dirección de destino">
+</div>
+
+<button onclick="enviarWhatsApp()">Enviar consulta</button>
 
 <script>
-let origen = "";
 
-function seleccionarOrigen(tipo) {
-    origen = tipo;
-    document.getElementById("confirmacion").innerHTML =
-        "Origen seleccionado: " + origen + "<br><br>Ahora elegir destino.";
+// Direcciones prefijadas
+const direcciones = {
+    casa: "Tu dirección de Casa",
+    trabajo: "Tu dirección de Trabajo",
+    favorito: "Tu dirección Favorita"
+};
+
+let origenFinal = "";
+let destinoFinal = "";
+
+function origenSeleccionado(tipo){
+    document.getElementById("origenManual").style.display="none";
+    origenFinal = direcciones[tipo];
 }
 
-function mostrarInput() {
-    document.getElementById("inputDireccion").style.display = "block";
+function destinoSeleccionado(tipo){
+    document.getElementById("destinoManual").style.display="none";
+    destinoFinal = direcciones[tipo];
 }
+
+function mostrarInput(tipo){
+    if(tipo==="origen"){
+        document.getElementById("origenManual").style.display="block";
+    }else{
+        document.getElementById("destinoManual").style.display="block";
+    }
+}
+
+function enviarWhatsApp(){
+
+    const origenRadio = document.querySelector('input[name="origen"]:checked');
+    const destinoRadio = document.querySelector('input[name="destino"]:checked');
+
+    if(!origenRadio || !destinoRadio){
+        alert("Seleccioná origen y destino");
+        return;
+    }
+
+    if(origenRadio.value==="otro"){
+        origenFinal = document.getElementById("origenTexto").value;
+    }
+
+    if(destinoRadio.value==="otro"){
+        destinoFinal = document.getElementById("destinoTexto").value;
+    }
+
+    if(!origenFinal || !destinoFinal){
+        alert("Completá las direcciones");
+        return;
+    }
+
+    const mensaje = `Hola, quiero consultar precio desde ${origenFinal} hasta ${destinoFinal}`;
+
+    const telefono = "549XXXXXXXXXX"; // CAMBIAR POR TU NUMERO
+
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+
+    window.open(url, "_blank");
+}
+
 </script>
 
 </body>
