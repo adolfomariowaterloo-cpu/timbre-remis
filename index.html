@@ -1,139 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Acción - Timbre Remis</title>
+<title>Timbre Remis</title>
+
+<link rel="manifest" href="manifest.json">
 
 <style>
 body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:#111;
-  text-align:center;
-  color:white;
-}
-
-.logo img{
-  width:180px;
-  margin-top:20px;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:black;
+    color:white;
+    text-align:center;
 }
 
 h1{
-  margin:10px 0 20px 0;
-  font-size:26px;
+    margin-top:20px;
+}
+
+.logo{
+    width:140px;
+    margin-top:20px;
 }
 
 .boton{
-  display:block;
-  width:85%;
-  margin:15px auto;
-  padding:20px;
-  font-size:20px;
-  border-radius:12px;
-  border:none;
-  color:white;
-  cursor:pointer;
+    display:block;
+    width:85%;
+    margin:15px auto;
+    padding:18px;
+    font-size:18px;
+    border-radius:12px;
+    border:none;
+    background:#c40000;
+    color:white;
 }
 
-.casa{ background:#c40000; }
-.trabajo{ background:#900000; }
-.otros{ background:#333; }
-.config{ background:#555; font-size:16px; }
+.boton:active{
+    background:#ff0000;
+}
 
-input{
-  width:80%;
-  padding:10px;
-  margin:10px;
-  font-size:16px;
+.mensaje{
+    margin-top:20px;
+    font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="logo">
-  <img src="logo.png">
-</div>
+<img src="logo.png" class="logo">
 
 <h1>Timbre Remis</h1>
 
-<div id="principal">
-  <button class="boton casa" onclick="enviarDireccion('casa')">
-    Casa 🏡
-  </button>
+<button class="boton" onclick="enviarDireccion('Casa', localStorage.getItem('casa'))">
+🏡 Casa
+</button>
 
-  <button class="boton trabajo" onclick="enviarDireccion('trabajo')">
-    Trabajo 🛠️
-  </button>
+<button class="boton" onclick="enviarDireccion('Trabajo', localStorage.getItem('trabajo'))">
+🛠️ Trabajo
+</button>
 
-  <button class="boton otros" onclick="enviarUbicacion()">
-    Otros 🗺️ (Ubicación actual)
-  </button>
+<button class="boton" onclick="enviarDireccion('Favorito', localStorage.getItem('favorito'))">
+⭐ Favorito
+</button>
 
-  <button class="boton config" onclick="configurar()">
-    ⚙ Configurar / Cambiar datos
-  </button>
-</div>
+<button class="boton" onclick="ubicacionActual()">
+🗺️ Otro lugar (ubicación actual)
+</button>
+
+<p class="mensaje" id="mensaje"></p>
 
 <script>
 
-let numero = "5493442641200";
-
-function pedirNombre(){
-  let nombre = localStorage.getItem("nombre");
-  if(!nombre){
-    nombre = prompt("Ingrese su nombre:");
-    if(nombre){
-      localStorage.setItem("nombre", nombre);
-    }
-  }
-  return nombre;
-}
-
-function enviarDireccion(tipo){
-  let direccion = localStorage.getItem(tipo);
-  if(!direccion){
-    direccion = prompt("Ingrese la dirección para " + tipo + ":");
-    if(direccion){
-      localStorage.setItem(tipo, direccion);
-    } else {
-      return;
-    }
-  }
-
-  let nombre = pedirNombre();
-  if(!nombre) return;
-
-  let mensaje = encodeURIComponent(
-    "Acción 🚗\nNombre: " + nombre +
-    "\nDirección: " + direccion
-  );
-
-  window.location.href = "https://wa.me/" + numero + "?text=" + mensaje;
-}
-
-function enviarUbicacion(){
-  let nombre = pedirNombre();
-  if(!nombre) return;
-
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(pos){
-      let lat = pos.coords.latitude;
-      let lon = pos.coords.longitude;
-      let mensaje = encodeURIComponent(
-        "Acción 🚗\nNombre: " + nombre +
-        "\nUbicación: https://maps.google.com/?q=" + lat + "," + lon
-      );
-      window.location.href = "https://wa.me/" + numero + "?text=" + mensaje;
-    });
-  }
-}
+const telefonoEmpresa = "5493442641200";
 
 function configurar(){
-  localStorage.clear();
-  alert("Datos borrados. Se volverán a pedir al usar los botones.");
+    if(!localStorage.getItem('casa')){
+        let casa = prompt("Ingrese dirección de CASA (ej: Urquiza 465)");
+        if(casa) localStorage.setItem('casa', casa);
+    }
+
+    if(!localStorage.getItem('trabajo')){
+        let trabajo = prompt("Ingrese dirección de TRABAJO (ej: Belgrano 674)");
+        if(trabajo) localStorage.setItem('trabajo', trabajo);
+    }
+
+    if(!localStorage.getItem('favorito')){
+        let fav = confirm("¿Desea agregar un lugar FAVORITO?");
+        if(fav){
+            let favorito = prompt("Ingrese dirección FAVORITO");
+            if(favorito) localStorage.setItem('favorito', favorito);
+        }
+    }
 }
+
+function enviarDireccion(tipo, direccion){
+    if(!direccion){
+        alert("No configurado aún.");
+        return;
+    }
+
+    let mensaje = "Hola, necesito un remis desde:\n" + direccion;
+
+    let url = "https://wa.me/" + telefonoEmpresa + "?text=" + encodeURIComponent(mensaje);
+
+    document.getElementById("mensaje").innerText = "Pedido enviado";
+
+    setTimeout(() => {
+        window.location.href = url;
+    }, 800);
+
+    setTimeout(() => {
+        window.close();
+    }, 3000);
+}
+
+function ubicacionActual(){
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(function(pos){
+            let lat = pos.coords.latitude;
+            let lon = pos.coords.longitude;
+
+            let mensaje = "Hola, necesito un remis desde mi ubicación:\nhttps://maps.google.com/?q=" + lat + "," + lon;
+
+            let url = "https://wa.me/" + telefonoEmpresa + "?text=" + encodeURIComponent(mensaje);
+
+            document.getElementById("mensaje").innerText = "Pedido enviado";
+
+            setTimeout(() => {
+                window.location.href = url;
+            }, 800);
+
+            setTimeout(() => {
+                window.close();
+            }, 3000);
+
+        });
+    }else{
+        alert("El celular no permite ubicación.");
+    }
+}
+
+configurar();
 
 </script>
 
