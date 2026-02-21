@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🚕 Timbre Remis</title>
+<title>Timbre Remis</title>
 
 <style>
 body{
@@ -18,13 +18,13 @@ header{
   padding:20px 10px 10px 10px;
 }
 
-header h1{
-  margin:5px 0;
-  font-size:32px;
+header img{
+  width:180px;
 }
 
-.logo{
-  font-size:60px;
+header h1{
+  margin:10px 0;
+  font-size:28px;
 }
 
 .container{
@@ -52,14 +52,16 @@ button:active{
   box-shadow:0 2px 0 rgba(0,0,0,0.5);
 }
 
-/* BOTONES PRINCIPALES */
-
 .casa{
   background:linear-gradient(#ff2b2b,#b30000);
 }
 
 .trabajo{
   background:linear-gradient(#ff8c00,#cc5500);
+}
+
+.favorito{
+  background:linear-gradient(#9b59b6,#5e3370);
 }
 
 .otros{
@@ -73,8 +75,6 @@ button:active{
   background:#444;
   box-shadow:none;
 }
-
-/* CONFIGURACION */
 
 input{
   width:85%;
@@ -107,8 +107,8 @@ input{
 <body>
 
 <header>
-  <div class="logo">🚕🔔</div>
-  <h1>Timbre Remis</h1>
+  <img src="accion.png" alt="Acción Remis">
+  <h1>Timbre Remis 🔔</h1>
 </header>
 
 <div class="container" id="principal">
@@ -119,8 +119,13 @@ input{
   </button>
 
   <button class="trabajo" onclick="pedirDesde('trabajo')">
-    🛠️ Desde Trabajo
+    🛠 Desde Trabajo
     <span class="small" id="dirTrabajoTexto"></span>
+  </button>
+
+  <button class="favorito" onclick="pedirDesde('favorito')">
+    ⭐ Desde Favorito
+    <span class="small" id="dirFavoritoTexto"></span>
   </button>
 
   <button class="otros" onclick="pedirUbicacion()">
@@ -128,7 +133,7 @@ input{
   </button>
 
   <button class="config" onclick="mostrarConfig()">
-    ⚙️ Configuración
+    ⚙ Configuración
   </button>
 
 </div>
@@ -143,9 +148,9 @@ input{
 
   <input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
 
-  <button class="guardar" onclick="guardarConfig()">Guardar</button>
+  <input type="text" id="dirFavorito" placeholder="Dirección Favorito">
 
-  <button class="config" onclick="volver()">Volver</button>
+  <button class="guardar" onclick="guardarConfig()">Guardar</button>
 
 </div>
 
@@ -153,21 +158,19 @@ input{
 
 const telefonoEmpresa = "5493442641200";
 
-/* CARGAR DATOS GUARDADOS */
 window.onload = function(){
   document.getElementById("apellido").value = localStorage.getItem("apellido") || "";
   document.getElementById("dirCasa").value = localStorage.getItem("dirCasa") || "";
   document.getElementById("dirTrabajo").value = localStorage.getItem("dirTrabajo") || "";
+  document.getElementById("dirFavorito").value = localStorage.getItem("dirFavorito") || "";
 
   actualizarTextos();
 }
 
 function actualizarTextos(){
-  const casa = localStorage.getItem("dirCasa");
-  const trabajo = localStorage.getItem("dirTrabajo");
-
-  document.getElementById("dirCasaTexto").innerText = casa ? casa : "";
-  document.getElementById("dirTrabajoTexto").innerText = trabajo ? trabajo : "";
+  document.getElementById("dirCasaTexto").innerText = localStorage.getItem("dirCasa") || "";
+  document.getElementById("dirTrabajoTexto").innerText = localStorage.getItem("dirTrabajo") || "";
+  document.getElementById("dirFavoritoTexto").innerText = localStorage.getItem("dirFavorito") || "";
 }
 
 function mostrarConfig(){
@@ -175,39 +178,26 @@ function mostrarConfig(){
   document.getElementById("configuracion").classList.remove("hidden");
 }
 
-function volver(){
-  document.getElementById("configuracion").classList.add("hidden");
-  document.getElementById("principal").classList.remove("hidden");
-}
-
 function guardarConfig(){
   localStorage.setItem("apellido", document.getElementById("apellido").value);
   localStorage.setItem("dirCasa", document.getElementById("dirCasa").value);
   localStorage.setItem("dirTrabajo", document.getElementById("dirTrabajo").value);
+  localStorage.setItem("dirFavorito", document.getElementById("dirFavorito").value);
 
   actualizarTextos();
-  alert("Datos guardados correctamente");
-  volver();
+  document.getElementById("configuracion").classList.add("hidden");
+  document.getElementById("principal").classList.remove("hidden");
 }
-
-/* PEDIDOS */
 
 function pedirDesde(tipo){
 
   const apellido = localStorage.getItem("apellido");
   if(!apellido){
-    alert("Debe configurar su apellido primero.");
     mostrarConfig();
     return;
   }
 
-  let direccion = "";
-
-  if(tipo === "casa"){
-    direccion = localStorage.getItem("dirCasa");
-  }else{
-    direccion = localStorage.getItem("dirTrabajo");
-  }
+  let direccion = localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
 
   if(!direccion){
     mostrarConfig();
@@ -221,7 +211,6 @@ function pedirUbicacion(){
 
   const apellido = localStorage.getItem("apellido");
   if(!apellido){
-    alert("Debe configurar su apellido primero.");
     mostrarConfig();
     return;
   }
@@ -232,11 +221,7 @@ function pedirUbicacion(){
       const lon = pos.coords.longitude;
       const link = "https://maps.google.com/?q="+lat+","+lon;
       enviarWhatsApp(apellido, link);
-    }, function(){
-      alert("No se pudo obtener ubicación.");
     });
-  }else{
-    alert("Geolocalización no soportada.");
   }
 }
 
