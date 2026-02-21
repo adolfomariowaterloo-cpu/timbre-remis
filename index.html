@@ -24,51 +24,59 @@ h1{
     margin-bottom:30px;
 }
 
+/* BOTONES 3D */
 button{
     border:none;
-    border-radius:40px;
+    border-radius:50px;
     padding:18px;
-    margin:10px 0;
+    margin:12px 0;
     font-size:18px;
     color:white;
     cursor:pointer;
-    box-shadow:0 4px 10px rgba(0,0,0,0.5);
-    transition:0.2s;
+    transition:0.15s;
+    box-shadow:
+        0 6px 0 rgba(0,0,0,0.6),
+        0 12px 20px rgba(0,0,0,0.7);
 }
 
 button:active{
-    transform:scale(0.97);
+    transform:translateY(4px);
+    box-shadow:
+        0 2px 0 rgba(0,0,0,0.6),
+        0 6px 10px rgba(0,0,0,0.7);
 }
+
+/* COLORES SEGÚN USO */
 
 .btn-casa{
     width:100%;
-    background:linear-gradient(145deg,#ff3b3b,#b30000);
+    background:linear-gradient(to bottom,#ff4d4d,#b30000);
 }
 
 .btn-trabajo{
     width:92%;
-    background:linear-gradient(145deg,#800000,#400000);
+    background:linear-gradient(to bottom,#8b0000,#4b0000);
 }
 
 .btn-favorito{
-    width:84%;
-    background:linear-gradient(145deg,#ff7b00,#b35400);
+    width:85%;
+    background:linear-gradient(to bottom,#ff8c00,#b35a00);
 }
 
 .btn-mapa{
-    width:84%;
-    background:linear-gradient(145deg,#2196f3,#0d47a1);
+    width:85%;
+    background:linear-gradient(to bottom,#42a5f5,#0d47a1);
 }
 
 .btn-secundario{
     width:90%;
-    background:#333;
+    background:linear-gradient(to bottom,#444,#222);
 }
 
 input{
     width:90%;
-    padding:12px;
-    border-radius:20px;
+    padding:14px;
+    border-radius:25px;
     border:none;
     margin:8px 0;
     font-size:16px;
@@ -92,13 +100,12 @@ input{
 
 <h1>Timbre Remis</h1>
 
-<!-- MENU PRINCIPAL -->
 <div id="menu">
 
-<button class="btn-casa" onclick="pedirViaje('Casa')">Casa</button>
-<button class="btn-trabajo" onclick="pedirViaje('Trabajo')">Trabajo</button>
-<button class="btn-favorito" onclick="pedirViaje('Favorito')">Favorito</button>
-<button class="btn-mapa" onclick="mostrarSeccion('viajeManual')">Ubicación actual</button>
+<button class="btn-casa" onclick="pedirViaje('Casa')">Desde Casa</button>
+<button class="btn-trabajo" onclick="pedirViaje('Trabajo')">Desde Trabajo</button>
+<button class="btn-favorito" onclick="pedirViaje('Favorito')">Desde Favorito</button>
+<button class="btn-mapa" onclick="mostrarSeccion('viajeManual')">Desde Ubicación Actual</button>
 
 <button class="btn-secundario" onclick="mostrarSeccion('tarifa')">Consultar tarifa</button>
 
@@ -143,16 +150,14 @@ input{
 
 <script>
 
-// DIRECCIONES PREFIJADAS
+// PONÉ TU NÚMERO REAL ACÁ
+const numero = "5493442641200"; 
+
 const direcciones = {
     Casa: "Tu dirección de casa",
     Trabajo: "Tu dirección de trabajo",
     Favorito: "Tu dirección favorita"
 };
-
-// NUMERO WHATSAPP
-const numero = "549XXXXXXXXXX"; // REEMPLAZAR
-
 
 function mostrarSeccion(id){
     document.getElementById("menu").style.display="none";
@@ -167,15 +172,14 @@ function volver(){
 
 function pedirViaje(tipo){
     let destino = prompt("¿A dónde vas?");
-    if(!destino){
-        return;
-    }
+    if(!destino) return;
 
     let origen = direcciones[tipo];
 
     let texto = "Hola, quiero un móvil desde " + origen + " hasta " + destino;
     let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto);
-    window.open(url, "_blank");
+
+    location.href = url;
 }
 
 function enviarViajeManual(){
@@ -189,7 +193,8 @@ function enviarViajeManual(){
 
     let texto = "Hola, quiero un móvil desde " + origen + " hasta " + destino;
     let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto);
-    window.open(url, "_blank");
+
+    location.href = url;
 }
 
 function enviarTarifa(){
@@ -203,7 +208,8 @@ function enviarTarifa(){
 
     let texto = "Hola, quiero consultar tarifa desde " + desde + " hasta " + hasta;
     let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto);
-    window.open(url, "_blank");
+
+    location.href = url;
 }
 
 </script>
