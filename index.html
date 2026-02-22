@@ -101,6 +101,9 @@ input{
 .hidden{
   display:none;
 }
+.tenue{
+  opacity:0.4;
+}
 </style>
 </head>
 
@@ -170,9 +173,36 @@ window.onload = function(){
 }
 
 function actualizarTextos(){
-  document.getElementById("dirCasaTexto").innerText = localStorage.getItem("dirCasa") || "";
-  document.getElementById("dirTrabajoTexto").innerText = localStorage.getItem("dirTrabajo") || "";
-  document.getElementById("dirFavoritoTexto").innerText = localStorage.getItem("dirFavorito") || "";
+
+  const dirCasa = localStorage.getItem("dirCasa") || "";
+  const dirTrabajo = localStorage.getItem("dirTrabajo") || "";
+  const dirFavorito = localStorage.getItem("dirFavorito") || "";
+
+  document.getElementById("dirCasaTexto").innerText = dirCasa;
+  document.getElementById("dirTrabajoTexto").innerText = dirTrabajo;
+  document.getElementById("dirFavoritoTexto").innerText = dirFavorito;
+
+  const btnCasa = document.querySelector(".casa");
+  const btnTrabajo = document.querySelector(".trabajo");
+  const btnFavorito = document.querySelector(".favorito");
+
+  if(dirCasa === ""){
+    btnCasa.classList.add("tenue");
+  } else {
+    btnCasa.classList.remove("tenue");
+  }
+
+  if(dirTrabajo === ""){
+    btnTrabajo.classList.add("tenue");
+  } else {
+    btnTrabajo.classList.remove("tenue");
+  }
+
+  if(dirFavorito === ""){
+    btnFavorito.classList.add("tenue");
+  } else {
+    btnFavorito.classList.remove("tenue");
+  }
 }
 
 function mostrarConfig(){
