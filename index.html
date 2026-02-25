@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#000000">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,21 +54,10 @@ button:active{
   box-shadow:0 2px 0 rgba(0,0,0,0.5);
 }
 
-.casa{
-  background:linear-gradient(#ff2b2b,#b30000);
-}
-
-.trabajo{
-  background:linear-gradient(#ff8c00,#cc5500);
-}
-
-.favorito{
-  background:linear-gradient(#9b59b6,#5e3370);
-}
-
-.otros{
-  background:linear-gradient(#2a9df4,#0b5fa5);
-}
+.casa{ background:linear-gradient(#ff2b2b,#b30000); }
+.trabajo{ background:linear-gradient(#ff8c00,#cc5500); }
+.favorito{ background:linear-gradient(#9b59b6,#5e3370); }
+.otros{ background:linear-gradient(#2a9df4,#0b5fa5); }
 
 .config{
   width:60%;
@@ -100,21 +89,15 @@ input{
   font-weight:normal;
 }
 
-.hidden{
-  display:none;
-}
-.tenue{
-  opacity:0.4;
-}
+.hidden{ display:none; }
+.tenue{ opacity:0.4; }
 </style>
 </head>
 
 <body>
 
 <header>
-<img src="logo.png">
-<alt=" 🚗 Acción Remis" width="150">
-  
+  <img src="logo.png" alt="🚗 Acción Remis" width="150">
   <h1>Timbre Remis 🔔</h1>
 </header>
 
@@ -136,7 +119,7 @@ input{
   </button>
 
   <button class="otros" onclick="pedirUbicacion()">
-   🗺️📍  Ubicación Actual
+   🗺️📍 Ubicación Actual
   </button>
 
   <button class="config" onclick="mostrarConfig()">
@@ -150,11 +133,8 @@ input{
   <h2>Configuración</h2>
 
   <input type="text" id="apellido" placeholder="Apellido del pasajero">
-
   <input type="text" id="dirCasa" placeholder="Dirección Casa">
-
   <input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
-
   <input type="text" id="dirFavorito" placeholder="Dirección Favorito">
 
   <button class="guardar" onclick="guardarConfig()">Guardar</button>
@@ -170,7 +150,6 @@ window.onload = function(){
   document.getElementById("dirCasa").value = localStorage.getItem("dirCasa") || "";
   document.getElementById("dirTrabajo").value = localStorage.getItem("dirTrabajo") || "";
   document.getElementById("dirFavorito").value = localStorage.getItem("dirFavorito") || "";
-
   actualizarTextos();
 }
 
@@ -184,27 +163,9 @@ function actualizarTextos(){
   document.getElementById("dirTrabajoTexto").innerText = dirTrabajo;
   document.getElementById("dirFavoritoTexto").innerText = dirFavorito;
 
-  const btnCasa = document.querySelector(".casa");
-  const btnTrabajo = document.querySelector(".trabajo");
-  const btnFavorito = document.querySelector(".favorito");
-
-  if(dirCasa === ""){
-    btnCasa.classList.add("tenue");
-  } else {
-    btnCasa.classList.remove("tenue");
-  }
-
-  if(dirTrabajo === ""){
-    btnTrabajo.classList.add("tenue");
-  } else {
-    btnTrabajo.classList.remove("tenue");
-  }
-
-  if(dirFavorito === ""){
-    btnFavorito.classList.add("tenue");
-  } else {
-    btnFavorito.classList.remove("tenue");
-  }
+  document.querySelector(".casa").classList.toggle("tenue", dirCasa === "");
+  document.querySelector(".trabajo").classList.toggle("tenue", dirTrabajo === "");
+  document.querySelector(".favorito").classList.toggle("tenue", dirFavorito === "");
 }
 
 function mostrarConfig(){
@@ -250,21 +211,36 @@ function pedirUbicacion(){
   }
 
   if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(pos){
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      const link = "https://maps.google.com/?q="+lat+","+lon;
-      enviarWhatsApp(apellido, link);
-    });
+
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const link = "https://maps.google.com/?q="+lat+","+lon;
+        enviarWhatsApp(apellido, link);
+      },
+      function(error){
+        alert("No se pudo obtener la ubicación. Activá el GPS.");
+      }
+    );
+
+  } else {
+    alert("Tu dispositivo no soporta geolocalización.");
   }
 }
 
 function enviarWhatsApp(apellido, origen){
 
-  const mensaje = "Hola, soy "+apellido+". Enviame un móvil a -->  "+origen;
+  const mensaje = "Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
   const url = "https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
 
-  window.open(url, "_blank");
+  const nuevaVentana = window.open(url, "_blank");
+
+  setTimeout(function(){
+    if(!nuevaVentana || nuevaVentana.closed || typeof nuevaVentana.closed == "undefined"){
+      alert("Parece que no tenés WhatsApp instalado. Comunicate al 3442-641200");
+    }
+  }, 1500);
 }
 
 </script>
