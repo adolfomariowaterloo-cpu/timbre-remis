@@ -97,7 +97,7 @@ input{
 <body>
 
 <header>
-  <img src="logo.png" alt="🚗 Acción Remis" width="150">
+  <img src="logo.png" alt="Acción Remis" width="150">
   <h1>Timbre Remis 🔔</h1>
 </header>
 
@@ -234,13 +234,7 @@ function enviarWhatsApp(apellido, origen){
   const mensaje = "Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
   const url = "https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
 
-  const nuevaVentana = window.open(url, "_blank");
-
-  setTimeout(function(){
-    if(!nuevaVentana || nuevaVentana.closed || typeof nuevaVentana.closed == "undefined"){
-      alert("Parece que no tenés WhatsApp instalado. Comunicate al 3442-641200");
-    }
-  }, 1500);
+  window.location.href = url;
 }
 
 </script>
