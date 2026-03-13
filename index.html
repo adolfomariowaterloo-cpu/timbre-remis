@@ -1,57 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Timbre Remis</title>
 
 <style>
+
 body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:#000;
-  color:white;
-  text-align:center;
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:#000;
+color:white;
+text-align:center;
 }
 
 header{
-  padding:20px 10px 10px 10px;
+padding:20px 10px 10px 10px;
 }
 
 header img{
-  width:180px;
+width:180px;
 }
 
 header h1{
-  margin:10px 0;
-  font-size:28px;
+margin:10px 0;
+font-size:28px;
 }
 
 .container{
-  padding:20px;
+padding:20px;
 }
 
 button{
-  width:90%;
-  max-width:400px;
-  margin:12px auto;
-  padding:18px;
-  font-size:20px;
-  border:none;
-  border-radius:18px;
-  cursor:pointer;
-  display:block;
-  color:white;
-  font-weight:bold;
-  box-shadow:0 6px 0 rgba(0,0,0,0.5);
-  transition:all 0.1s;
+width:90%;
+max-width:400px;
+margin:12px auto;
+padding:18px;
+font-size:20px;
+border:none;
+border-radius:18px;
+cursor:pointer;
+display:block;
+color:white;
+font-weight:bold;
+box-shadow:0 6px 0 rgba(0,0,0,0.5);
+transition:all 0.1s;
 }
 
 button:active{
-  transform:translateY(4px);
-  box-shadow:0 2px 0 rgba(0,0,0,0.5);
+transform:translateY(4px);
+box-shadow:0 2px 0 rgba(0,0,0,0.5);
 }
 
 .casa{ background:linear-gradient(#ff2b2b,#b30000); }
@@ -60,181 +63,340 @@ button:active{
 .otros{ background:linear-gradient(#2a9df4,#0b5fa5); }
 
 .config{
-  width:60%;
-  font-size:16px;
-  padding:10px;
-  background:#444;
-  box-shadow:none;
+width:60%;
+font-size:16px;
+padding:10px;
+background:#444;
+box-shadow:none;
 }
 
 input{
-  width:85%;
-  padding:10px;
-  margin:10px 0;
-  font-size:16px;
-  border-radius:8px;
-  border:none;
+width:85%;
+padding:10px;
+margin:10px 0;
+font-size:16px;
+border-radius:8px;
+border:none;
 }
 
 .guardar{
-  background:#28a745;
-  color:white;
-  font-weight:bold;
+background:#28a745;
+color:white;
+font-weight:bold;
 }
 
 .small{
-  font-size:14px;
-  display:block;
-  margin-top:5px;
-  font-weight:normal;
+font-size:14px;
+display:block;
+margin-top:5px;
+font-weight:normal;
 }
 
 .hidden{ display:none; }
 .tenue{ opacity:0.4; }
+
+.cardFarmacia{
+background:#222;
+padding:15px;
+margin:15px auto;
+border-radius:12px;
+max-width:420px;
+}
+
+.cardFarmacia h3{
+margin:5px 0;
+}
+
+.btnMini{
+padding:10px;
+font-size:16px;
+margin:6px;
+border-radius:10px;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-  <img src="logo.png" alt="Acción Remis" width="150">
-  <h1>Timbre Remis 🔔</h1>
+<img src="logo.png">
+<h1>Timbre Remis 🔔</h1>
 </header>
+
 
 <div class="container" id="principal">
 
-  <button class="casa" onclick="pedirDesde('casa')">
-    🏠 Desde Casa
-    <span class="small" id="dirCasaTexto"></span>
-  </button>
+<button class="casa" onclick="pedirDesde('casa')">
+🏠 Desde Casa
+<span class="small" id="dirCasaTexto"></span>
+</button>
 
-  <button class="trabajo" onclick="pedirDesde('trabajo')">
-    🛠 Desde Trabajo
-    <span class="small" id="dirTrabajoTexto"></span>
-  </button>
+<button class="trabajo" onclick="pedirDesde('trabajo')">
+🛠 Desde Trabajo
+<span class="small" id="dirTrabajoTexto"></span>
+</button>
 
-  <button class="favorito" onclick="pedirDesde('favorito')">
-    ⭐ Desde Favorito
-    <span class="small" id="dirFavoritoTexto"></span>
-  </button>
+<button class="favorito" onclick="pedirDesde('favorito')">
+⭐ Desde Favorito
+<span class="small" id="dirFavoritoTexto"></span>
+</button>
 
-  <button class="otros" onclick="pedirUbicacion()">
-   🗺️📍 Ubicación Actual
-  </button>
+<button class="otros" onclick="pedirUbicacion()">
+🗺️📍 Ubicación Actual
+</button>
 
-  <button class="config" onclick="mostrarConfig()">
-    ⚙ Configuración
-  </button>
+<button class="otros" onclick="mostrarFarmacias()">
+💊 Farmacias de Turno
+</button>
+
+<button class="config" onclick="mostrarConfig()">
+⚙ Configuración
+</button>
 
 </div>
+
+
+
+<div class="container hidden" id="pantallaFarmacias">
+
+<h2>💊 Farmacias de Turno</h2>
+
+<div id="listaFarmacias"></div>
+
+<button class="config" onclick="volverInicio()">
+⬅ Volver
+</button>
+
+</div>
+
+
 
 <div class="container hidden" id="configuracion">
 
-  <h2>Configuración</h2>
+<h2>Configuración</h2>
 
-  <input type="text" id="apellido" placeholder="Apellido del pasajero">
-  <input type="text" id="dirCasa" placeholder="Dirección Casa">
-  <input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
-  <input type="text" id="dirFavorito" placeholder="Dirección Favorito">
+<input type="text" id="apellido" placeholder="Apellido del pasajero">
+<input type="text" id="dirCasa" placeholder="Dirección Casa">
+<input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
+<input type="text" id="dirFavorito" placeholder="Dirección Favorito">
 
-  <button class="guardar" onclick="guardarConfig()">Guardar</button>
+<button class="guardar" onclick="guardarConfig()">Guardar</button>
 
 </div>
+
+
 
 <script>
 
 const telefonoEmpresa = "5493442641200";
 
 window.onload = function(){
-  document.getElementById("apellido").value = localStorage.getItem("apellido") || "";
-  document.getElementById("dirCasa").value = localStorage.getItem("dirCasa") || "";
-  document.getElementById("dirTrabajo").value = localStorage.getItem("dirTrabajo") || "";
-  document.getElementById("dirFavorito").value = localStorage.getItem("dirFavorito") || "";
-  actualizarTextos();
+
+document.getElementById("apellido").value = localStorage.getItem("apellido") || "";
+document.getElementById("dirCasa").value = localStorage.getItem("dirCasa") || "";
+document.getElementById("dirTrabajo").value = localStorage.getItem("dirTrabajo") || "";
+document.getElementById("dirFavorito").value = localStorage.getItem("dirFavorito") || "";
+
+actualizarTextos();
+
 }
+
+
 
 function actualizarTextos(){
 
-  const dirCasa = localStorage.getItem("dirCasa") || "";
-  const dirTrabajo = localStorage.getItem("dirTrabajo") || "";
-  const dirFavorito = localStorage.getItem("dirFavorito") || "";
+const dirCasa = localStorage.getItem("dirCasa") || "";
+const dirTrabajo = localStorage.getItem("dirTrabajo") || "";
+const dirFavorito = localStorage.getItem("dirFavorito") || "";
 
-  document.getElementById("dirCasaTexto").innerText = dirCasa;
-  document.getElementById("dirTrabajoTexto").innerText = dirTrabajo;
-  document.getElementById("dirFavoritoTexto").innerText = dirFavorito;
+document.getElementById("dirCasaTexto").innerText = dirCasa;
+document.getElementById("dirTrabajoTexto").innerText = dirTrabajo;
+document.getElementById("dirFavoritoTexto").innerText = dirFavorito;
 
-  document.querySelector(".casa").classList.toggle("tenue", dirCasa === "");
-  document.querySelector(".trabajo").classList.toggle("tenue", dirTrabajo === "");
-  document.querySelector(".favorito").classList.toggle("tenue", dirFavorito === "");
 }
+
+
 
 function mostrarConfig(){
-  document.getElementById("principal").classList.add("hidden");
-  document.getElementById("configuracion").classList.remove("hidden");
+
+document.getElementById("principal").classList.add("hidden");
+document.getElementById("configuracion").classList.remove("hidden");
+
 }
+
+
 
 function guardarConfig(){
-  localStorage.setItem("apellido", document.getElementById("apellido").value);
-  localStorage.setItem("dirCasa", document.getElementById("dirCasa").value);
-  localStorage.setItem("dirTrabajo", document.getElementById("dirTrabajo").value);
-  localStorage.setItem("dirFavorito", document.getElementById("dirFavorito").value);
 
-  actualizarTextos();
-  document.getElementById("configuracion").classList.add("hidden");
-  document.getElementById("principal").classList.remove("hidden");
+localStorage.setItem("apellido", document.getElementById("apellido").value);
+localStorage.setItem("dirCasa", document.getElementById("dirCasa").value);
+localStorage.setItem("dirTrabajo", document.getElementById("dirTrabajo").value);
+localStorage.setItem("dirFavorito", document.getElementById("dirFavorito").value);
+
+document.getElementById("configuracion").classList.add("hidden");
+document.getElementById("principal").classList.remove("hidden");
+
+actualizarTextos();
+
 }
+
+
 
 function pedirDesde(tipo){
 
-  const apellido = localStorage.getItem("apellido");
-  if(!apellido){
-    mostrarConfig();
-    return;
-  }
+const apellido = localStorage.getItem("apellido");
 
-  let direccion = localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
-
-  if(!direccion){
-    mostrarConfig();
-    return;
-  }
-
-  enviarWhatsApp(apellido, direccion);
+if(!apellido){
+mostrarConfig();
+return;
 }
+
+let direccion = localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
+
+if(!direccion){
+mostrarConfig();
+return;
+}
+
+enviarWhatsApp(apellido, direccion);
+
+}
+
+
 
 function pedirUbicacion(){
 
-  const apellido = localStorage.getItem("apellido");
-  if(!apellido){
-    mostrarConfig();
-    return;
-  }
+const apellido = localStorage.getItem("apellido");
 
-  if(navigator.geolocation){
-
-    navigator.geolocation.getCurrentPosition(
-      function(pos){
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        const link = "https://maps.google.com/?q="+lat+","+lon;
-        enviarWhatsApp(apellido, link);
-      },
-      function(error){
-        alert("No se pudo obtener la ubicación. Activá el GPS.");
-      }
-    );
-
-  } else {
-    alert("Tu dispositivo no soporta geolocalización.");
-  }
+if(!apellido){
+mostrarConfig();
+return;
 }
+
+navigator.geolocation.getCurrentPosition(
+
+function(pos){
+
+const lat = pos.coords.latitude;
+const lon = pos.coords.longitude;
+
+const link = "https://maps.google.com/?q="+lat+","+lon;
+
+enviarWhatsApp(apellido, link);
+
+},
+
+function(){
+alert("No se pudo obtener la ubicación");
+}
+
+);
+
+}
+
+
 
 function enviarWhatsApp(apellido, origen){
 
-  const mensaje = "Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
-  const url = "https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
+const mensaje = "Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
 
-  window.location.href = url;
+const url = "https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
+
+window.location.href = url;
+
+}
+
+
+
+function volverInicio(){
+
+document.getElementById("pantallaFarmacias").classList.add("hidden");
+document.getElementById("principal").classList.remove("hidden");
+
+}
+
+
+
+function mostrarFarmacias(){
+
+document.getElementById("principal").classList.add("hidden");
+document.getElementById("pantallaFarmacias").classList.remove("hidden");
+
+const turnos = {
+
+/* ACA CARGAS LAS FARMACIAS DEL MES */
+
+1:[
+{nombre:"Farmacia Moderna", direccion:"9 de Julio 1052", tel:"425515"}
+],
+
+2:[
+{nombre:"Farmacia Popular", direccion:"Galarza 802", tel:"425740"}
+]
+
+};
+
+
+
+const ahora = new Date();
+
+let dia = ahora.getDate();
+let hora = ahora.getHours();
+
+if(hora < 8){
+dia = dia - 1;
+}
+
+const lista = turnos[dia];
+
+let html = "";
+
+if(!lista){
+
+html = "<p>No hay farmacias cargadas para hoy</p>";
+
+}else{
+
+lista.forEach(f=>{
+
+html += `
+<div class="cardFarmacia">
+
+<h3>${f.nombre}</h3>
+
+<p>${f.direccion}</p>
+
+<button class="btnMini otros" onclick="window.open('tel:${f.tel}')">📞 Llamar</button>
+
+<button class="btnMini otros" onclick="window.open('https://maps.google.com/?q=${f.direccion}')">🗺 Ver Mapa</button>
+
+<button class="btnMini casa" onclick="pedirRemisFarmacia('${f.direccion}')">🚕 Pedir Remis</button>
+
+</div>
+`;
+
+});
+
+}
+
+document.getElementById("listaFarmacias").innerHTML = html;
+
+}
+
+
+
+function pedirRemisFarmacia(direccion){
+
+const apellido = localStorage.getItem("apellido");
+
+if(!apellido){
+mostrarConfig();
+return;
+}
+
+enviarWhatsApp(apellido, direccion);
+
 }
 
 </script>
