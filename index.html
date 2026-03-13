@@ -20,11 +20,11 @@ text-align:center;
 }
 
 header{
-padding:20px 10px 10px 10px;
+padding:20px;
 }
 
 header img{
-width:180px;
+width:160px;
 }
 
 header h1{
@@ -38,7 +38,7 @@ padding:20px;
 
 button{
 width:90%;
-max-width:400px;
+max-width:420px;
 margin:12px auto;
 padding:18px;
 font-size:20px;
@@ -49,7 +49,6 @@ display:block;
 color:white;
 font-weight:bold;
 box-shadow:0 6px 0 rgba(0,0,0,0.5);
-transition:all 0.1s;
 }
 
 button:active{
@@ -57,18 +56,12 @@ transform:translateY(4px);
 box-shadow:0 2px 0 rgba(0,0,0,0.5);
 }
 
-.casa{ background:linear-gradient(#ff2b2b,#b30000); }
-.trabajo{ background:linear-gradient(#ff8c00,#cc5500); }
-.favorito{ background:linear-gradient(#9b59b6,#5e3370); }
-.otros{ background:linear-gradient(#2a9df4,#0b5fa5); }
-
-.config{
-width:60%;
-font-size:16px;
-padding:10px;
-background:#444;
-box-shadow:none;
-}
+.casa{background:linear-gradient(#ff2b2b,#b30000);}
+.trabajo{background:linear-gradient(#ff8c00,#cc5500);}
+.favorito{background:linear-gradient(#9b59b6,#5e3370);}
+.ubicacion{background:linear-gradient(#2a9df4,#0b5fa5);}
+.farmacia{background:linear-gradient(#00c853,#007e33);}
+.config{background:#555;}
 
 input{
 width:85%;
@@ -81,21 +74,17 @@ border:none;
 
 .guardar{
 background:#28a745;
-color:white;
-font-weight:bold;
 }
 
 .small{
 font-size:14px;
 display:block;
 margin-top:5px;
-font-weight:normal;
 }
 
-.hidden{ display:none; }
-.tenue{ opacity:0.4; }
+.hidden{display:none;}
 
-.cardFarmacia{
+.card{
 background:#222;
 padding:15px;
 margin:15px auto;
@@ -103,14 +92,14 @@ border-radius:12px;
 max-width:420px;
 }
 
-.cardFarmacia h3{
+.card h3{
 margin:5px 0;
 }
 
 .btnMini{
 padding:10px;
-font-size:16px;
-margin:6px;
+font-size:15px;
+margin:5px;
 border-radius:10px;
 }
 
@@ -142,11 +131,11 @@ border-radius:10px;
 <span class="small" id="dirFavoritoTexto"></span>
 </button>
 
-<button class="otros" onclick="pedirUbicacion()">
-🗺️📍 Ubicación Actual
+<button class="ubicacion" onclick="pedirUbicacion()">
+📍 Ubicación Actual
 </button>
 
-<button class="otros" onclick="mostrarFarmacias()">
+<button class="farmacia" onclick="mostrarFarmacias()">
 💊 Farmacias de Turno
 </button>
 
@@ -158,25 +147,12 @@ border-radius:10px;
 
 
 
-<div class="container hidden" id="pantallaFarmacias">
-
-<h2>💊 Farmacias de Turno</h2>
-
-<div id="listaFarmacias"></div>
-
-<button class="config" onclick="volverInicio()">
-⬅ Volver
-</button>
-
-</div>
-
-
-
 <div class="container hidden" id="configuracion">
 
 <h2>Configuración</h2>
 
-<input type="text" id="apellido" placeholder="Apellido del pasajero">
+<input type="text" id="apellido" placeholder="Apellido">
+
 <input type="text" id="dirCasa" placeholder="Dirección Casa">
 <input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
 <input type="text" id="dirFavorito" placeholder="Dirección Favorito">
@@ -187,16 +163,28 @@ border-radius:10px;
 
 
 
+<div class="container hidden" id="farmacias">
+
+<h2>💊 Farmacias de Turno</h2>
+
+<div id="listaFarmacias"></div>
+
+<button class="config" onclick="volverInicio()">⬅ Volver</button>
+
+</div>
+
+
+
 <script>
 
-const telefonoEmpresa = "5493442641200";
+const telefonoEmpresa="5493442641200";
 
-window.onload = function(){
+window.onload=function(){
 
-document.getElementById("apellido").value = localStorage.getItem("apellido") || "";
-document.getElementById("dirCasa").value = localStorage.getItem("dirCasa") || "";
-document.getElementById("dirTrabajo").value = localStorage.getItem("dirTrabajo") || "";
-document.getElementById("dirFavorito").value = localStorage.getItem("dirFavorito") || "";
+document.getElementById("apellido").value=localStorage.getItem("apellido")||"";
+document.getElementById("dirCasa").value=localStorage.getItem("dirCasa")||"";
+document.getElementById("dirTrabajo").value=localStorage.getItem("dirTrabajo")||"";
+document.getElementById("dirFavorito").value=localStorage.getItem("dirFavorito")||"";
 
 actualizarTextos();
 
@@ -206,13 +194,9 @@ actualizarTextos();
 
 function actualizarTextos(){
 
-const dirCasa = localStorage.getItem("dirCasa") || "";
-const dirTrabajo = localStorage.getItem("dirTrabajo") || "";
-const dirFavorito = localStorage.getItem("dirFavorito") || "";
-
-document.getElementById("dirCasaTexto").innerText = dirCasa;
-document.getElementById("dirTrabajoTexto").innerText = dirTrabajo;
-document.getElementById("dirFavoritoTexto").innerText = dirFavorito;
+document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||"";
+document.getElementById("dirTrabajoTexto").innerText=localStorage.getItem("dirTrabajo")||"";
+document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirFavorito")||"";
 
 }
 
@@ -229,15 +213,15 @@ document.getElementById("configuracion").classList.remove("hidden");
 
 function guardarConfig(){
 
-localStorage.setItem("apellido", document.getElementById("apellido").value);
-localStorage.setItem("dirCasa", document.getElementById("dirCasa").value);
-localStorage.setItem("dirTrabajo", document.getElementById("dirTrabajo").value);
-localStorage.setItem("dirFavorito", document.getElementById("dirFavorito").value);
+localStorage.setItem("apellido",document.getElementById("apellido").value);
+localStorage.setItem("dirCasa",document.getElementById("dirCasa").value);
+localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value);
+localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value);
+
+actualizarTextos();
 
 document.getElementById("configuracion").classList.add("hidden");
 document.getElementById("principal").classList.remove("hidden");
-
-actualizarTextos();
 
 }
 
@@ -245,21 +229,21 @@ actualizarTextos();
 
 function pedirDesde(tipo){
 
-const apellido = localStorage.getItem("apellido");
+const apellido=localStorage.getItem("apellido");
 
 if(!apellido){
 mostrarConfig();
 return;
 }
 
-let direccion = localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
+let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
 
 if(!direccion){
 mostrarConfig();
 return;
 }
 
-enviarWhatsApp(apellido, direccion);
+enviarWhatsApp(apellido,direccion);
 
 }
 
@@ -267,7 +251,7 @@ enviarWhatsApp(apellido, direccion);
 
 function pedirUbicacion(){
 
-const apellido = localStorage.getItem("apellido");
+const apellido=localStorage.getItem("apellido");
 
 if(!apellido){
 mostrarConfig();
@@ -278,12 +262,12 @@ navigator.geolocation.getCurrentPosition(
 
 function(pos){
 
-const lat = pos.coords.latitude;
-const lon = pos.coords.longitude;
+const lat=pos.coords.latitude;
+const lon=pos.coords.longitude;
 
-const link = "https://maps.google.com/?q="+lat+","+lon;
+const link="https://maps.google.com/?q="+lat+","+lon;
 
-enviarWhatsApp(apellido, link);
+enviarWhatsApp(apellido,link);
 
 },
 
@@ -297,13 +281,13 @@ alert("No se pudo obtener la ubicación");
 
 
 
-function enviarWhatsApp(apellido, origen){
+function enviarWhatsApp(apellido,origen){
 
-const mensaje = "Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
+const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
 
-const url = "https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
+const url="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
 
-window.location.href = url;
+window.location.href=url;
 
 }
 
@@ -311,7 +295,8 @@ window.location.href = url;
 
 function volverInicio(){
 
-document.getElementById("pantallaFarmacias").classList.add("hidden");
+document.getElementById("farmacias").classList.add("hidden");
+document.getElementById("configuracion").classList.add("hidden");
 document.getElementById("principal").classList.remove("hidden");
 
 }
@@ -321,69 +306,71 @@ document.getElementById("principal").classList.remove("hidden");
 function mostrarFarmacias(){
 
 document.getElementById("principal").classList.add("hidden");
-document.getElementById("pantallaFarmacias").classList.remove("hidden");
+document.getElementById("farmacias").classList.remove("hidden");
 
-const turnos = {
-
-/* ACA CARGAS LAS FARMACIAS DEL MES */
+const turnos={
 
 1:[
-{nombre:"Farmacia Moderna", direccion:"9 de Julio 1052", tel:"425515"}
+{nombre:"Farmacia Moderna",direccion:"9 de Julio 1052",tel:"425515"},
+{nombre:"Farmacia Popular",direccion:"Galarza 802",tel:"425740"}
 ],
 
 2:[
-{nombre:"Farmacia Popular", direccion:"Galarza 802", tel:"425740"}
+{nombre:"Farmacia Ramirez",direccion:"Galarza 650",tel:"422683"}
+],
+
+3:[
+{nombre:"Farmacia Cientifica",direccion:"25 de Mayo 205",tel:"431901"}
 ]
 
 };
-13:[
-{nombre:"Farmacia Ramírez", direccion:"Galarza 650", tel:"422683"},
-{nombre:"Farmacia Científica", direccion:"25 de Mayo 205", tel:"431901"}
-],
 
 
-const ahora = new Date();
 
-let dia = ahora.getDate();
-let hora = ahora.getHours();
+const ahora=new Date();
 
-if(hora < 8){
-dia = dia - 1;
+let dia=ahora.getDate();
+let hora=ahora.getHours();
+
+if(hora<8){
+dia=dia-1;
 }
 
-const lista = turnos[dia];
+const lista=turnos[dia];
 
-let html = "";
+let html="";
 
 if(!lista){
 
-html = "<p>No hay farmacias cargadas para hoy</p>";
+html="<p>No hay farmacias cargadas para hoy</p>";
 
 }else{
 
 lista.forEach(f=>{
 
-html += `
-<div class="cardFarmacia">
+html+=`
+
+<div class="card">
 
 <h3>${f.nombre}</h3>
 
 <p>${f.direccion}</p>
 
-<button class="btnMini otros" onclick="window.open('tel:${f.tel}')">📞 Llamar</button>
+<button class="btnMini ubicacion" onclick="window.open('tel:${f.tel}')">📞 Llamar</button>
 
-<button class="btnMini otros" onclick="window.open('https://maps.google.com/?q=${f.direccion}')">🗺 Ver Mapa</button>
+<button class="btnMini ubicacion" onclick="window.open('https://maps.google.com/?q=${f.direccion}')">🗺 Mapa</button>
 
 <button class="btnMini casa" onclick="pedirRemisFarmacia('${f.direccion}')">🚕 Pedir Remis</button>
 
 </div>
+
 `;
 
 });
 
 }
 
-document.getElementById("listaFarmacias").innerHTML = html;
+document.getElementById("listaFarmacias").innerHTML=html;
 
 }
 
@@ -391,14 +378,14 @@ document.getElementById("listaFarmacias").innerHTML = html;
 
 function pedirRemisFarmacia(direccion){
 
-const apellido = localStorage.getItem("apellido");
+const apellido=localStorage.getItem("apellido");
 
 if(!apellido){
 mostrarConfig();
 return;
 }
 
-enviarWhatsApp(apellido, direccion);
+enviarWhatsApp(apellido,direccion);
 
 }
 
