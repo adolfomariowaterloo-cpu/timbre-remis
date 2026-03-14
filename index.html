@@ -60,8 +60,15 @@ box-shadow:0 2px 0 rgba(0,0,0,0.5);
 .trabajo{background:linear-gradient(#ff8c00,#cc5500);}
 .favorito{background:linear-gradient(#9b59b6,#5e3370);}
 .ubicacion{background:linear-gradient(#2a9df4,#0b5fa5);}
-.farmacia{background:linear-gradient(#00c853,#007e33);}
 .config{background:#555;}
+
+.remis{background:linear-gradient(#ff2b2b,#b30000);}
+.emergencia{background:linear-gradient(#ff0000,#7a0000);}
+.util{background:linear-gradient(#0066cc,#003366);}
+.eventos{background:linear-gradient(#e1306c,#833ab4);}
+.panico{background:linear-gradient(#ff0000,#000000);}
+.farmacia{background:linear-gradient(#00c853,#007e33);}
+.volver{background:#444;}
 
 input{
 width:85%;
@@ -94,7 +101,38 @@ margin-top:5px;
 <h1>Timbre Remis 🔔</h1>
 </header>
 
-<div class="container" id="principal">
+
+<div class="container" id="menuPrincipal">
+
+<button class="remis" onclick="abrirMenu('menuRemis')">
+🚕 Remis
+</button>
+
+<button class="emergencia" onclick="abrirMenu('menuEmergencias')">
+🚨 Teléfonos de Emergencia
+</button>
+
+<button class="util" onclick="abrirMenu('menuUtiles')">
+☎ Teléfonos Útiles
+</button>
+
+<button class="farmacia" onclick="abrirFarmacia()">
+💊 Farmacias de Turno
+</button>
+
+<button class="eventos" onclick="window.open('https://www.instagram.com/eventos.cdelu/','_blank')">
+🎉 Eventos
+</button>
+
+<button class="panico" onclick="abrirMenu('menuPanico')">
+🆘 Botón de Pánico
+</button>
+
+</div>
+
+
+
+<div class="container hidden" id="menuRemis">
 
 <button class="casa" onclick="pedirDesde('casa')">
 🏠 Desde Casa
@@ -115,21 +153,62 @@ margin-top:5px;
 📍 Ubicación Actual
 </button>
 
-<button class="farmacia" onclick="abrirFarmacia()">
-💊 Farmacias de Turno
+<button class="config" onclick="abrirMenu('configuracion')">
+⚙ Configuración
 </button>
 
-<button class="config" onclick="mostrarConfig()">
-⚙ Configuración
+<button class="volver" onclick="volverPrincipal()">
+⬅ Volver
 </button>
 
 </div>
 
 
 
-<div class="container hidden" id="configuracion">
+<div class="container hidden" id="menuEmergencias">
 
-<h2>Configuración</h2>
+<button class="emergencia" onclick="llamar('101')">🚓 Policía 101</button>
+<button class="emergencia" onclick="llamar('100')">🚒 Bomberos 100</button>
+<button class="emergencia" onclick="llamar('107')">🚑 Ambulancia Hospital 107</button>
+<button class="emergencia" onclick="llamar('15660877')">🚑 Vida Emergencias 15660877</button>
+<button class="emergencia" onclick="llamar('425294')">🚑 ALERTA Emergencias 425294</button>
+<button class="emergencia" onclick="llamar('08007770080')">⚡ ENERSA Cable Suelto</button>
+<button class="emergencia" onclick="llamar('0800777427632')">🔥 GAS NEA Fuga Gas</button>
+
+<button class="volver" onclick="volverPrincipal()">⬅ Volver</button>
+
+</div>
+
+
+
+<div class="container hidden" id="menuUtiles">
+
+<button class="util" onclick="llamar('443901')">🏥 Hospital 443901</button>
+<button class="util" onclick="llamar('422352')">🚌 Terminal Ómnibus 422352</button>
+<button class="util" onclick="llamar('103')">🚓 Guardia Urbana 103</button>
+<button class="util" onclick="llamar('106')">⚓ Prefectura 106</button>
+
+<button class="volver" onclick="volverPrincipal()">⬅ Volver</button>
+
+</div>
+
+
+
+<div class="container hidden" id="menuPanico">
+
+<input type="text" id="telefonoPanico" placeholder="Número de contacto">
+
+<button class="panico" onclick="activarPanico()">Enviar Alerta</button>
+
+<button class="emergencia" onclick="llamar('101')">🚓 Policía 101</button>
+
+<button class="volver" onclick="volverPrincipal()">⬅ Volver</button>
+
+</div>
+
+
+
+<div class="container hidden" id="configuracion">
 
 <input type="text" id="apellido" placeholder="Apellido">
 
@@ -139,6 +218,8 @@ margin-top:5px;
 
 <button class="guardar" onclick="guardarConfig()">Guardar</button>
 
+<button class="volver" onclick="abrirMenu('menuRemis')">⬅ Volver</button>
+
 </div>
 
 
@@ -146,6 +227,50 @@ margin-top:5px;
 <script>
 
 const telefonoEmpresa="5493442641200";
+
+function abrirMenu(menu){
+
+document.getElementById("menuPrincipal").classList.add("hidden");
+document.getElementById("menuRemis").classList.add("hidden");
+document.getElementById("menuEmergencias").classList.add("hidden");
+document.getElementById("menuUtiles").classList.add("hidden");
+document.getElementById("menuPanico").classList.add("hidden");
+document.getElementById("configuracion").classList.add("hidden");
+
+document.getElementById(menu).classList.remove("hidden");
+
+}
+
+
+
+function volverPrincipal(){
+
+document.getElementById("menuPrincipal").classList.remove("hidden");
+document.getElementById("menuRemis").classList.add("hidden");
+document.getElementById("menuEmergencias").classList.add("hidden");
+document.getElementById("menuUtiles").classList.add("hidden");
+document.getElementById("menuPanico").classList.add("hidden");
+document.getElementById("configuracion").classList.add("hidden");
+
+}
+
+
+
+function llamar(numero){
+
+window.location.href="tel:"+numero;
+
+}
+
+
+
+function abrirFarmacia(){
+
+window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
+
+}
+
+
 
 window.onload=function(){
 
@@ -170,15 +295,6 @@ document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirF
 
 
 
-function mostrarConfig(){
-
-document.getElementById("principal").classList.add("hidden");
-document.getElementById("configuracion").classList.remove("hidden");
-
-}
-
-
-
 function guardarConfig(){
 
 localStorage.setItem("apellido",document.getElementById("apellido").value);
@@ -188,8 +304,7 @@ localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value)
 
 actualizarTextos();
 
-document.getElementById("configuracion").classList.add("hidden");
-document.getElementById("principal").classList.remove("hidden");
+abrirMenu("menuRemis");
 
 }
 
@@ -200,14 +315,14 @@ function pedirDesde(tipo){
 const apellido=localStorage.getItem("apellido");
 
 if(!apellido){
-mostrarConfig();
+abrirMenu("configuracion");
 return;
 }
 
 let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
 
 if(!direccion){
-mostrarConfig();
+abrirMenu("configuracion");
 return;
 }
 
@@ -222,7 +337,7 @@ function pedirUbicacion(){
 const apellido=localStorage.getItem("apellido");
 
 if(!apellido){
-mostrarConfig();
+abrirMenu("configuracion");
 return;
 }
 
@@ -261,9 +376,15 @@ window.location.href=url;
 
 
 
-function abrirFarmacia(){
+function activarPanico(){
 
-window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
+const numero=document.getElementById("telefonoPanico").value;
+
+if(numero){
+
+window.location.href="tel:"+numero;
+
+}
 
 }
 
