@@ -1,35 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Timbre Remis</title>
+<title>Acción Remis</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
 
 <style>
 
 body{
 margin:0;
 font-family:Arial, Helvetica, sans-serif;
-background:#000;
+background:#0b3d2e;
 color:white;
 text-align:center;
 }
 
 header{
-padding:20px;
-}
-
-header img{
-width:160px;
-}
-
-header h1{
-margin:10px 0;
+background:#c40000;
+padding:15px;
 font-size:28px;
+font-weight:bold;
 }
 
 .container{
@@ -43,85 +39,185 @@ margin:12px auto;
 padding:18px;
 font-size:20px;
 border:none;
-border-radius:18px;
+border-radius:20px;
 cursor:pointer;
 display:block;
 color:white;
 font-weight:bold;
-box-shadow:0 6px 0 rgba(0,0,0,0.5);
+box-shadow:0 6px 0 rgba(0,0,0,0.4);
 }
 
 button:active{
 transform:translateY(4px);
-box-shadow:0 2px 0 rgba(0,0,0,0.5);
+box-shadow:0 2px 0 rgba(0,0,0,0.4);
 }
 
-.casa{background:linear-gradient(#ff2b2b,#b30000);}
-.trabajo{background:linear-gradient(#ff8c00,#cc5500);}
-.favorito{background:linear-gradient(#9b59b6,#5e3370);}
-.ubicacion{background:linear-gradient(#2a9df4,#0b5fa5);}
-.farmacia{background:linear-gradient(#00c853,#007e33);}
+.timbre{
+padding:35px;
+font-size:26px;
+background:linear-gradient(#ffe34d,#ffbf00);
+color:#000;
+border-radius:50px;
+box-shadow:0 10px 0 #c99500;
+}
+
+.emergencia{
+background:linear-gradient(#ff3a3a,#a80000);
+}
+
+.farmacia{
+background:linear-gradient(#1fa64a,#0d6e2b);
+}
+
+.telefonos{
+background:linear-gradient(#3c7edb,#1f4c8f);
+}
+
+.eventos{
+background:linear-gradient(#8a4edb,#4a2a8f);
+}
+
+.casa{background:#c40000;}
+.trabajo{background:#ff8c00;}
+.favorito{background:#7a2bc4;}
+.ubicacion{background:#1c86ee;}
 .config{background:#555;}
-
-input{
-width:85%;
-padding:10px;
-margin:10px 0;
-font-size:16px;
-border-radius:8px;
-border:none;
-}
-
-.guardar{
-background:#28a745;
-}
 
 .small{
 font-size:14px;
 display:block;
-margin-top:5px;
+margin-top:6px;
 }
 
-.hidden{display:none;}
+.hidden{
+display:none;
+}
+
+footer{
+margin-top:40px;
+font-size:14px;
+opacity:0.8;
+}
+
+input{
+width:85%;
+padding:10px;
+margin:8px;
+border-radius:10px;
+border:none;
+}
 
 </style>
+
 </head>
+
 
 <body>
 
 <header>
-<img src="logo.png">
-<h1>Timbre Remis 🔔</h1>
+ACCIÓN REMIS
 </header>
+
 
 <div class="container" id="principal">
 
-<button class="casa" onclick="pedirDesde('casa')">
-🏠 Desde Casa
+<button class="timbre" onclick="abrirOpcionesRemis()">
+🔔 TOCAR TIMBRE ACCIÓN
+<div class="small">Tocar para pedir un remis</div>
+</button>
+
+<button class="emergencia" onclick="abrirEmergencias()">
+🚨 EMERGENCIAS
+</button>
+
+<button class="farmacia" onclick="abrirFarmacia()">
+💊 FARMACIA DE TURNO
+</button>
+
+<button class="telefonos" onclick="abrirTelefonos()">
+📞 TELÉFONOS ÚTILES
+</button>
+
+<button class="eventos" onclick="abrirEventos()">
+🎭 EVENTOS
+</button>
+
+</div>
+
+
+
+<div class="container hidden" id="opcionesRemis">
+
+<h2>¿Desde dónde pedís el remis?</h2>
+
+<button class="casa" onclick="pedirDesde('Casa')">
+🏠 Casa
 <span class="small" id="dirCasaTexto"></span>
 </button>
 
-<button class="trabajo" onclick="pedirDesde('trabajo')">
-🛠 Desde Trabajo
+<button class="trabajo" onclick="pedirDesde('Trabajo')">
+🏢 Trabajo
 <span class="small" id="dirTrabajoTexto"></span>
 </button>
 
-<button class="favorito" onclick="pedirDesde('favorito')">
-⭐ Desde Favorito
+<button class="favorito" onclick="pedirDesde('Favorito')">
+⭐ Favorito
 <span class="small" id="dirFavoritoTexto"></span>
 </button>
 
 <button class="ubicacion" onclick="pedirUbicacion()">
-📍 Ubicación Actual
+📍 Ubicación actual
 </button>
 
-<button class="farmacia" onclick="abrirFarmacia()">
-💊 Farmacias de Turno
-</button>
-
-<button class="config" onclick="mostrarConfig()">
+<button class="config" onclick="abrirConfig()">
 ⚙ Configuración
 </button>
+
+<button onclick="volverInicio()">⬅ Volver</button>
+
+</div>
+
+
+
+<div class="container hidden" id="pantallaEmergencias">
+
+<h2>Emergencias</h2>
+
+<button onclick="window.location.href='tel:101'">
+🚓 Policía
+</button>
+
+<button onclick="window.location.href='tel:100'">
+🚒 Bomberos
+</button>
+
+<button onclick="window.location.href='tel:107'">
+🚑 Ambulancia
+</button>
+
+<button onclick="volverInicio()">⬅ Volver</button>
+
+</div>
+
+
+
+<div class="container hidden" id="pantallaTelefonos">
+
+<h2>Teléfonos útiles</h2>
+
+<button onclick="window.location.href='tel:03442420000'">
+Hospital
+</button>
+
+<button onclick="window.location.href='tel:03442430000'">
+Terminal
+</button>
+
+<button onclick="window.location.href='tel:03442440000'">
+Municipalidad
+</button>
+
+<button onclick="volverInicio()">⬅ Volver</button>
 
 </div>
 
@@ -137,9 +233,17 @@ margin-top:5px;
 <input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
 <input type="text" id="dirFavorito" placeholder="Dirección Favorito">
 
-<button class="guardar" onclick="guardarConfig()">Guardar</button>
+<button class="config" onclick="guardarConfig()">Guardar</button>
+
+<button onclick="volverInicio()">⬅ Volver</button>
 
 </div>
+
+
+
+<footer>
+Acción Remis – Siempre cerca
+</footer>
 
 
 
@@ -158,8 +262,6 @@ actualizarTextos();
 
 }
 
-
-
 function actualizarTextos(){
 
 document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||"";
@@ -168,16 +270,44 @@ document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirF
 
 }
 
-
-
-function mostrarConfig(){
+function abrirOpcionesRemis(){
 
 document.getElementById("principal").classList.add("hidden");
+document.getElementById("opcionesRemis").classList.remove("hidden");
+
+}
+
+function abrirEmergencias(){
+
+document.getElementById("principal").classList.add("hidden");
+document.getElementById("pantallaEmergencias").classList.remove("hidden");
+
+}
+
+function abrirTelefonos(){
+
+document.getElementById("principal").classList.add("hidden");
+document.getElementById("pantallaTelefonos").classList.remove("hidden");
+
+}
+
+function abrirConfig(){
+
+document.getElementById("opcionesRemis").classList.add("hidden");
 document.getElementById("configuracion").classList.remove("hidden");
 
 }
 
+function volverInicio(){
 
+document.getElementById("principal").classList.remove("hidden");
+
+document.getElementById("opcionesRemis").classList.add("hidden");
+document.getElementById("pantallaEmergencias").classList.add("hidden");
+document.getElementById("pantallaTelefonos").classList.add("hidden");
+document.getElementById("configuracion").classList.add("hidden");
+
+}
 
 function guardarConfig(){
 
@@ -188,43 +318,21 @@ localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value)
 
 actualizarTextos();
 
-document.getElementById("configuracion").classList.add("hidden");
-document.getElementById("principal").classList.remove("hidden");
+alert("Configuración guardada");
 
 }
-
-
 
 function pedirDesde(tipo){
 
-const apellido=localStorage.getItem("apellido");
+let direccion=localStorage.getItem("dir"+tipo);
 
-if(!apellido){
-mostrarConfig();
-return;
-}
-
-let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
-
-if(!direccion){
-mostrarConfig();
-return;
-}
+const apellido=localStorage.getItem("apellido")||"Cliente";
 
 enviarWhatsApp(apellido,direccion);
 
 }
 
-
-
 function pedirUbicacion(){
-
-const apellido=localStorage.getItem("apellido");
-
-if(!apellido){
-mostrarConfig();
-return;
-}
 
 navigator.geolocation.getCurrentPosition(
 
@@ -235,23 +343,17 @@ const lon=pos.coords.longitude;
 
 const link="https://maps.google.com/?q="+lat+","+lon;
 
+const apellido=localStorage.getItem("apellido")||"Cliente";
+
 enviarWhatsApp(apellido,link);
 
-},
-
-function(){
-alert("No se pudo obtener la ubicación");
-}
-
-);
+});
 
 }
-
-
 
 function enviarWhatsApp(apellido,origen){
 
-const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
+const mensaje="Hola, soy "+apellido+". Enviame un móvil a: "+origen;
 
 const url="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
 
@@ -259,11 +361,15 @@ window.location.href=url;
 
 }
 
-
-
 function abrirFarmacia(){
 
 window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
+
+}
+
+function abrirEventos(){
+
+window.open("https://www.uruguayenses.com/eventos","_blank");
 
 }
 
