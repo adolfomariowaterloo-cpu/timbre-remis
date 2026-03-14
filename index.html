@@ -19,119 +19,77 @@ text-align:center;
 color:white;
 }
 
-/* pantalla con el cartel */
-
-#principal{
-
-background-image:url("cartel.jpg");
-background-size:cover;
-background-position:center;
-
-height:100vh;
-position:relative;
-
+header{
+background:#c40000;
+padding:18px;
+font-size:30px;
+font-weight:bold;
 }
-
-/* botones invisibles encima del cartel */
-
-.boton{
-
-position:absolute;
-border:none;
-background:transparent;
-cursor:pointer;
-
-}
-
-/* posiciones sobre el cartel */
-
-#timbre{
-
-top:140px;
-left:50%;
-transform:translateX(-50%);
-width:320px;
-height:170px;
-
-}
-
-#emergencias{
-
-top:390px;
-left:50%;
-transform:translateX(-50%);
-width:350px;
-height:70px;
-
-}
-
-#farmacia{
-
-top:470px;
-left:50%;
-transform:translateX(-50%);
-width:350px;
-height:70px;
-
-}
-
-#telefonos{
-
-top:550px;
-left:50%;
-transform:translateX(-50%);
-width:350px;
-height:70px;
-
-}
-
-#eventos{
-
-top:630px;
-left:50%;
-transform:translateX(-50%);
-width:350px;
-height:70px;
-
-}
-
-/* pantallas internas */
 
 .container{
-
-padding:25px;
-
+padding:20px;
 }
 
 button{
-
 width:90%;
 max-width:420px;
 margin:12px auto;
 padding:20px;
-font-size:20px;
+font-size:22px;
 border:none;
-border-radius:30px;
+border-radius:40px;
 cursor:pointer;
 display:block;
+font-weight:bold;
 color:white;
-
+box-shadow:0 6px 0 rgba(0,0,0,0.4);
 }
 
-.azul{background:#2d6cdf;}
-.rojo{background:#c62828;}
-.verde{background:#2e7d32;}
-gris{background:#444;}
+.timbre{
+background:linear-gradient(#ffe34d,#ffbf00);
+color:black;
+font-size:26px;
+padding:35px;
+}
 
-.hidden{display:none;}
+.emergencia{
+background:linear-gradient(#ff3a3a,#a80000);
+}
+
+.farmacia{
+background:linear-gradient(#1fa64a,#0d6e2b);
+}
+
+.telefonos{
+background:linear-gradient(#3c7edb,#1f4c8f);
+}
+
+.eventos{
+background:linear-gradient(#8a4edb,#4a2a8f);
+}
+
+.small{
+font-size:15px;
+margin-top:6px;
+}
+
+.hidden{
+display:none;
+}
 
 .volver{
-
-margin-top:20px;
+margin-top:25px;
 font-size:18px;
 color:#ddd;
 cursor:pointer;
+}
 
+input{
+width:85%;
+padding:10px;
+margin:8px;
+border-radius:10px;
+border:none;
 }
 
 </style>
@@ -140,62 +98,65 @@ cursor:pointer;
 
 <body>
 
+<header>
+ACCIÓN REMIS
+</header>
 
-<!-- PANTALLA CARTEL -->
 
-<div id="principal">
+<div class="container" id="principal">
 
-<button class="boton" id="timbre" onclick="abrirOpcionesRemis()"></button>
+<button class="timbre" onclick="abrirOpcionesRemis()">
+🔔 TOCAR TIMBRE ACCIÓN
+<div class="small">Tocar para pedir un remis</div>
+</button>
 
-<button class="boton" id="emergencias" onclick="abrirEmergencias()"></button>
+<button class="emergencia" onclick="abrirEmergencias()">
+🚨 EMERGENCIAS
+</button>
 
-<button class="boton" id="farmacia" onclick="abrirFarmacia()"></button>
+<button class="farmacia" onclick="abrirFarmacia()">
+💊 FARMACIA DE TURNO
+</button>
 
-<button class="boton" id="telefonos" onclick="abrirTelefonos()"></button>
+<button class="telefonos" onclick="abrirTelefonos()">
+📞 TELÉFONOS ÚTILES
+</button>
 
-<button class="boton" id="eventos" onclick="abrirEventos()"></button>
+<button class="eventos" onclick="abrirEventos()">
+🎭 EVENTOS
+</button>
 
 </div>
 
 
-
-<!-- PEDIR REMIS -->
 
 <div class="container hidden" id="opcionesRemis">
 
 <h2>¿Desde dónde pedís el remis?</h2>
 
-<button class="azul" onclick="pedirDesde('Casa')">🏠 Casa</button>
+<button onclick="pedirDesde('Casa')">🏠 Casa</button>
 
-<button class="azul" onclick="pedirDesde('Trabajo')">🏢 Trabajo</button>
+<button onclick="pedirDesde('Trabajo')">🏢 Trabajo</button>
 
-<button class="verde" onclick="pedirUbicacion()">📍 Ubicación actual</button>
+<button onclick="pedirUbicacion()">📍 Ubicación actual</button>
 
-<button class="gris" onclick="abrirConfig()">⚙ Configuración</button>
+<button onclick="abrirConfig()">⚙ Configuración</button>
 
 <div class="volver" onclick="volverInicio()">⬅ Volver</div>
 
 </div>
 
 
-
-<!-- EMERGENCIAS -->
 
 <div class="container hidden" id="pantallaEmergencias">
 
 <h2>Emergencias</h2>
 
-<button class="rojo" onclick="llamar('Policía','101')">
-🚓 Policía
-</button>
+<button onclick="window.location.href='tel:101'">🚓 Policía</button>
 
-<button class="rojo" onclick="llamar('Bomberos','100')">
-🚒 Bomberos
-</button>
+<button onclick="window.location.href='tel:100'">🚒 Bomberos</button>
 
-<button class="rojo" onclick="llamar('Ambulancia','107')">
-🚑 Ambulancia
-</button>
+<button onclick="window.location.href='tel:107'">🚑 Ambulancia</button>
 
 <div class="volver" onclick="volverInicio()">⬅ Volver</div>
 
@@ -203,27 +164,42 @@ cursor:pointer;
 
 
 
-<!-- TELEFONOS -->
-
 <div class="container hidden" id="pantallaTelefonos">
 
 <h2>Teléfonos útiles</h2>
 
-<button class="azul" onclick="window.location.href='tel:107'">Hospital</button>
+<button onclick="window.location.href='tel:107'">Hospital</button>
 
-<button class="azul" onclick="window.location.href='tel:03442420000'">Terminal</button>
+<button onclick="window.location.href='tel:03442420000'">Terminal</button>
 
-<button class="azul" onclick="window.location.href='tel:03442430000'">Municipalidad</button>
+<button onclick="window.location.href='tel:03442430000'">Municipalidad</button>
 
-<button class="azul" onclick="window.location.href='tel:03442440000'">Turismo</button>
+<button onclick="window.location.href='tel:03442440000'">Turismo</button>
 
-<button class="verde">MIDA</button>
+<button onclick="window.location.href='tel:03442411111'">Mida</button>
 
-<button class="verde">Emergencia Médica</button>
+<button onclick="window.location.href='tel:03442422222'">Emergencia Médica</button>
 
-<button class="verde">Círculo Católico</button>
+<button onclick="window.location.href='tel:03442433333'">Círculo Católico</button>
 
-<button class="verde">Alerta</button>
+<button onclick="window.location.href='tel:03442444444'">Alerta</button>
+
+<div class="volver" onclick="volverInicio()">⬅ Volver</div>
+
+</div>
+
+
+
+<div class="container hidden" id="configuracion">
+
+<h2>Configuración</h2>
+
+<input type="text" id="apellido" placeholder="Apellido">
+
+<input type="text" id="dirCasa" placeholder="Dirección Casa">
+<input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
+
+<button onclick="guardarConfig()">Guardar</button>
 
 <div class="volver" onclick="volverInicio()">⬅ Volver</div>
 
@@ -237,28 +213,40 @@ const telefonoEmpresa="5493442641200";
 
 function abrirOpcionesRemis(){
 
-document.getElementById("principal").style.display="none";
+document.getElementById("principal").classList.add("hidden");
 document.getElementById("opcionesRemis").classList.remove("hidden");
 
 }
 
 function abrirEmergencias(){
 
-document.getElementById("principal").style.display="none";
+document.getElementById("principal").classList.add("hidden");
 document.getElementById("pantallaEmergencias").classList.remove("hidden");
 
 }
 
 function abrirTelefonos(){
 
-document.getElementById("principal").style.display="none";
+document.getElementById("principal").classList.add("hidden");
 document.getElementById("pantallaTelefonos").classList.remove("hidden");
+
+}
+
+function abrirConfig(){
+
+document.getElementById("opcionesRemis").classList.add("hidden");
+document.getElementById("configuracion").classList.remove("hidden");
 
 }
 
 function volverInicio(){
 
-location.reload();
+document.getElementById("principal").classList.remove("hidden");
+
+document.getElementById("opcionesRemis").classList.add("hidden");
+document.getElementById("pantallaEmergencias").classList.add("hidden");
+document.getElementById("pantallaTelefonos").classList.add("hidden");
+document.getElementById("configuracion").classList.add("hidden");
 
 }
 
@@ -302,6 +290,16 @@ window.location.href=url;
 
 }
 
+function guardarConfig(){
+
+localStorage.setItem("apellido",document.getElementById("apellido").value);
+localStorage.setItem("dirCasa",document.getElementById("dirCasa").value);
+localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value);
+
+alert("Configuración guardada");
+
+}
+
 function abrirFarmacia(){
 
 window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
@@ -311,16 +309,6 @@ window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/
 function abrirEventos(){
 
 window.open("https://www.instagram.com/eventos.cdelu/","_blank");
-
-}
-
-function llamar(servicio,numero){
-
-if(confirm(servicio+" - Teléfono: "+numero+"\n\n¿Llamar ahora?")){
-
-window.location.href="tel:"+numero;
-
-}
 
 }
 
