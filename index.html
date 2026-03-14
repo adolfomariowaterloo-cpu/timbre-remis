@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <link rel="manifest" href="manifest.json">
@@ -7,7 +8,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Timbre Remis</title>
+<title>Acción Remis</title>
 
 <style>
 
@@ -56,25 +57,38 @@ transform:translateY(4px);
 box-shadow:0 2px 0 rgba(0,0,0,0.5);
 }
 
+/* BOTON TIMBRE */
+
+.timbre{
+width:90%;
+max-width:420px;
+margin:20px auto;
+padding:30px;
+font-size:28px;
+border:none;
+border-radius:30px;
+background:linear-gradient(#ffe34d,#ffbf00);
+color:#000;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 10px 0 #c99500;
+transition:all 0.15s;
+}
+
+.timbre:active{
+transform:translateY(6px);
+box-shadow:0 4px 0 #c99500;
+}
+
+/* BOTONES */
+
 .casa{background:linear-gradient(#ff2b2b,#b30000);}
 .trabajo{background:linear-gradient(#ff8c00,#cc5500);}
 .favorito{background:linear-gradient(#9b59b6,#5e3370);}
 .ubicacion{background:linear-gradient(#2a9df4,#0b5fa5);}
 .farmacia{background:linear-gradient(#00c853,#007e33);}
+.emergencia{background:linear-gradient(#e60000,#8b0000);}
 .config{background:#555;}
-
-input{
-width:85%;
-padding:10px;
-margin:10px 0;
-font-size:16px;
-border-radius:8px;
-border:none;
-}
-
-.guardar{
-background:#28a745;
-}
 
 .small{
 font-size:14px;
@@ -84,39 +98,46 @@ margin-top:5px;
 
 .hidden{display:none;}
 
+footer{
+margin-top:30px;
+font-size:14px;
+opacity:0.7;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <header>
-<img src="logo.png">
-<h1>Timbre Remis 🔔</h1>
+
+<h1>ACCIÓN REMIS</h1>
+
 </header>
+
+
+<!-- PANTALLA PRINCIPAL -->
 
 <div class="container" id="principal">
 
-<button class="casa" onclick="pedirDesde('casa')">
-🏠 Desde Casa
-<span class="small" id="dirCasaTexto"></span>
+<button class="timbre" onclick="abrirOpcionesRemis()">
+
+🔔 TOCAR TIMBRE ACCIÓN
+
+<div class="small">
+Tocar para pedir un remis
+</div>
+
 </button>
 
-<button class="trabajo" onclick="pedirDesde('trabajo')">
-🛠 Desde Trabajo
-<span class="small" id="dirTrabajoTexto"></span>
-</button>
 
-<button class="favorito" onclick="pedirDesde('favorito')">
-⭐ Desde Favorito
-<span class="small" id="dirFavoritoTexto"></span>
-</button>
-
-<button class="ubicacion" onclick="pedirUbicacion()">
-📍 Ubicación Actual
+<button class="emergencia" onclick="mostrarEmergencias()">
+🆘 Emergencias
 </button>
 
 <button class="farmacia" onclick="abrirFarmacia()">
-💊 Farmacias de Turno
+💊 Farmacia de turno
 </button>
 
 <button class="config" onclick="mostrarConfig()">
@@ -126,6 +147,37 @@ margin-top:5px;
 </div>
 
 
+
+<!-- OPCIONES REMIS -->
+
+<div class="container hidden" id="opcionesRemis">
+
+<h2>¿Desde dónde pedís el remis?</h2>
+
+<button class="casa" onclick="pedirDesde('casa')">
+🏠 Casa
+<span class="small" id="dirCasaTexto"></span>
+</button>
+
+<button class="trabajo" onclick="pedirDesde('trabajo')">
+🏢 Trabajo
+<span class="small" id="dirTrabajoTexto"></span>
+</button>
+
+<button class="favorito" onclick="pedirDesde('favorito')">
+⭐ Favorito
+<span class="small" id="dirFavoritoTexto"></span>
+</button>
+
+<button class="ubicacion" onclick="pedirUbicacion()">
+📍 Ubicación actual
+</button>
+
+</div>
+
+
+
+<!-- CONFIGURACION -->
 
 <div class="container hidden" id="configuracion">
 
@@ -137,9 +189,17 @@ margin-top:5px;
 <input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
 <input type="text" id="dirFavorito" placeholder="Dirección Favorito">
 
-<button class="guardar" onclick="guardarConfig()">Guardar</button>
+<button class="config" onclick="guardarConfig()">Guardar</button>
 
 </div>
+
+
+
+<footer>
+
+Acción Remis – Siempre cerca cuando lo necesitás
+
+</footer>
 
 
 
@@ -158,8 +218,6 @@ actualizarTextos();
 
 }
 
-
-
 function actualizarTextos(){
 
 document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||"";
@@ -168,7 +226,12 @@ document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirF
 
 }
 
+function abrirOpcionesRemis(){
 
+document.getElementById("principal").classList.add("hidden");
+document.getElementById("opcionesRemis").classList.remove("hidden");
+
+}
 
 function mostrarConfig(){
 
@@ -176,8 +239,6 @@ document.getElementById("principal").classList.add("hidden");
 document.getElementById("configuracion").classList.remove("hidden");
 
 }
-
-
 
 function guardarConfig(){
 
@@ -188,43 +249,20 @@ localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value)
 
 actualizarTextos();
 
-document.getElementById("configuracion").classList.add("hidden");
-document.getElementById("principal").classList.remove("hidden");
+alert("Configuración guardada");
 
 }
-
-
 
 function pedirDesde(tipo){
 
 const apellido=localStorage.getItem("apellido");
-
-if(!apellido){
-mostrarConfig();
-return;
-}
-
 let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
-
-if(!direccion){
-mostrarConfig();
-return;
-}
 
 enviarWhatsApp(apellido,direccion);
 
 }
 
-
-
 function pedirUbicacion(){
-
-const apellido=localStorage.getItem("apellido");
-
-if(!apellido){
-mostrarConfig();
-return;
-}
 
 navigator.geolocation.getCurrentPosition(
 
@@ -235,19 +273,13 @@ const lon=pos.coords.longitude;
 
 const link="https://maps.google.com/?q="+lat+","+lon;
 
+const apellido=localStorage.getItem("apellido");
+
 enviarWhatsApp(apellido,link);
 
-},
-
-function(){
-alert("No se pudo obtener la ubicación");
-}
-
-);
+});
 
 }
-
-
 
 function enviarWhatsApp(apellido,origen){
 
@@ -259,11 +291,15 @@ window.location.href=url;
 
 }
 
-
-
 function abrirFarmacia(){
 
 window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
+
+}
+
+function mostrarEmergencias(){
+
+alert("Policía 101 | Bomberos 100 | Ambulancia 107");
 
 }
 
