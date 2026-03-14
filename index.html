@@ -1,9 +1,12 @@
 ```html
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Acción Remis</title>
 
 <style>
@@ -16,113 +19,92 @@ text-align:center;
 color:white;
 }
 
-/* fondo con cartel */
+/* pantalla con el cartel */
 
 #principal{
+
 background-image:url("cartel.jpg");
 background-size:cover;
 background-position:center;
+
 height:100vh;
 position:relative;
+
 }
 
-/* botones invisibles del cartel */
+/* botones invisibles encima del cartel */
 
 .boton{
+
 position:absolute;
 border:none;
 background:transparent;
 cursor:pointer;
+
 }
 
+/* posiciones sobre el cartel */
+
 #timbre{
+
 top:140px;
 left:50%;
 transform:translateX(-50%);
 width:320px;
 height:170px;
+
 }
 
 #emergencias{
+
 top:390px;
 left:50%;
 transform:translateX(-50%);
 width:350px;
 height:70px;
+
 }
 
 #farmacia{
+
 top:470px;
 left:50%;
 transform:translateX(-50%);
 width:350px;
 height:70px;
+
 }
 
 #telefonos{
+
 top:550px;
 left:50%;
 transform:translateX(-50%);
 width:350px;
 height:70px;
+
 }
 
 #eventos{
+
 top:630px;
 left:50%;
 transform:translateX(-50%);
 width:350px;
 height:70px;
-}
-
-/* BOTON PANICO */
-
-#panicButton{
-
-position:absolute;
-bottom:30px;
-right:20px;
-
-width:140px;
-height:140px;
-
-border-radius:50%;
-overflow:hidden;
-
-border:4px solid white;
 
 }
 
-/* zona silenciosa */
-
-#panicSilent{
-height:50%;
-background:white;
-color:black;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-}
-
-/* zona alarma */
-
-#panicAlarm{
-height:50%;
-background:red;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-}
-
-.hidden{display:none;}
+/* pantallas internas */
 
 .container{
+
 padding:25px;
+
 }
 
 button{
+
 width:90%;
 max-width:420px;
 margin:12px auto;
@@ -133,175 +115,151 @@ border-radius:30px;
 cursor:pointer;
 display:block;
 color:white;
+
 }
 
 .azul{background:#2d6cdf;}
 .rojo{background:#c62828;}
 .verde{background:#2e7d32;}
-.gris{background:#444;}
+gris{background:#444;}
+
+.hidden{display:none;}
 
 .volver{
+
 margin-top:20px;
 font-size:18px;
 color:#ddd;
 cursor:pointer;
+
 }
 
 </style>
+
 </head>
 
 <body>
 
+
+<!-- PANTALLA CARTEL -->
+
 <div id="principal">
 
 <button class="boton" id="timbre" onclick="abrirOpcionesRemis()"></button>
+
 <button class="boton" id="emergencias" onclick="abrirEmergencias()"></button>
+
 <button class="boton" id="farmacia" onclick="abrirFarmacia()"></button>
+
 <button class="boton" id="telefonos" onclick="abrirTelefonos()"></button>
+
 <button class="boton" id="eventos" onclick="abrirEventos()"></button>
 
-<div id="panicButton">
-
-<div id="panicSilent">🔇</div>
-<div id="panicAlarm">🚨</div>
-
 </div>
 
-</div>
 
+
+<!-- PEDIR REMIS -->
 
 <div class="container hidden" id="opcionesRemis">
 
 <h2>¿Desde dónde pedís el remis?</h2>
 
 <button class="azul" onclick="pedirDesde('Casa')">🏠 Casa</button>
+
 <button class="azul" onclick="pedirDesde('Trabajo')">🏢 Trabajo</button>
+
 <button class="verde" onclick="pedirUbicacion()">📍 Ubicación actual</button>
+
+<button class="gris" onclick="abrirConfig()">⚙ Configuración</button>
 
 <div class="volver" onclick="volverInicio()">⬅ Volver</div>
 
 </div>
 
+
+
+<!-- EMERGENCIAS -->
 
 <div class="container hidden" id="pantallaEmergencias">
 
 <h2>Emergencias</h2>
 
-<button class="rojo" onclick="llamar('Policía','101')">🚓 Policía</button>
-<button class="rojo" onclick="llamar('Bomberos','100')">🚒 Bomberos</button>
-<button class="rojo" onclick="llamar('Ambulancia','107')">🚑 Ambulancia</button>
+<button class="rojo" onclick="llamar('Policía','101')">
+🚓 Policía
+</button>
+
+<button class="rojo" onclick="llamar('Bomberos','100')">
+🚒 Bomberos
+</button>
+
+<button class="rojo" onclick="llamar('Ambulancia','107')">
+🚑 Ambulancia
+</button>
 
 <div class="volver" onclick="volverInicio()">⬅ Volver</div>
 
 </div>
+
+
+
+<!-- TELEFONOS -->
+
+<div class="container hidden" id="pantallaTelefonos">
+
+<h2>Teléfonos útiles</h2>
+
+<button class="azul" onclick="window.location.href='tel:107'">Hospital</button>
+
+<button class="azul" onclick="window.location.href='tel:03442420000'">Terminal</button>
+
+<button class="azul" onclick="window.location.href='tel:03442430000'">Municipalidad</button>
+
+<button class="azul" onclick="window.location.href='tel:03442440000'">Turismo</button>
+
+<button class="verde">MIDA</button>
+
+<button class="verde">Emergencia Médica</button>
+
+<button class="verde">Círculo Católico</button>
+
+<button class="verde">Alerta</button>
+
+<div class="volver" onclick="volverInicio()">⬅ Volver</div>
+
+</div>
+
 
 
 <script>
 
 const telefonoEmpresa="5493442641200";
 
-let panicTimer=null;
-let panicMode="silent";
-
-/* detectar zona tocada */
-
-document.getElementById("panicSilent").addEventListener("mousedown",()=>startPanic("silent"));
-document.getElementById("panicAlarm").addEventListener("mousedown",()=>startPanic("alarm"));
-
-document.addEventListener("mouseup",cancelPanic);
-document.addEventListener("touchend",cancelPanic);
-
-function startPanic(mode){
-
-panicMode=mode;
-
-panicTimer=setTimeout(()=>{
-
-enviarPanico();
-
-if(mode==="alarm") sonarAlarma();
-
-alert("ALERTA ENVIADA");
-
-},3000);
-
-}
-
-function cancelPanic(){
-clearTimeout(panicTimer);
-}
-
-function sonarAlarma(){
-
-const audio=new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-audio.loop=true;
-audio.play();
-
-}
-
-/* envio alerta */
-
-function enviarPanico(){
-
-navigator.geolocation.getCurrentPosition(function(pos){
-
-const lat=pos.coords.latitude;
-const lon=pos.coords.longitude;
-
-const mapa="https://maps.google.com/?q="+lat+","+lon;
-
-const mensaje=
-"🚨 AUXILIO\n\n"+
-"Mensaje enviado a través del botón de pánico de Acción.\n\n"+
-"Estoy en una situación de emergencia.\n\n"+
-"Ubicación:\n"+mapa+"\n\n"+
-"Si me estoy moviendo es posible que la ubicación cambie.";
-
-const contactos=[
-localStorage.getItem("panic1"),
-localStorage.getItem("panic2"),
-localStorage.getItem("panic3")
-];
-
-contactos.forEach(numero=>{
-
-if(!numero) return;
-
-const wa="https://wa.me/"+numero+"?text="+encodeURIComponent(mensaje);
-window.open(wa,"_blank");
-
-const sms="sms:"+numero+"?body="+encodeURIComponent(mensaje);
-window.open(sms,"_blank");
-
-});
-
-});
-
-}
-
-/* resto funciones */
-
 function abrirOpcionesRemis(){
+
 document.getElementById("principal").style.display="none";
 document.getElementById("opcionesRemis").classList.remove("hidden");
+
 }
 
 function abrirEmergencias(){
+
 document.getElementById("principal").style.display="none";
 document.getElementById("pantallaEmergencias").classList.remove("hidden");
+
 }
 
-function abrirTelefonos(){}
-function abrirFarmacia(){
-window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
-}
+function abrirTelefonos(){
 
-function abrirEventos(){
-window.open("https://www.instagram.com/eventos.cdelu/","_blank");
+document.getElementById("principal").style.display="none";
+document.getElementById("pantallaTelefonos").classList.remove("hidden");
+
 }
 
 function volverInicio(){
+
 location.reload();
+
 }
 
 function pedirDesde(tipo){
@@ -344,10 +302,24 @@ window.location.href=url;
 
 }
 
+function abrirFarmacia(){
+
+window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
+
+}
+
+function abrirEventos(){
+
+window.open("https://www.instagram.com/eventos.cdelu/","_blank");
+
+}
+
 function llamar(servicio,numero){
 
 if(confirm(servicio+" - Teléfono: "+numero+"\n\n¿Llamar ahora?")){
+
 window.location.href="tel:"+numero;
+
 }
 
 }
