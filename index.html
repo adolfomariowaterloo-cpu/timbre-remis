@@ -1,257 +1,342 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Timbre Remis</title>
+<title>Acción Remis</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial, Helvetica, sans-serif;
-background:#000;
-color:white;
+font-family:Arial;
+background:#184c3a;
 text-align:center;
+color:white;
 }
 
-header{
-padding:20px;
+/* fondo con cartel */
+
+#principal{
+background-image:url("cartel.jpg");
+background-size:cover;
+background-position:center;
+height:100vh;
+position:relative;
 }
 
-header img{
-width:160px;
+/* botones invisibles del cartel */
+
+.boton{
+position:absolute;
+border:none;
+background:transparent;
+cursor:pointer;
 }
 
-header h1{
-margin:10px 0;
-font-size:28px;
+#timbre{
+top:140px;
+left:50%;
+transform:translateX(-50%);
+width:320px;
+height:170px;
 }
+
+#emergencias{
+top:390px;
+left:50%;
+transform:translateX(-50%);
+width:350px;
+height:70px;
+}
+
+#farmacia{
+top:470px;
+left:50%;
+transform:translateX(-50%);
+width:350px;
+height:70px;
+}
+
+#telefonos{
+top:550px;
+left:50%;
+transform:translateX(-50%);
+width:350px;
+height:70px;
+}
+
+#eventos{
+top:630px;
+left:50%;
+transform:translateX(-50%);
+width:350px;
+height:70px;
+}
+
+/* BOTON PANICO */
+
+#panicButton{
+
+position:absolute;
+bottom:30px;
+right:20px;
+
+width:140px;
+height:140px;
+
+border-radius:50%;
+overflow:hidden;
+
+border:4px solid white;
+
+}
+
+/* zona silenciosa */
+
+#panicSilent{
+height:50%;
+background:white;
+color:black;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+}
+
+/* zona alarma */
+
+#panicAlarm{
+height:50%;
+background:red;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+}
+
+.hidden{display:none;}
 
 .container{
-padding:20px;
+padding:25px;
 }
 
 button{
 width:90%;
 max-width:420px;
 margin:12px auto;
-padding:18px;
+padding:20px;
 font-size:20px;
 border:none;
-border-radius:18px;
+border-radius:30px;
 cursor:pointer;
 display:block;
 color:white;
-font-weight:bold;
-box-shadow:0 6px 0 rgba(0,0,0,0.5);
 }
 
-button:active{
-transform:translateY(4px);
-box-shadow:0 2px 0 rgba(0,0,0,0.5);
+.azul{background:#2d6cdf;}
+.rojo{background:#c62828;}
+.verde{background:#2e7d32;}
+.gris{background:#444;}
+
+.volver{
+margin-top:20px;
+font-size:18px;
+color:#ddd;
+cursor:pointer;
 }
-
-.casa{background:linear-gradient(#ff2b2b,#b30000);}
-.trabajo{background:linear-gradient(#ff8c00,#cc5500);}
-.favorito{background:linear-gradient(#9b59b6,#5e3370);}
-.ubicacion{background:linear-gradient(#2a9df4,#0b5fa5);}
-.farmacia{background:linear-gradient(#00c853,#007e33);}
-.config{background:#555;}
-
-input{
-width:85%;
-padding:10px;
-margin:10px 0;
-font-size:16px;
-border-radius:8px;
-border:none;
-}
-
-.guardar{
-background:#28a745;
-}
-
-.small{
-font-size:14px;
-display:block;
-margin-top:5px;
-}
-
-.hidden{display:none;}
 
 </style>
 </head>
 
 <body>
 
-<header>
-<img src="logo.png">
-<h1>Timbre Remis 🔔</h1>
-</header>
+<div id="principal">
 
-<div class="container" id="principal">
+<button class="boton" id="timbre" onclick="abrirOpcionesRemis()"></button>
+<button class="boton" id="emergencias" onclick="abrirEmergencias()"></button>
+<button class="boton" id="farmacia" onclick="abrirFarmacia()"></button>
+<button class="boton" id="telefonos" onclick="abrirTelefonos()"></button>
+<button class="boton" id="eventos" onclick="abrirEventos()"></button>
 
-<button class="casa" onclick="pedirDesde('casa')">
-🏠 Desde Casa
-<span class="small" id="dirCasaTexto"></span>
-</button>
+<div id="panicButton">
 
-<button class="trabajo" onclick="pedirDesde('trabajo')">
-🛠 Desde Trabajo
-<span class="small" id="dirTrabajoTexto"></span>
-</button>
+<div id="panicSilent">🔇</div>
+<div id="panicAlarm">🚨</div>
 
-<button class="favorito" onclick="pedirDesde('favorito')">
-⭐ Desde Favorito
-<span class="small" id="dirFavoritoTexto"></span>
-</button>
-
-<button class="ubicacion" onclick="pedirUbicacion()">
-📍 Ubicación Actual
-</button>
-
-<button class="farmacia" onclick="abrirFarmacia()">
-💊 Farmacias de Turno
-</button>
-
-<button class="config" onclick="mostrarConfig()">
-⚙ Configuración
-</button>
+</div>
 
 </div>
 
 
+<div class="container hidden" id="opcionesRemis">
 
-<div class="container hidden" id="configuracion">
+<h2>¿Desde dónde pedís el remis?</h2>
 
-<h2>Configuración</h2>
+<button class="azul" onclick="pedirDesde('Casa')">🏠 Casa</button>
+<button class="azul" onclick="pedirDesde('Trabajo')">🏢 Trabajo</button>
+<button class="verde" onclick="pedirUbicacion()">📍 Ubicación actual</button>
 
-<input type="text" id="apellido" placeholder="Apellido">
-
-<input type="text" id="dirCasa" placeholder="Dirección Casa">
-<input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
-<input type="text" id="dirFavorito" placeholder="Dirección Favorito">
-
-<button class="guardar" onclick="guardarConfig()">Guardar</button>
+<div class="volver" onclick="volverInicio()">⬅ Volver</div>
 
 </div>
 
+
+<div class="container hidden" id="pantallaEmergencias">
+
+<h2>Emergencias</h2>
+
+<button class="rojo" onclick="llamar('Policía','101')">🚓 Policía</button>
+<button class="rojo" onclick="llamar('Bomberos','100')">🚒 Bomberos</button>
+<button class="rojo" onclick="llamar('Ambulancia','107')">🚑 Ambulancia</button>
+
+<div class="volver" onclick="volverInicio()">⬅ Volver</div>
+
+</div>
 
 
 <script>
 
 const telefonoEmpresa="5493442641200";
 
-window.onload=function(){
+let panicTimer=null;
+let panicMode="silent";
 
-document.getElementById("apellido").value=localStorage.getItem("apellido")||"";
-document.getElementById("dirCasa").value=localStorage.getItem("dirCasa")||"";
-document.getElementById("dirTrabajo").value=localStorage.getItem("dirTrabajo")||"";
-document.getElementById("dirFavorito").value=localStorage.getItem("dirFavorito")||"";
+/* detectar zona tocada */
 
-actualizarTextos();
+document.getElementById("panicSilent").addEventListener("mousedown",()=>startPanic("silent"));
+document.getElementById("panicAlarm").addEventListener("mousedown",()=>startPanic("alarm"));
 
-}
+document.addEventListener("mouseup",cancelPanic);
+document.addEventListener("touchend",cancelPanic);
 
+function startPanic(mode){
 
+panicMode=mode;
 
-function actualizarTextos(){
+panicTimer=setTimeout(()=>{
 
-document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||"";
-document.getElementById("dirTrabajoTexto").innerText=localStorage.getItem("dirTrabajo")||"";
-document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirFavorito")||"";
+enviarPanico();
 
-}
+if(mode==="alarm") sonarAlarma();
 
+alert("ALERTA ENVIADA");
 
-
-function mostrarConfig(){
-
-document.getElementById("principal").classList.add("hidden");
-document.getElementById("configuracion").classList.remove("hidden");
+},3000);
 
 }
 
+function cancelPanic(){
+clearTimeout(panicTimer);
+}
 
+function sonarAlarma(){
 
-function guardarConfig(){
-
-localStorage.setItem("apellido",document.getElementById("apellido").value);
-localStorage.setItem("dirCasa",document.getElementById("dirCasa").value);
-localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value);
-localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value);
-
-actualizarTextos();
-
-document.getElementById("configuracion").classList.add("hidden");
-document.getElementById("principal").classList.remove("hidden");
+const audio=new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+audio.loop=true;
+audio.play();
 
 }
 
+/* envio alerta */
 
+function enviarPanico(){
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+const lat=pos.coords.latitude;
+const lon=pos.coords.longitude;
+
+const mapa="https://maps.google.com/?q="+lat+","+lon;
+
+const mensaje=
+"🚨 AUXILIO\n\n"+
+"Mensaje enviado a través del botón de pánico de Acción.\n\n"+
+"Estoy en una situación de emergencia.\n\n"+
+"Ubicación:\n"+mapa+"\n\n"+
+"Si me estoy moviendo es posible que la ubicación cambie.";
+
+const contactos=[
+localStorage.getItem("panic1"),
+localStorage.getItem("panic2"),
+localStorage.getItem("panic3")
+];
+
+contactos.forEach(numero=>{
+
+if(!numero) return;
+
+const wa="https://wa.me/"+numero+"?text="+encodeURIComponent(mensaje);
+window.open(wa,"_blank");
+
+const sms="sms:"+numero+"?body="+encodeURIComponent(mensaje);
+window.open(sms,"_blank");
+
+});
+
+});
+
+}
+
+/* resto funciones */
+
+function abrirOpcionesRemis(){
+document.getElementById("principal").style.display="none";
+document.getElementById("opcionesRemis").classList.remove("hidden");
+}
+
+function abrirEmergencias(){
+document.getElementById("principal").style.display="none";
+document.getElementById("pantallaEmergencias").classList.remove("hidden");
+}
+
+function abrirTelefonos(){}
+function abrirFarmacia(){
+window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
+}
+
+function abrirEventos(){
+window.open("https://www.instagram.com/eventos.cdelu/","_blank");
+}
+
+function volverInicio(){
+location.reload();
+}
 
 function pedirDesde(tipo){
 
-const apellido=localStorage.getItem("apellido");
+let direccion="";
 
-if(!apellido){
-mostrarConfig();
-return;
-}
+if(tipo=="Casa") direccion=localStorage.getItem("dirCasa");
+if(tipo=="Trabajo") direccion=localStorage.getItem("dirTrabajo");
 
-let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
-
-if(!direccion){
-mostrarConfig();
-return;
-}
+const apellido=localStorage.getItem("apellido")||"Cliente";
 
 enviarWhatsApp(apellido,direccion);
 
 }
 
-
-
 function pedirUbicacion(){
 
-const apellido=localStorage.getItem("apellido");
-
-if(!apellido){
-mostrarConfig();
-return;
-}
-
-navigator.geolocation.getCurrentPosition(
-
-function(pos){
+navigator.geolocation.getCurrentPosition(function(pos){
 
 const lat=pos.coords.latitude;
 const lon=pos.coords.longitude;
 
 const link="https://maps.google.com/?q="+lat+","+lon;
 
+const apellido=localStorage.getItem("apellido")||"Cliente";
+
 enviarWhatsApp(apellido,link);
 
-},
-
-function(){
-alert("No se pudo obtener la ubicación");
-}
-
-);
+});
 
 }
-
-
 
 function enviarWhatsApp(apellido,origen){
 
-const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
+const mensaje="Hola, soy "+apellido+". Enviame un móvil a: "+origen;
 
 const url="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
 
@@ -259,11 +344,11 @@ window.location.href=url;
 
 }
 
+function llamar(servicio,numero){
 
-
-function abrirFarmacia(){
-
-window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
+if(confirm(servicio+" - Teléfono: "+numero+"\n\n¿Llamar ahora?")){
+window.location.href="tel:"+numero;
+}
 
 }
 
@@ -271,3 +356,4 @@ window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/
 
 </body>
 </html>
+```
