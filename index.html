@@ -255,8 +255,6 @@ font-size:22px;
 </div>
 
 
-<!-- BOTON PANICO FLOTANTE -->
-
 <div id="panicButton">
 <div id="panicSilent">🔇</div>
 <div id="panicAlarm">🚨</div>
@@ -270,12 +268,17 @@ const telefonoEmpresa="5493442641200";
 
 let panicTimer=null;
 let panicMode="silent";
+let alarmAudio=null;
 
 document.getElementById("panicSilent").addEventListener("mousedown",()=>startPanic("silent"));
 document.getElementById("panicAlarm").addEventListener("mousedown",()=>startPanic("alarm"));
+document.getElementById("panicSilent").addEventListener("touchstart",()=>startPanic("silent"));
+document.getElementById("panicAlarm").addEventListener("touchstart",()=>startPanic("alarm"));
 
 document.addEventListener("mouseup",cancelPanic);
 document.addEventListener("touchend",cancelPanic);
+
+
 
 function startPanic(mode){
 
@@ -285,25 +288,36 @@ panicTimer=setTimeout(()=>{
 
 enviarPanico();
 
-if(mode==="alarm") sonarAlarma();
+if(navigator.vibrate){
+navigator.vibrate([500,300,500,300,500]);
+}
 
-alert("ALERTA ENVIADA");
+if(mode==="alarm"){
+sonarAlarma();
+}
 
 },3000);
 
 }
 
+
+
 function cancelPanic(){
 clearTimeout(panicTimer);
 }
 
+
+
 function sonarAlarma(){
 
-const audio=new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-audio.loop=true;
-audio.play();
+alarmAudio=new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+alarmAudio.loop=true;
+alarmAudio.volume=1;
+alarmAudio.play();
 
 }
+
+
 
 function enviarPanico(){
 
@@ -318,8 +332,9 @@ const mensaje=
 "🚨 AUXILIO\n\n"+
 "Mensaje enviado a través del botón de pánico de Acción.\n\n"+
 "Estoy en una situación de emergencia.\n\n"+
-"Ubicación:\n"+mapa+"\n\n"+
-"Si me estoy moviendo es posible que la ubicación cambie.";
+"Mi ubicación:\n"+mapa+"\n\n"+
+"Si me estoy moviendo es posible que la ubicación cambie.\n"+
+"Enviaré una nueva alerta si es necesario.";
 
 const contactos=[
 localStorage.getItem("panic1"),
