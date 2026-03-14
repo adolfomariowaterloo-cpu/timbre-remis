@@ -1,231 +1,143 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Acción Remis</title>
+<title>Timbre Remis</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial;
-background:#184c3a;
-text-align:center;
+font-family:Arial, Helvetica, sans-serif;
+background:#000;
 color:white;
+text-align:center;
 }
 
-/* pantalla con el cartel */
-
-#principal{
-
-background-image:url("cartel.jpg");
-background-size:cover;
-background-position:center;
-
-height:100vh;
-position:relative;
-
+header{
+padding:20px;
 }
 
-/* botones invisibles encima del cartel */
-
-.boton{
-
-position:absolute;
-border:none;
-background:transparent;
-cursor:pointer;
-
+header img{
+width:160px;
 }
 
-/* posiciones sobre el cartel */
-
-#timbre{
-
-top:140px;
-left:50%;
-transform:translateX(-50%);
-width:320px;
-height:170px;
-
+header h1{
+margin:10px 0;
+font-size:28px;
 }
-
-#emergencias{
-
-top:390px;
-left:50%;
-transform:translateX(-50%);
-width:350px;
-height:70px;
-
-}
-
-#farmacia{
-
-top:470px;
-left:50%;
-transform:translateX(-50%);
-width:350px;
-height:70px;
-
-}
-
-#telefonos{
-
-top:550px;
-left:50%;
-transform:translateX(-50%);
-width:350px;
-height:70px;
-
-}
-
-#eventos{
-
-top:630px;
-left:50%;
-transform:translateX(-50%);
-width:350px;
-height:70px;
-
-}
-
-/* pantallas internas */
 
 .container{
-
-padding:25px;
-
+padding:20px;
 }
 
 button{
-
 width:90%;
 max-width:420px;
 margin:12px auto;
-padding:20px;
+padding:18px;
 font-size:20px;
 border:none;
-border-radius:30px;
+border-radius:18px;
 cursor:pointer;
 display:block;
 color:white;
-
+font-weight:bold;
+box-shadow:0 6px 0 rgba(0,0,0,0.5);
 }
 
-.azul{background:#2d6cdf;}
-.rojo{background:#c62828;}
-.verde{background:#2e7d32;}
-gris{background:#444;}
+button:active{
+transform:translateY(4px);
+box-shadow:0 2px 0 rgba(0,0,0,0.5);
+}
+
+.casa{background:linear-gradient(#ff2b2b,#b30000);}
+.trabajo{background:linear-gradient(#ff8c00,#cc5500);}
+.favorito{background:linear-gradient(#9b59b6,#5e3370);}
+.ubicacion{background:linear-gradient(#2a9df4,#0b5fa5);}
+.farmacia{background:linear-gradient(#00c853,#007e33);}
+.config{background:#555;}
+
+input{
+width:85%;
+padding:10px;
+margin:10px 0;
+font-size:16px;
+border-radius:8px;
+border:none;
+}
+
+.guardar{
+background:#28a745;
+}
+
+.small{
+font-size:14px;
+display:block;
+margin-top:5px;
+}
 
 .hidden{display:none;}
 
-.volver{
-
-margin-top:20px;
-font-size:18px;
-color:#ddd;
-cursor:pointer;
-
-}
-
 </style>
-
 </head>
 
 <body>
 
+<header>
+<img src="logo.png">
+<h1>Timbre Remis 🔔</h1>
+</header>
 
-<!-- PANTALLA CARTEL -->
+<div class="container" id="principal">
 
-<div id="principal">
+<button class="casa" onclick="pedirDesde('casa')">
+🏠 Desde Casa
+<span class="small" id="dirCasaTexto"></span>
+</button>
 
-<button class="boton" id="timbre" onclick="abrirOpcionesRemis()"></button>
+<button class="trabajo" onclick="pedirDesde('trabajo')">
+🛠 Desde Trabajo
+<span class="small" id="dirTrabajoTexto"></span>
+</button>
 
-<button class="boton" id="emergencias" onclick="abrirEmergencias()"></button>
+<button class="favorito" onclick="pedirDesde('favorito')">
+⭐ Desde Favorito
+<span class="small" id="dirFavoritoTexto"></span>
+</button>
 
-<button class="boton" id="farmacia" onclick="abrirFarmacia()"></button>
+<button class="ubicacion" onclick="pedirUbicacion()">
+📍 Ubicación Actual
+</button>
 
-<button class="boton" id="telefonos" onclick="abrirTelefonos()"></button>
+<button class="farmacia" onclick="abrirFarmacia()">
+💊 Farmacias de Turno
+</button>
 
-<button class="boton" id="eventos" onclick="abrirEventos()"></button>
+<button class="config" onclick="mostrarConfig()">
+⚙ Configuración
+</button>
 
 </div>
 
 
 
-<!-- PEDIR REMIS -->
+<div class="container hidden" id="configuracion">
 
-<div class="container hidden" id="opcionesRemis">
+<h2>Configuración</h2>
 
-<h2>¿Desde dónde pedís el remis?</h2>
+<input type="text" id="apellido" placeholder="Apellido">
 
-<button class="azul" onclick="pedirDesde('Casa')">🏠 Casa</button>
+<input type="text" id="dirCasa" placeholder="Dirección Casa">
+<input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
+<input type="text" id="dirFavorito" placeholder="Dirección Favorito">
 
-<button class="azul" onclick="pedirDesde('Trabajo')">🏢 Trabajo</button>
-
-<button class="verde" onclick="pedirUbicacion()">📍 Ubicación actual</button>
-
-<button class="gris" onclick="abrirConfig()">⚙ Configuración</button>
-
-<div class="volver" onclick="volverInicio()">⬅ Volver</div>
-
-</div>
-
-
-
-<!-- EMERGENCIAS -->
-
-<div class="container hidden" id="pantallaEmergencias">
-
-<h2>Emergencias</h2>
-
-<button class="rojo" onclick="llamar('Policía','101')">
-🚓 Policía
-</button>
-
-<button class="rojo" onclick="llamar('Bomberos','100')">
-🚒 Bomberos
-</button>
-
-<button class="rojo" onclick="llamar('Ambulancia','107')">
-🚑 Ambulancia
-</button>
-
-<div class="volver" onclick="volverInicio()">⬅ Volver</div>
-
-</div>
-
-
-
-<!-- TELEFONOS -->
-
-<div class="container hidden" id="pantallaTelefonos">
-
-<h2>Teléfonos útiles</h2>
-
-<button class="azul" onclick="window.location.href='tel:107'">Hospital</button>
-
-<button class="azul" onclick="window.location.href='tel:03442420000'">Terminal</button>
-
-<button class="azul" onclick="window.location.href='tel:03442430000'">Municipalidad</button>
-
-<button class="azul" onclick="window.location.href='tel:03442440000'">Turismo</button>
-
-<button class="verde">MIDA</button>
-
-<button class="verde">Emergencia Médica</button>
-
-<button class="verde">Círculo Católico</button>
-
-<button class="verde">Alerta</button>
-
-<div class="volver" onclick="volverInicio()">⬅ Volver</div>
+<button class="guardar" onclick="guardarConfig()">Guardar</button>
 
 </div>
 
@@ -235,66 +147,111 @@ cursor:pointer;
 
 const telefonoEmpresa="5493442641200";
 
-function abrirOpcionesRemis(){
+window.onload=function(){
 
-document.getElementById("principal").style.display="none";
-document.getElementById("opcionesRemis").classList.remove("hidden");
+document.getElementById("apellido").value=localStorage.getItem("apellido")||"";
+document.getElementById("dirCasa").value=localStorage.getItem("dirCasa")||"";
+document.getElementById("dirTrabajo").value=localStorage.getItem("dirTrabajo")||"";
+document.getElementById("dirFavorito").value=localStorage.getItem("dirFavorito")||"";
 
-}
-
-function abrirEmergencias(){
-
-document.getElementById("principal").style.display="none";
-document.getElementById("pantallaEmergencias").classList.remove("hidden");
+actualizarTextos();
 
 }
 
-function abrirTelefonos(){
 
-document.getElementById("principal").style.display="none";
-document.getElementById("pantallaTelefonos").classList.remove("hidden");
+
+function actualizarTextos(){
+
+document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||"";
+document.getElementById("dirTrabajoTexto").innerText=localStorage.getItem("dirTrabajo")||"";
+document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirFavorito")||"";
+
+}
+
+
+
+function mostrarConfig(){
+
+document.getElementById("principal").classList.add("hidden");
+document.getElementById("configuracion").classList.remove("hidden");
 
 }
 
-function volverInicio(){
 
-location.reload();
+
+function guardarConfig(){
+
+localStorage.setItem("apellido",document.getElementById("apellido").value);
+localStorage.setItem("dirCasa",document.getElementById("dirCasa").value);
+localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value);
+localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value);
+
+actualizarTextos();
+
+document.getElementById("configuracion").classList.add("hidden");
+document.getElementById("principal").classList.remove("hidden");
 
 }
+
+
 
 function pedirDesde(tipo){
 
-let direccion="";
+const apellido=localStorage.getItem("apellido");
 
-if(tipo=="Casa") direccion=localStorage.getItem("dirCasa");
-if(tipo=="Trabajo") direccion=localStorage.getItem("dirTrabajo");
+if(!apellido){
+mostrarConfig();
+return;
+}
 
-const apellido=localStorage.getItem("apellido")||"Cliente";
+let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
+
+if(!direccion){
+mostrarConfig();
+return;
+}
 
 enviarWhatsApp(apellido,direccion);
 
 }
 
+
+
 function pedirUbicacion(){
 
-navigator.geolocation.getCurrentPosition(function(pos){
+const apellido=localStorage.getItem("apellido");
+
+if(!apellido){
+mostrarConfig();
+return;
+}
+
+navigator.geolocation.getCurrentPosition(
+
+function(pos){
 
 const lat=pos.coords.latitude;
 const lon=pos.coords.longitude;
 
 const link="https://maps.google.com/?q="+lat+","+lon;
 
-const apellido=localStorage.getItem("apellido")||"Cliente";
-
 enviarWhatsApp(apellido,link);
 
-});
+},
+
+function(){
+alert("No se pudo obtener la ubicación");
+}
+
+);
 
 }
 
+
+
 function enviarWhatsApp(apellido,origen){
 
-const mensaje="Hola, soy "+apellido+". Enviame un móvil a: "+origen;
+const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
 
 const url="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
 
@@ -302,25 +259,11 @@ window.location.href=url;
 
 }
 
+
+
 function abrirFarmacia(){
 
 window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
-
-}
-
-function abrirEventos(){
-
-window.open("https://www.instagram.com/eventos.cdelu/","_blank");
-
-}
-
-function llamar(servicio,numero){
-
-if(confirm(servicio+" - Teléfono: "+numero+"\n\n¿Llamar ahora?")){
-
-window.location.href="tel:"+numero;
-
-}
 
 }
 
@@ -328,4 +271,3 @@ window.location.href="tel:"+numero;
 
 </body>
 </html>
-```
