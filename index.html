@@ -95,30 +95,23 @@ margin-top:5px;
 position:fixed;
 bottom:20px;
 right:20px;
-width:120px;
+width:90%;
+max-width:420px;
 height:60px;
-border-radius:12px;
+border-radius:18px;
 overflow:hidden;
 display:flex;
-box-shadow:0 0 15px rgba(255,0,0,0.7);
+margin:auto;
 }
 
 #panicoSilencio{
 flex:1;
 background:white;
-color:black;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:14px;
 }
 
 #panicoSirena{
 flex:1;
 background:red;
-display:flex;
-align-items:center;
-justify-content:center;
 }
 
 </style>
@@ -134,23 +127,23 @@ justify-content:center;
 <div class="container" id="menuPrincipal">
 
 <button class="remis" onclick="abrirMenu('menuRemis')">
-🚕 Remis
+Remis
 </button>
 
 <button class="emergencia" onclick="abrirMenu('menuEmergencias')">
-🚨 Teléfonos de Emergencia
+Teléfonos de Emergencia
 </button>
 
 <button class="util" onclick="abrirMenu('menuUtiles')">
-☎ Teléfonos Útiles
+Teléfonos Útiles
 </button>
 
 <button class="farmacia" onclick="abrirFarmacia()">
-💊 Farmacias de Turno
+Farmacias de Turno
 </button>
 
 <button class="eventos" onclick="window.open('https://www.instagram.com/eventos.cdelu/','_blank')">
-🎉 Eventos
+Eventos
 </button>
 
 </div>
@@ -159,30 +152,30 @@ justify-content:center;
 <div class="container hidden" id="menuRemis">
 
 <button class="casa" onclick="pedirDesde('casa')">
-🏠 Desde Casa
+Desde Casa
 <span class="small" id="dirCasaTexto"></span>
 </button>
 
 <button class="trabajo" onclick="pedirDesde('trabajo')">
-🛠 Desde Trabajo
+Desde Trabajo
 <span class="small" id="dirTrabajoTexto"></span>
 </button>
 
 <button class="favorito" onclick="pedirDesde('favorito')">
-⭐ Desde Favorito
+Desde Favorito
 <span class="small" id="dirFavoritoTexto"></span>
 </button>
 
 <button class="ubicacion" onclick="pedirUbicacion()">
-📍 Ubicación Actual
+Ubicación Actual
 </button>
 
 <button class="config" onclick="abrirMenu('configuracion')">
-⚙ Configuración
+Configuración
 </button>
 
 <button class="volver" onclick="volverPrincipal()">
-⬅ Volver
+Volver
 </button>
 
 </div>
@@ -191,15 +184,15 @@ justify-content:center;
 
 <div class="container hidden" id="menuEmergencias">
 
-<button class="emergencia" onclick="llamar('101')">🚓 Policía 101</button>
-<button class="emergencia" onclick="llamar('100')">🚒 Bomberos 100</button>
-<button class="emergencia" onclick="llamar('107')">🚑 Ambulancia Hospital 107</button>
-<button class="emergencia" onclick="llamar('15660877')">🚑 Vida Emergencias 15660877</button>
-<button class="emergencia" onclick="llamar('425294')">🚑 ALERTA Emergencias 425294</button>
-<button class="emergencia" onclick="llamar('08007770080')">⚡ ENERSA Cable Suelto</button>
-<button class="emergencia" onclick="llamar('0800777427632')">🔥 GAS NEA Fuga Gas</button>
+<button class="emergencia" onclick="llamar('101')">Policía 101</button>
+<button class="emergencia" onclick="llamar('100')">Bomberos 100</button>
+<button class="emergencia" onclick="llamar('107')">Ambulancia Hospital 107</button>
+<button class="emergencia" onclick="llamar('15660877')">Vida Emergencias</button>
+<button class="emergencia" onclick="llamar('425294')">ALERTA Emergencias</button>
+<button class="emergencia" onclick="llamar('08007770080')">ENERSA Cable Suelto</button>
+<button class="emergencia" onclick="llamar('0800777427632')">GAS NEA Fuga Gas</button>
 
-<button class="volver" onclick="volverPrincipal()">⬅ Volver</button>
+<button class="volver" onclick="volverPrincipal()">Volver</button>
 
 </div>
 
@@ -207,12 +200,12 @@ justify-content:center;
 
 <div class="container hidden" id="menuUtiles">
 
-<button class="util" onclick="llamar('443901')">🏥 Hospital 443901</button>
-<button class="util" onclick="llamar('422352')">🚌 Terminal Ómnibus 422352</button>
-<button class="util" onclick="llamar('103')">🚓 Guardia Urbana 103</button>
-<button class="util" onclick="llamar('106')">⚓ Prefectura 106</button>
+<button class="util" onclick="llamar('443901')">Hospital 443901</button>
+<button class="util" onclick="llamar('422352')">Terminal Ómnibus 422352</button>
+<button class="util" onclick="llamar('103')">Guardia Urbana 103</button>
+<button class="util" onclick="llamar('106')">Prefectura 106</button>
 
-<button class="volver" onclick="volverPrincipal()">⬅ Volver</button>
+<button class="volver" onclick="volverPrincipal()">Volver</button>
 
 </div>
 
@@ -232,7 +225,7 @@ justify-content:center;
 
 <button class="guardar" onclick="guardarConfig()">Guardar</button>
 
-<button class="volver" onclick="abrirMenu('menuRemis')">⬅ Volver</button>
+<button class="volver" onclick="abrirMenu('menuRemis')">Volver</button>
 
 </div>
 
@@ -240,9 +233,9 @@ justify-content:center;
 
 <div id="botonPanico">
 
-<div id="panicoSilencio">SOS</div>
+<div id="panicoSilencio"></div>
 
-<div id="panicoSirena">🚨</div>
+<div id="panicoSirena"></div>
 
 </div>
 
@@ -260,10 +253,10 @@ const telefonoEmpresa="5493442641200";
 
 let panicoTimer=null;
 
-document.getElementById("panicoSilencio").addEventListener("mousedown",()=>activarHold(false));
-document.getElementById("panicoSirena").addEventListener("mousedown",()=>activarHold(true));
+document.getElementById("panicoSilencio").addEventListener("touchstart",()=>activarHold(false));
+document.getElementById("panicoSirena").addEventListener("touchstart",()=>activarHold(true));
 
-document.addEventListener("mouseup",cancelarHold);
+document.addEventListener("touchend",cancelarHold);
 
 
 
@@ -272,9 +265,7 @@ function activarHold(sonido){
 panicoTimer=setTimeout(()=>{
 
 if(sonido){
-
 document.getElementById("sirena").play();
-
 }
 
 enviarPanico();
@@ -286,9 +277,7 @@ enviarPanico();
 
 
 function cancelarHold(){
-
 clearTimeout(panicoTimer);
-
 }
 
 
@@ -452,14 +441,12 @@ const lon=pos.coords.longitude;
 
 const mapa="https://maps.google.com/?q="+lat+","+lon;
 
-const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Acción Remises. Estoy en una situación de emergencia. Mi ubicación "+mapa;
+const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Accion Remises. Estoy en una situación de emergencia. Mi ubicación "+mapa;
 
 let contactos=[
-
 localStorage.getItem("contacto1"),
 localStorage.getItem("contacto2"),
 localStorage.getItem("contacto3")
-
 ];
 
 contactos.forEach(c=>{
@@ -475,9 +462,7 @@ window.open("sms:"+c+"?body="+encodeURIComponent(mensaje));
 });
 
 if(navigator.vibrate){
-
 navigator.vibrate([300,200,300,200,500]);
-
 }
 
 alert("Alerta enviada. Se notificó a tus contactos de emergencia con tu ubicación actual.");
