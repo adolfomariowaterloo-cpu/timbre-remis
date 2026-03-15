@@ -4,83 +4,142 @@
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Timbre Remis</title>
+<title>Timbre Acción Remises</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial,Helvetica,sans-serif;
 background:#000;
 color:white;
 text-align:center;
 }
 
-header{padding:20px;}
-header img{width:160px;}
-header h1{margin:10px 0;font-size:28px;}
+header{
+padding:20px;
+}
 
-.container{padding:20px;}
+header img{
+width:150px;
+}
+
+header h1{
+margin:10px 0;
+font-size:26px;
+}
+
+.container{
+padding:20px;
+}
 
 button{
+
 width:90%;
 max-width:420px;
-margin:12px auto;
+
+margin:10px auto;
+
 padding:18px;
-font-size:20px;
+
+font-size:18px;
+
 border:none;
+
 border-radius:18px;
+
 cursor:pointer;
+
 display:block;
+
 color:white;
+
 font-weight:bold;
+
 box-shadow:0 6px 0 rgba(0,0,0,0.5);
+
 }
 
 button:active{
+
 transform:translateY(4px);
+
 box-shadow:0 2px 0 rgba(0,0,0,0.5);
+
 }
 
 .remis{background:linear-gradient(#ff2b2b,#b30000);}
-.emergencia{background:linear-gradient(#ff0000,#7a0000);}
+
 .util{background:linear-gradient(#0066cc,#003366);}
+
+.emergencia{background:linear-gradient(#ff0000,#7a0000);}
+
 .eventos{background:linear-gradient(#e1306c,#833ab4);}
+
 .farmacia{background:linear-gradient(#00c853,#007e33);}
+
 .servicios{background:linear-gradient(#ff9800,#c66900);}
+
 .servicioItem{background:linear-gradient(#444,#222);}
+
 .volver{background:#444;}
 
+.guardar{background:#28a745;}
+
 input{
+
 width:85%;
+
 padding:10px;
-margin:8px 0;
-font-size:15px;
+
+margin:6px 0;
+
+font-size:14px;
+
 border-radius:8px;
+
 border:none;
+
 }
 
-.guardar{background:#28a745;}
-.hidden{display:none;}
+.hidden{
+
+display:none;
+
+}
 
 #botonPanico{
 
 position:fixed;
+
 bottom:20px;
+
 right:20px;
+
 width:90px;
+
 height:90px;
+
 border-radius:50%;
+
 background:red;
+
 display:flex;
+
 align-items:center;
+
 justify-content:center;
-font-weight:bold;
-font-size:12px;
+
 text-align:center;
+
+font-size:12px;
+
+font-weight:bold;
+
 box-shadow:0 0 20px red;
 
 }
@@ -88,37 +147,101 @@ box-shadow:0 0 20px red;
 </style>
 </head>
 
+
 <body>
 
 <header>
+
 <img src="logo.png">
-<h1>Timbre Remis 🔔</h1>
+
+<h1>Timbre Acción Remises</h1>
+
 </header>
+
 
 <div class="container" id="menuPrincipal">
 
-<button class="remis" onclick="abrirMenu('menuRemis')">Remis</button>
+<button class="remis" onclick="abrirMenu('menuRemis')">PEDIR REMIS</button>
 
 <button class="emergencia" onclick="abrirMenu('menuEmergencias')">
-Teléfonos de Emergencia
+TELÉFONOS DE EMERGENCIA
 </button>
 
 <button class="util" onclick="abrirMenu('menuUtiles')">
-Teléfonos Útiles
+TELÉFONOS ÚTILES
 </button>
 
 <button class="servicios" onclick="abrirMenu('menuServicios')">
-Contratación de Servicios
+CONTRATACIÓN DE SERVICIOS
 </button>
 
-<button class="farmacia" onclick="abrirFarmacia()">
-Farmacias de Turno
+<button class="farmacia"
+onclick="window.open('https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/','_blank')">
+FARMACIAS DE TURNO
 </button>
 
 <button class="eventos"
 onclick="window.open('https://www.instagram.com/eventos.cdelu/','_blank')">
-Eventos
+EVENTOS
 </button>
+
+<button onclick="abrirMenu('menuConfiguracion')">
+CONFIGURACIÓN
+</button>
+
+</div>
+
+
+
+<div class="container hidden" id="menuRemis">
+
+<button onclick="pedirRemis('casa')">CASA</button>
+
+<button onclick="pedirRemis('trabajo')">TRABAJO</button>
+
+<button onclick="pedirRemis('favorito')">FAVORITO</button>
+
+<button onclick="pedirRemis('ubicacion')">MI UBICACIÓN</button>
+
+<button class="volver" onclick="volver()">VOLVER</button>
+
+</div>
+
+
+
+<div class="container hidden" id="menuEmergencias">
+
+<button onclick="window.location.href='tel:911'">POLICÍA 911</button>
+
+<button onclick="window.location.href='tel:107'">AMBULANCIA 107</button>
+
+<button onclick="window.location.href='tel:100'">BOMBEROS 100</button>
+
+<button onclick="window.location.href='tel:3442660877'">
+VIDA EMERGENCIAS 3442660877
+</button>
+
+<button onclick="window.location.href='tel:424242'">
+CIRCULO CATÓLICO EMERGENCIA 424242
+</button>
+
+<button class="volver" onclick="volver()">VOLVER</button>
+
+</div>
+
+
+
+<div class="container hidden" id="menuUtiles">
+
+<button onclick="window.location.href='tel:103'">DEFENSA CIVIL</button>
+
+<button onclick="window.location.href='tel:08009993333'">
+VIOLENCIA DE GENERO
+</button>
+
+<button onclick="window.location.href='tel:102'">NIÑEZ</button>
+
+<button class="volver" onclick="volver()">VOLVER</button>
 
 </div>
 
@@ -126,39 +249,198 @@ Eventos
 
 <div class="container hidden" id="menuServicios">
 
-<button class="servicioItem" onclick="llamarServicio('mecanico')">Auxilio Mecánico</button>
+<button class="servicioItem" onclick="llamarServicio('mecanico')">
+AUXILIO MECÁNICO
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('limpieza')">Serv. Limpieza Casa / Oficina</button>
+<button class="servicioItem" onclick="llamarServicio('limpieza')">
+LIMPIEZA CASA / OFICINA
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('plomeria')">Plomería</button>
+<button class="servicioItem" onclick="llamarServicio('plomeria')">
+PLOMERÍA
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('electricidad')">Electricidad Domiciliaria</button>
+<button class="servicioItem" onclick="llamarServicio('electricidad')">
+ELECTRICIDAD DOMICILIARIA
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('gasista')">Gasista</button>
+<button class="servicioItem" onclick="llamarServicio('gasista')">
+GASISTA
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('albanil')">Albañilería</button>
+<button class="servicioItem" onclick="llamarServicio('albanil')">
+ALBAÑILERÍA
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('pintor')">Pintor de Casas</button>
+<button class="servicioItem" onclick="llamarServicio('pintor')">
+PINTOR DE CASAS
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('carpintero')">Carpintero</button>
+<button class="servicioItem" onclick="llamarServicio('carpintero')">
+CARPINTERO
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('jardin')">Jardinería / Corte de Pasto</button>
+<button class="servicioItem" onclick="llamarServicio('jardin')">
+JARDINERÍA / CORTE DE PASTO
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('costurera')">Costurera Profesional</button>
+<button class="servicioItem" onclick="llamarServicio('costurera')">
+COSTURERA PROFESIONAL
+</button>
 
-<button class="servicioItem" onclick="llamarServicio('estetica')">Estética Corporal</button>
+<button class="servicioItem" onclick="llamarServicio('estetica')">
+ESTÉTICA CORPORAL
+</button>
 
-<button class="volver" onclick="volverPrincipal()">Volver</button>
+<button class="volver" onclick="volver()">VOLVER</button>
 
 </div>
 
 
 
-<div class="container hidden" id="configuracion">
+<div class="container hidden" id="menuConfiguracion">
 
-<h3>Servicios</h3>
+<h3>DOMICILIOS REMIS</h3>
 
-<input id="mecanico_nombre" placeholder="Auxilio Mecánico - Nombre">
-<input id="mecanico_tel" placeholder="Auxilio Mecánico - Teléfono">
+<input id="casa" placeholder="Dirección Casa">
+<input id="trabajo" placeholder="Dirección Trabajo">
+<input id="favorito" placeholder="Dirección Favorita">
 
-<input
+<h3>CONTACTOS DE EMERGENCIA</h3>
+
+<input id="contacto1" placeholder="Contacto emergencia 1">
+<input id="contacto2" placeholder="Contacto emergencia 2">
+<input id="contacto3" placeholder="Contacto emergencia 3">
+
+<h3>SERVICIOS</h3>
+
+<input id="mecanico_tel" placeholder="Auxilio mecánico teléfono">
+<input id="limpieza_tel" placeholder="Limpieza teléfono">
+<input id="plomeria_tel" placeholder="Plomería teléfono">
+<input id="electricidad_tel" placeholder="Electricidad teléfono">
+<input id="gasista_tel" placeholder="Gasista teléfono">
+<input id="albanil_tel" placeholder="Albañil teléfono">
+<input id="pintor_tel" placeholder="Pintor teléfono">
+<input id="carpintero_tel" placeholder="Carpintero teléfono">
+<input id="jardin_tel" placeholder="Jardinería teléfono">
+<input id="costurera_tel" placeholder="Costurera teléfono">
+<input id="estetica_tel" placeholder="Estética teléfono">
+
+<button class="guardar" onclick="guardar()">GUARDAR</button>
+
+<button class="volver" onclick="volver()">VOLVER</button>
+
+</div>
+
+
+
+<div id="botonPanico">
+PANICO
+</div>
+
+
+
+<script>
+
+function abrirMenu(menu){
+
+document.getElementById("menuPrincipal").classList.add("hidden")
+
+document.getElementById(menu).classList.remove("hidden")
+
+}
+
+function volver(){
+
+let menus=document.querySelectorAll(".container")
+
+menus.forEach(m=>m.classList.add("hidden"))
+
+document.getElementById("menuPrincipal").classList.remove("hidden")
+
+}
+
+
+
+function pedirRemis(tipo){
+
+let dir=localStorage.getItem(tipo)
+
+if(tipo=="ubicacion"){
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+dir="https://maps.google.com/?q="+pos.coords.latitude+","+pos.coords.longitude
+
+enviarRemis(dir)
+
+})
+
+}else{
+
+enviarRemis(dir)
+
+}
+
+}
+
+
+
+function enviarRemis(dir){
+
+let numero="543442000000"
+
+let texto="Hola, necesito un remis en: "+dir
+
+window.open("https://wa.me/"+numero+"?text="+encodeURIComponent(texto))
+
+}
+
+
+
+function llamarServicio(tipo){
+
+let tel=localStorage.getItem(tipo+"_tel")
+
+if(tel){
+
+window.location.href="tel:"+tel
+
+}
+
+}
+
+
+
+function guardar(){
+
+let campos=document.querySelectorAll("input")
+
+campos.forEach(c=>{
+
+localStorage.setItem(c.id,c.value)
+
+})
+
+}
+
+
+
+window.onload=function(){
+
+let campos=document.querySelectorAll("input")
+
+campos.forEach(c=>{
+
+c.value=localStorage.getItem(c.id)||""
+
+})
+
+}
+
+</script>
+
+
+</body>
+</html>
