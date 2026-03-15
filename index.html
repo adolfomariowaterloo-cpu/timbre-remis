@@ -91,9 +91,6 @@ margin-top:5px;
 
 .hidden{display:none;}
 
-
-/* BOTON PANICO REDONDO */
-
 #botonPanico{
 
 position:fixed;
@@ -168,15 +165,16 @@ Eventos
 
 <div class="container hidden" id="menuServicios">
 
-<button class="util">Plomero</button>
-<button class="util">Electricista</button>
-<button class="util">Gasista</button>
-<button class="util">Costurera</button>
-<button class="util">Estética Uñas y Cejas</button>
-<button class="util">Peluquería</button>
-<button class="util">Zapatería</button>
-<button class="util">Limpieza Casas / Oficinas</button>
-<button class="util">Cuidado Señoras / Niños</button>
+<button class="util" onclick="llamar('3442666445')">Mecánico</button>
+<button class="util" onclick="llamar('3442424688')">Electricista</button>
+<button class="util" onclick="llamar('3442')">Gasista</button>
+<button class="util" onclick="llamar('3442406327')">Costurera</button>
+<button class="util" onclick="llamar('3442406327')">Estética Uñas y Cejas</button>
+<button class="util" onclick="llamar('34246327')">Peluquería</button>
+<button class="util" onclick="llamar('3442677247')">Zapatería</button>
+<button class="util" onclick="llamar('3442426688')">Plomero</button>
+<button class="util" onclick="llamar('3442583937')">Limpieza Casas / Oficinas</button>
+<button class="util" onclick="llamar('3442485255')">Cuidado Señoras / Niños</button>
 
 <button class="volver" onclick="volverPrincipal()">Volver</button>
 
@@ -288,7 +286,7 @@ document.getElementById("sirena").play()
 
 enviarPanico()
 
-},3000)
+},2000)
 
 }
 
@@ -372,58 +370,6 @@ abrirMenu("menuRemis")
 
 }
 
-function pedirDesde(tipo){
-
-const apellido=localStorage.getItem("apellido")
-
-if(!apellido){
-abrirMenu("configuracion")
-return
-}
-
-let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1))
-
-if(!direccion){
-abrirMenu("configuracion")
-return
-}
-
-enviarWhatsApp(apellido,direccion)
-
-}
-
-function pedirUbicacion(){
-
-const apellido=localStorage.getItem("apellido")
-
-if(!apellido){
-abrirMenu("configuracion")
-return
-}
-
-navigator.geolocation.getCurrentPosition(function(pos){
-
-const lat=pos.coords.latitude
-const lon=pos.coords.longitude
-
-const link="https://maps.google.com/?q="+lat+","+lon
-
-enviarWhatsApp(apellido,link)
-
-})
-
-}
-
-function enviarWhatsApp(apellido,origen){
-
-const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen
-
-const url="whatsapp://send?phone="+telefonoEmpresa+"&text="+encodeURIComponent(mensaje)
-
-window.location.href=url
-
-}
-
 function enviarPanico(){
 
 navigator.geolocation.getCurrentPosition(function(pos){
@@ -433,7 +379,7 @@ const lon=pos.coords.longitude
 
 const mapa="https://maps.google.com/?q="+lat+","+lon
 
-const mensaje="AUXILIO. Mi ubicación "+mapa
+const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Acción Remises. Estoy en una situación de emergencia. Mi ubicación: "+mapa
 
 let contactos=[
 localStorage.getItem("contacto1"),
@@ -445,8 +391,7 @@ contactos.forEach(c=>{
 
 if(c){
 
-window.open("whatsapp://send?phone="+c+"&text="+encodeURIComponent(mensaje))
-window.open("sms:"+c+"?body="+encodeURIComponent(mensaje))
+window.open("https://wa.me/"+c+"?text="+encodeURIComponent(mensaje))
 
 }
 
