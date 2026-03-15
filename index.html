@@ -23,6 +23,10 @@ header{
 padding:20px;
 }
 
+header img{
+width:160px;
+}
+
 header h1{
 margin:10px 0;
 font-size:28px;
@@ -98,10 +102,13 @@ overflow:hidden;
 display:flex;
 flex-direction:column;
 margin:auto;
+color:black;
+font-weight:bold;
 }
 
 #panicoTexto{
 background:#111;
+color:white;
 font-size:14px;
 padding:6px;
 }
@@ -114,11 +121,17 @@ flex:1;
 #panicoSilencio{
 flex:1;
 background:white;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 #panicoSirena{
 flex:1;
 background:red;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 </style>
@@ -127,6 +140,7 @@ background:red;
 <body>
 
 <header>
+<img src="logo.png">
 <h1>Timbre Remis 🔔</h1>
 </header>
 
@@ -245,8 +259,8 @@ BOTÓN DE PÁNICO – apretar x 3 segundos
 </div>
 
 <div id="panicoZona">
-<div id="panicoSilencio"></div>
-<div id="panicoSirena"></div>
+<div id="panicoSilencio">Silencio</div>
+<div id="panicoSirena">Alarma</div>
 </div>
 
 </div>
@@ -335,154 +349,6 @@ window.location.href="tel:"+numero;
 function abrirFarmacia(){
 
 window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank");
-
-}
-
-
-
-window.onload=function(){
-
-document.getElementById("apellido").value=localStorage.getItem("apellido")||"";
-document.getElementById("dirCasa").value=localStorage.getItem("dirCasa")||"";
-document.getElementById("dirTrabajo").value=localStorage.getItem("dirTrabajo")||"";
-document.getElementById("dirFavorito").value=localStorage.getItem("dirFavorito")||"";
-
-document.getElementById("contacto1").value=localStorage.getItem("contacto1")||"";
-document.getElementById("contacto2").value=localStorage.getItem("contacto2")||"";
-document.getElementById("contacto3").value=localStorage.getItem("contacto3")||"";
-
-actualizarTextos();
-
-}
-
-
-
-function actualizarTextos(){
-
-document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||"";
-document.getElementById("dirTrabajoTexto").innerText=localStorage.getItem("dirTrabajo")||"";
-document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirFavorito")||"";
-
-}
-
-
-
-function guardarConfig(){
-
-localStorage.setItem("apellido",document.getElementById("apellido").value);
-localStorage.setItem("dirCasa",document.getElementById("dirCasa").value);
-localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value);
-localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value);
-
-localStorage.setItem("contacto1",document.getElementById("contacto1").value);
-localStorage.setItem("contacto2",document.getElementById("contacto2").value);
-localStorage.setItem("contacto3",document.getElementById("contacto3").value);
-
-actualizarTextos();
-
-abrirMenu("menuRemis");
-
-}
-
-
-
-function pedirDesde(tipo){
-
-const apellido=localStorage.getItem("apellido");
-
-if(!apellido){
-abrirMenu("configuracion");
-return;
-}
-
-let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1));
-
-if(!direccion){
-abrirMenu("configuracion");
-return;
-}
-
-enviarWhatsApp(apellido,direccion);
-
-}
-
-
-
-function pedirUbicacion(){
-
-const apellido=localStorage.getItem("apellido");
-
-if(!apellido){
-abrirMenu("configuracion");
-return;
-}
-
-navigator.geolocation.getCurrentPosition(
-
-function(pos){
-
-const lat=pos.coords.latitude;
-const lon=pos.coords.longitude;
-
-const link="https://maps.google.com/?q="+lat+","+lon;
-
-enviarWhatsApp(apellido,link);
-
-}
-
-);
-
-}
-
-
-
-function enviarWhatsApp(apellido,origen){
-
-const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
-
-const url="whatsapp://send?phone="+telefonoEmpresa+"&text="+encodeURIComponent(mensaje);
-
-window.location.href=url;
-
-}
-
-
-
-function enviarPanico(){
-
-navigator.geolocation.getCurrentPosition(function(pos){
-
-const lat=pos.coords.latitude;
-const lon=pos.coords.longitude;
-
-const mapa="https://maps.google.com/?q="+lat+","+lon;
-
-const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Accion Remises. Estoy en una situación de emergencia. Mi ubicación "+mapa;
-
-let contactos=[
-localStorage.getItem("contacto1"),
-localStorage.getItem("contacto2"),
-localStorage.getItem("contacto3")
-];
-
-contactos.forEach(c=>{
-
-if(c){
-
-window.open("whatsapp://send?phone="+c+"&text="+encodeURIComponent(mensaje));
-window.open("sms:"+c+"?body="+encodeURIComponent(mensaje));
-
-}
-
-});
-
-if(navigator.vibrate){
-navigator.vibrate([300,200,300,200,500]);
-}
-
-alert("Alerta enviada.");
-
-});
 
 }
 
