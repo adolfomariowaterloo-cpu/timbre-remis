@@ -66,7 +66,6 @@ box-shadow:0 2px 0 rgba(0,0,0,0.5);
 .emergencia{background:linear-gradient(#ff0000,#7a0000);}
 .util{background:linear-gradient(#0066cc,#003366);}
 .eventos{background:linear-gradient(#e1306c,#833ab4);}
-.panico{background:linear-gradient(#ff0000,#000000);}
 .farmacia{background:linear-gradient(#00c853,#007e33);}
 .volver{background:#444;}
 
@@ -187,7 +186,8 @@ Volver
 <button class="emergencia" onclick="llamar('101')">Policía 101</button>
 <button class="emergencia" onclick="llamar('100')">Bomberos 100</button>
 <button class="emergencia" onclick="llamar('107')">Ambulancia Hospital 107</button>
-<button class="emergencia" onclick="llamar('15660877')">Vida Emergencias</button>
+<button class="emergencia" onclick="llamar('3442660877')">Vida Emergencias Médicas</button>
+<button class="emergencia" onclick="llamar('424242')">Círculo Católico Emergencia</button>
 <button class="emergencia" onclick="llamar('425294')">ALERTA Emergencias</button>
 <button class="emergencia" onclick="llamar('08007770080')">ENERSA Cable Suelto</button>
 <button class="emergencia" onclick="llamar('0800777427632')">GAS NEA Fuga Gas</button>
@@ -290,6 +290,8 @@ document.getElementById("menuEmergencias").classList.add("hidden");
 document.getElementById("menuUtiles").classList.add("hidden");
 document.getElementById("configuracion").classList.add("hidden");
 
+document.getElementById("botonPanico").style.display="none";
+
 document.getElementById(menu).classList.remove("hidden");
 
 }
@@ -303,6 +305,8 @@ document.getElementById("menuRemis").classList.add("hidden");
 document.getElementById("menuEmergencias").classList.add("hidden");
 document.getElementById("menuUtiles").classList.add("hidden");
 document.getElementById("configuracion").classList.add("hidden");
+
+document.getElementById("botonPanico").style.display="flex";
 
 }
 
@@ -454,7 +458,6 @@ contactos.forEach(c=>{
 if(c){
 
 window.open("https://wa.me/"+c+"?text="+encodeURIComponent(mensaje));
-
 window.open("sms:"+c+"?body="+encodeURIComponent(mensaje));
 
 }
