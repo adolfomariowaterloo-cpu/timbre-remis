@@ -67,6 +67,7 @@ box-shadow:0 2px 0 rgba(0,0,0,0.5);
 .util{background:linear-gradient(#0066cc,#003366);}
 .eventos{background:linear-gradient(#e1306c,#833ab4);}
 .farmacia{background:linear-gradient(#00c853,#007e33);}
+.servicios{background:linear-gradient(#00aaff,#006699);}
 .volver{background:#444;}
 
 input{
@@ -90,49 +91,38 @@ margin-top:5px;
 
 .hidden{display:none;}
 
+
+/* BOTON PANICO REDONDO */
+
 #botonPanico{
+
 position:fixed;
-bottom:20px;
+bottom:25px;
 right:20px;
-width:90%;
-max-width:420px;
+
+width:80px;
 height:80px;
-border-radius:18px;
-overflow:hidden;
+
+background:red;
+border-radius:50%;
+
 display:flex;
-flex-direction:column;
-margin:auto;
+align-items:center;
+justify-content:center;
+
+font-weight:bold;
+font-size:14px;
+
+box-shadow:0 6px 0 rgba(0,0,0,0.5);
+
 user-select:none;
 -webkit-user-select:none;
+
 }
 
-#panicoTexto{
-background:#111;
-color:white;
-font-size:14px;
-padding:6px;
-}
-
-#panicoZona{
-display:flex;
-flex:1;
-}
-
-#panicoSilencio{
-flex:1;
-background:white;
-display:flex;
-align-items:center;
-justify-content:center;
-color:black;
-}
-
-#panicoSirena{
-flex:1;
-background:red;
-display:flex;
-align-items:center;
-justify-content:center;
+#botonPanico:active{
+transform:translateY(4px);
+box-shadow:0 2px 0 rgba(0,0,0,0.5);
 }
 
 </style>
@@ -145,15 +135,53 @@ justify-content:center;
 <h1>Timbre Remis 🔔</h1>
 </header>
 
+
+
 <div class="container" id="menuPrincipal">
 
 <button class="remis" onclick="abrirMenu('menuRemis')">Remis</button>
-<button class="emergencia" onclick="abrirMenu('menuEmergencias')">Teléfonos de Emergencia</button>
-<button class="util" onclick="abrirMenu('menuUtiles')">Teléfonos Útiles</button>
-<button class="farmacia" onclick="abrirFarmacia()">Farmacias de Turno</button>
-<button class="eventos" onclick="window.open('https://www.instagram.com/eventos.cdelu/','_blank')">Eventos</button>
+
+<button class="servicios" onclick="abrirMenu('menuServicios')">
+Servicios Domiciliarios
+</button>
+
+<button class="emergencia" onclick="abrirMenu('menuEmergencias')">
+Teléfonos de Emergencia
+</button>
+
+<button class="util" onclick="abrirMenu('menuUtiles')">
+Teléfonos Útiles
+</button>
+
+<button class="farmacia" onclick="abrirFarmacia()">
+Farmacias de Turno
+</button>
+
+<button class="eventos"
+onclick="window.open('https://www.instagram.com/eventos.cdelu/','_blank')">
+Eventos
+</button>
 
 </div>
+
+
+
+<div class="container hidden" id="menuServicios">
+
+<button class="util">Plomero</button>
+<button class="util">Electricista</button>
+<button class="util">Gasista</button>
+<button class="util">Costurera</button>
+<button class="util">Estética Uñas y Cejas</button>
+<button class="util">Peluquería</button>
+<button class="util">Zapatería</button>
+<button class="util">Limpieza Casas / Oficinas</button>
+<button class="util">Cuidado Señoras / Niños</button>
+
+<button class="volver" onclick="volverPrincipal()">Volver</button>
+
+</div>
+
 
 
 <div class="container hidden" id="menuRemis">
@@ -233,18 +261,7 @@ Desde Favorito
 
 
 
-<div id="botonPanico">
-
-<div id="panicoTexto">
-BOTÓN DE PÁNICO – apretar x 3 segundos
-</div>
-
-<div id="panicoZona">
-<div id="panicoSilencio">Silencio</div>
-<div id="panicoSirena">Alarma</div>
-</div>
-
-</div>
+<div id="botonPanico">SOS</div>
 
 
 
@@ -260,18 +277,14 @@ const telefonoEmpresa="5493442641200"
 
 let panicoTimer=null
 
-document.getElementById("panicoSilencio").addEventListener("touchstart",()=>activarHold(false))
-document.getElementById("panicoSirena").addEventListener("touchstart",()=>activarHold(true))
-
+document.getElementById("botonPanico").addEventListener("touchstart",activarHold)
 document.addEventListener("touchend",cancelarHold)
 
-function activarHold(sonido){
+function activarHold(){
 
 panicoTimer=setTimeout(()=>{
 
-if(sonido){
 document.getElementById("sirena").play()
-}
 
 enviarPanico()
 
@@ -289,6 +302,7 @@ document.getElementById("menuPrincipal").classList.add("hidden")
 document.getElementById("menuRemis").classList.add("hidden")
 document.getElementById("menuEmergencias").classList.add("hidden")
 document.getElementById("menuUtiles").classList.add("hidden")
+document.getElementById("menuServicios").classList.add("hidden")
 document.getElementById("configuracion").classList.add("hidden")
 
 document.getElementById("botonPanico").style.display="none"
@@ -303,6 +317,7 @@ document.getElementById("menuPrincipal").classList.remove("hidden")
 document.getElementById("menuRemis").classList.add("hidden")
 document.getElementById("menuEmergencias").classList.add("hidden")
 document.getElementById("menuUtiles").classList.add("hidden")
+document.getElementById("menuServicios").classList.add("hidden")
 document.getElementById("configuracion").classList.add("hidden")
 
 document.getElementById("botonPanico").style.display="flex"
