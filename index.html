@@ -23,10 +23,6 @@ header{
 padding:20px;
 }
 
-header img{
-width:160px;
-}
-
 header h1{
 margin:10px 0;
 font-size:28px;
@@ -96,11 +92,23 @@ bottom:20px;
 right:20px;
 width:90%;
 max-width:420px;
-height:60px;
+height:80px;
 border-radius:18px;
 overflow:hidden;
 display:flex;
+flex-direction:column;
 margin:auto;
+}
+
+#panicoTexto{
+background:#111;
+font-size:14px;
+padding:6px;
+}
+
+#panicoZona{
+display:flex;
+flex:1;
 }
 
 #panicoSilencio{
@@ -119,7 +127,6 @@ background:red;
 <body>
 
 <header>
-<img src="logo.png">
 <h1>Timbre Remis 🔔</h1>
 </header>
 
@@ -233,9 +240,14 @@ Volver
 
 <div id="botonPanico">
 
-<div id="panicoSilencio"></div>
+<div id="panicoTexto">
+BOTÓN DE PÁNICO – apretar x 3 segundos
+</div>
 
+<div id="panicoZona">
+<div id="panicoSilencio"></div>
 <div id="panicoSirena"></div>
+</div>
 
 </div>
 
@@ -428,7 +440,7 @@ function enviarWhatsApp(apellido,origen){
 
 const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen;
 
-const url="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje);
+const url="whatsapp://send?phone="+telefonoEmpresa+"&text="+encodeURIComponent(mensaje);
 
 window.location.href=url;
 
@@ -457,7 +469,7 @@ contactos.forEach(c=>{
 
 if(c){
 
-window.open("https://wa.me/"+c+"?text="+encodeURIComponent(mensaje));
+window.open("whatsapp://send?phone="+c+"&text="+encodeURIComponent(mensaje));
 window.open("sms:"+c+"?body="+encodeURIComponent(mensaje));
 
 }
@@ -468,7 +480,7 @@ if(navigator.vibrate){
 navigator.vibrate([300,200,300,200,500]);
 }
 
-alert("Alerta enviada. Se notificó a tus contactos de emergencia con tu ubicación actual.");
+alert("Alerta enviada.");
 
 });
 
