@@ -51,6 +51,7 @@ box-shadow:0 2px 0 rgba(0,0,0,0.5);
 .eventos{background:linear-gradient(#e1306c,#833ab4);}
 .farmacia{background:linear-gradient(#00c853,#007e33);}
 .servicios{background:linear-gradient(#ff9800,#c66900);}
+.servicioItem{background:linear-gradient(#444,#222);}
 .volver{background:#444;}
 
 input{
@@ -64,6 +65,25 @@ border:none;
 
 .guardar{background:#28a745;}
 .hidden{display:none;}
+
+#botonPanico{
+
+position:fixed;
+bottom:20px;
+right:20px;
+width:90px;
+height:90px;
+border-radius:50%;
+background:red;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+font-size:12px;
+text-align:center;
+box-shadow:0 0 20px red;
+
+}
 
 </style>
 </head>
@@ -106,17 +126,27 @@ Eventos
 
 <div class="container hidden" id="menuServicios">
 
-<button onclick="llamarServicio('mecanico')">Auxilio Mecánico</button>
-<button onclick="llamarServicio('limpieza')">Serv. Limpieza Casa/Oficina</button>
-<button onclick="llamarServicio('plomeria')">Plomería</button>
-<button onclick="llamarServicio('electricidad')">Electricidad Domiciliaria</button>
-<button onclick="llamarServicio('estetica')">Estética Corporal</button>
-<button onclick="llamarServicio('pasto')">Corte de Pasto</button>
-<button onclick="llamarServicio('jardineria')">Jardinería</button>
-<button onclick="llamarServicio('costurera')">Costurera Profesional</button>
-<button onclick="llamarServicio('gasista')">Gasista</button>
-<button onclick="llamarServicio('pintor')">Pintor de Casas</button>
-<button onclick="llamarServicio('carpintero')">Carpintero</button>
+<button class="servicioItem" onclick="llamarServicio('mecanico')">Auxilio Mecánico</button>
+
+<button class="servicioItem" onclick="llamarServicio('limpieza')">Serv. Limpieza Casa / Oficina</button>
+
+<button class="servicioItem" onclick="llamarServicio('plomeria')">Plomería</button>
+
+<button class="servicioItem" onclick="llamarServicio('electricidad')">Electricidad Domiciliaria</button>
+
+<button class="servicioItem" onclick="llamarServicio('gasista')">Gasista</button>
+
+<button class="servicioItem" onclick="llamarServicio('albanil')">Albañilería</button>
+
+<button class="servicioItem" onclick="llamarServicio('pintor')">Pintor de Casas</button>
+
+<button class="servicioItem" onclick="llamarServicio('carpintero')">Carpintero</button>
+
+<button class="servicioItem" onclick="llamarServicio('jardin')">Jardinería / Corte de Pasto</button>
+
+<button class="servicioItem" onclick="llamarServicio('costurera')">Costurera Profesional</button>
+
+<button class="servicioItem" onclick="llamarServicio('estetica')">Estética Corporal</button>
 
 <button class="volver" onclick="volverPrincipal()">Volver</button>
 
@@ -131,119 +161,4 @@ Eventos
 <input id="mecanico_nombre" placeholder="Auxilio Mecánico - Nombre">
 <input id="mecanico_tel" placeholder="Auxilio Mecánico - Teléfono">
 
-<input id="limpieza_nombre" placeholder="Limpieza - Nombre">
-<input id="limpieza_tel" placeholder="Limpieza - Teléfono">
-
-<input id="plomeria_nombre" placeholder="Plomería - Nombre">
-<input id="plomeria_tel" placeholder="Plomería - Teléfono">
-
-<input id="electricidad_nombre" placeholder="Electricidad - Nombre">
-<input id="electricidad_tel" placeholder="Electricidad - Teléfono">
-
-<input id="estetica_nombre" placeholder="Estética - Nombre">
-<input id="estetica_tel" placeholder="Estética - Teléfono">
-
-<input id="pasto_nombre" placeholder="Corte Pasto - Nombre">
-<input id="pasto_tel" placeholder="Corte Pasto - Teléfono">
-
-<input id="jardineria_nombre" placeholder="Jardinería - Nombre">
-<input id="jardineria_tel" placeholder="Jardinería - Teléfono">
-
-<input id="costurera_nombre" placeholder="Costurera - Nombre">
-<input id="costurera_tel" placeholder="Costurera - Teléfono">
-
-<input id="gasista_nombre" placeholder="Gasista - Nombre">
-<input id="gasista_tel" placeholder="Gasista - Teléfono">
-
-<input id="pintor_nombre" placeholder="Pintor - Nombre">
-<input id="pintor_tel" placeholder="Pintor - Teléfono">
-
-<input id="carpintero_nombre" placeholder="Carpintero - Nombre">
-<input id="carpintero_tel" placeholder="Carpintero - Teléfono">
-
-<button class="guardar" onclick="guardarServicios()">Guardar</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
-</div>
-
-
-
-<script>
-
-function abrirMenu(menu){
-
-document.getElementById("menuPrincipal").classList.add("hidden")
-
-document.getElementById(menu).classList.remove("hidden")
-
-}
-
-function volverPrincipal(){
-
-document.getElementById("menuPrincipal").classList.remove("hidden")
-
-let menus=document.querySelectorAll(".container")
-
-menus.forEach(m=>{
-if(m.id!=="menuPrincipal"){
-m.classList.add("hidden")
-}
-})
-
-}
-
-function abrirFarmacia(){
-
-window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank")
-
-}
-
-function llamarServicio(tipo){
-
-let tel=localStorage.getItem(tipo+"_tel")
-
-if(tel){
-window.location.href="tel:"+tel
-}
-
-}
-
-function guardarServicios(){
-
-let campos=[
-"mecanico","limpieza","plomeria","electricidad","estetica",
-"pasto","jardineria","costurera","gasista","pintor","carpintero"
-]
-
-campos.forEach(c=>{
-
-localStorage.setItem(c+"_nombre",document.getElementById(c+"_nombre").value)
-
-localStorage.setItem(c+"_tel",document.getElementById(c+"_tel").value)
-
-})
-
-}
-
-window.onload=function(){
-
-let campos=[
-"mecanico","limpieza","plomeria","electricidad","estetica",
-"pasto","jardineria","costurera","gasista","pintor","carpintero"
-]
-
-campos.forEach(c=>{
-
-document.getElementById(c+"_nombre").value=localStorage.getItem(c+"_nombre")||""
-
-document.getElementById(c+"_tel").value=localStorage.getItem(c+"_tel")||""
-
-})
-
-}
-
-</script>
-
-</body>
-</html>
+<input
