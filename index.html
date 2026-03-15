@@ -91,6 +91,36 @@ margin-top:5px;
 
 .hidden{display:none;}
 
+#botonPanico{
+position:fixed;
+bottom:20px;
+right:20px;
+width:120px;
+height:60px;
+border-radius:12px;
+overflow:hidden;
+display:flex;
+box-shadow:0 0 15px rgba(255,0,0,0.7);
+}
+
+#panicoSilencio{
+flex:1;
+background:white;
+color:black;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+}
+
+#panicoSirena{
+flex:1;
+background:red;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
 </style>
 </head>
 
@@ -100,7 +130,6 @@ margin-top:5px;
 <img src="logo.png">
 <h1>Timbre Remis 🔔</h1>
 </header>
-
 
 <div class="container" id="menuPrincipal">
 
@@ -124,12 +153,7 @@ margin-top:5px;
 🎉 Eventos
 </button>
 
-<button class="panico" onclick="abrirMenu('menuPanico')">
-🆘 Botón de Pánico
-</button>
-
 </div>
-
 
 
 <div class="container hidden" id="menuRemis">
@@ -194,20 +218,6 @@ margin-top:5px;
 
 
 
-<div class="container hidden" id="menuPanico">
-
-<input type="text" id="telefonoPanico" placeholder="Número de contacto">
-
-<button class="panico" onclick="activarPanico()">Enviar Alerta</button>
-
-<button class="emergencia" onclick="llamar('101')">🚓 Policía 101</button>
-
-<button class="volver" onclick="volverPrincipal()">⬅ Volver</button>
-
-</div>
-
-
-
 <div class="container hidden" id="configuracion">
 
 <input type="text" id="apellido" placeholder="Apellido">
@@ -215,6 +225,10 @@ margin-top:5px;
 <input type="text" id="dirCasa" placeholder="Dirección Casa">
 <input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
 <input type="text" id="dirFavorito" placeholder="Dirección Favorito">
+
+<input type="text" id="contacto1" placeholder="Contacto Emergencia 1">
+<input type="text" id="contacto2" placeholder="Contacto Emergencia 2">
+<input type="text" id="contacto3" placeholder="Contacto Emergencia 3">
 
 <button class="guardar" onclick="guardarConfig()">Guardar</button>
 
@@ -224,9 +238,60 @@ margin-top:5px;
 
 
 
+<div id="botonPanico">
+
+<div id="panicoSilencio">SOS</div>
+
+<div id="panicoSirena">🚨</div>
+
+</div>
+
+
+
+<audio id="sirena">
+<source src="sirena.mp3" type="audio/mpeg">
+</audio>
+
+
+
 <script>
 
 const telefonoEmpresa="5493442641200";
+
+let panicoTimer=null;
+
+document.getElementById("panicoSilencio").addEventListener("mousedown",()=>activarHold(false));
+document.getElementById("panicoSirena").addEventListener("mousedown",()=>activarHold(true));
+
+document.addEventListener("mouseup",cancelarHold);
+
+
+
+function activarHold(sonido){
+
+panicoTimer=setTimeout(()=>{
+
+if(sonido){
+
+document.getElementById("sirena").play();
+
+}
+
+enviarPanico();
+
+},3000);
+
+}
+
+
+
+function cancelarHold(){
+
+clearTimeout(panicoTimer);
+
+}
+
+
 
 function abrirMenu(menu){
 
@@ -234,7 +299,6 @@ document.getElementById("menuPrincipal").classList.add("hidden");
 document.getElementById("menuRemis").classList.add("hidden");
 document.getElementById("menuEmergencias").classList.add("hidden");
 document.getElementById("menuUtiles").classList.add("hidden");
-document.getElementById("menuPanico").classList.add("hidden");
 document.getElementById("configuracion").classList.add("hidden");
 
 document.getElementById(menu).classList.remove("hidden");
@@ -249,7 +313,6 @@ document.getElementById("menuPrincipal").classList.remove("hidden");
 document.getElementById("menuRemis").classList.add("hidden");
 document.getElementById("menuEmergencias").classList.add("hidden");
 document.getElementById("menuUtiles").classList.add("hidden");
-document.getElementById("menuPanico").classList.add("hidden");
 document.getElementById("configuracion").classList.add("hidden");
 
 }
@@ -279,6 +342,10 @@ document.getElementById("dirCasa").value=localStorage.getItem("dirCasa")||"";
 document.getElementById("dirTrabajo").value=localStorage.getItem("dirTrabajo")||"";
 document.getElementById("dirFavorito").value=localStorage.getItem("dirFavorito")||"";
 
+document.getElementById("contacto1").value=localStorage.getItem("contacto1")||"";
+document.getElementById("contacto2").value=localStorage.getItem("contacto2")||"";
+document.getElementById("contacto3").value=localStorage.getItem("contacto3")||"";
+
 actualizarTextos();
 
 }
@@ -301,6 +368,10 @@ localStorage.setItem("apellido",document.getElementById("apellido").value);
 localStorage.setItem("dirCasa",document.getElementById("dirCasa").value);
 localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value);
 localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value);
+
+localStorage.setItem("contacto1",document.getElementById("contacto1").value);
+localStorage.setItem("contacto2",document.getElementById("contacto2").value);
+localStorage.setItem("contacto3",document.getElementById("contacto3").value);
 
 actualizarTextos();
 
@@ -352,10 +423,6 @@ const link="https://maps.google.com/?q="+lat+","+lon;
 
 enviarWhatsApp(apellido,link);
 
-},
-
-function(){
-alert("No se pudo obtener la ubicación");
 }
 
 );
@@ -376,15 +443,46 @@ window.location.href=url;
 
 
 
-function activarPanico(){
+function enviarPanico(){
 
-const numero=document.getElementById("telefonoPanico").value;
+navigator.geolocation.getCurrentPosition(function(pos){
 
-if(numero){
+const lat=pos.coords.latitude;
+const lon=pos.coords.longitude;
 
-window.location.href="tel:"+numero;
+const mapa="https://maps.google.com/?q="+lat+","+lon;
+
+const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Acción Remises. Estoy en una situación de emergencia. Mi ubicación "+mapa;
+
+let contactos=[
+
+localStorage.getItem("contacto1"),
+localStorage.getItem("contacto2"),
+localStorage.getItem("contacto3")
+
+];
+
+contactos.forEach(c=>{
+
+if(c){
+
+window.open("https://wa.me/"+c+"?text="+encodeURIComponent(mensaje));
+
+window.open("sms:"+c+"?body="+encodeURIComponent(mensaje));
 
 }
+
+});
+
+if(navigator.vibrate){
+
+navigator.vibrate([300,200,300,200,500]);
+
+}
+
+alert("Alerta enviada. Se notificó a tus contactos de emergencia con tu ubicación actual.");
+
+});
 
 }
 
