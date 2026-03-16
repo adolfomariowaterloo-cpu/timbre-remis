@@ -1,456 +1,70 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Timbre Remis</title>
-
-<style>
-
-body{
-margin:0;
-font-family:Arial, Helvetica, sans-serif;
-background:#000;
-color:white;
-text-align:center;
-}
-
-header{
-padding:20px;
-}
-
-header img{
-width:160px;
-}
-
-header h1{
-margin:10px 0;
-font-size:28px;
-}
-
-.container{
-padding:20px;
-}
-
-button{
-width:90%;
-max-width:420px;
-margin:12px auto;
-padding:18px;
-font-size:20px;
-border:none;
-border-radius:18px;
-cursor:pointer;
-display:block;
-color:white;
-font-weight:bold;
-box-shadow:0 6px 0 rgba(0,0,0,0.5);
-}
-
-button:active{
-transform:translateY(4px);
-box-shadow:0 2px 0 rgba(0,0,0,0.5);
-}
-
-.casa{background:linear-gradient(#ff2b2b,#b30000);}
-.trabajo{background:linear-gradient(#ff8c00,#cc5500);}
-.favorito{background:linear-gradient(#9b59b6,#5e3370);}
-.ubicacion{background:linear-gradient(#2a9df4,#0b5fa5);}
-.config{background:#555;}
-
-.remis{background:linear-gradient(#ff2b2b,#b30000);}
-.emergencia{background:linear-gradient(#ff0000,#7a0000);}
-.util{background:linear-gradient(#0066cc,#003366);}
-.eventos{background:linear-gradient(#e1306c,#833ab4);}
-.farmacia{background:linear-gradient(#00c853,#007e33);}
-.servicios{background:linear-gradient(#00aaff,#006699);}
-.volver{background:#444;}
-
-input{
-width:85%;
-padding:10px;
-margin:10px 0;
-font-size:16px;
-border-radius:8px;
-border:none;
-}
-
-.guardar{
-background:#28a745;
-}
-
-.small{
-font-size:14px;
-display:block;
-margin-top:5px;
-}
-
-.hidden{display:none;}
-
-#botonPanico{
+<div id="bienvenida" style="
 position:fixed;
-bottom:25px;
-right:20px;
-width:80px;
-height:80px;
-background:red;
-border-radius:50%;
-display:flex;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.85);
+color:white;
+display:none;
 align-items:center;
 justify-content:center;
-box-shadow:0 6px 0 rgba(0,0,0,0.5);
-user-select:none;
--webkit-user-select:none;
-}
+text-align:center;
+z-index:9999;
+padding:25px;
+font-family:Arial">
 
-#botonPanico:active{
-transform:translateY(4px);
-box-shadow:0 2px 0 rgba(0,0,0,0.5);
-}
+<div style="max-width:500px">
 
-#textoSOS{
-position:fixed;
-bottom:110px;
-right:28px;
-font-weight:bold;
-font-size:18px;
-background:red;
-color:white;
-padding:4px 10px;
+<h2>Bienvenido al Timbre de Acción Remises</h2>
+
+<p>
+Para que el sistema funcione correctamente, <b>solo esta primera vez</b> vas a tener que cargar algunos datos en <b>Configuración</b>.
+</p>
+
+<p>
+Podés guardar tus domicilios habituales (Casa, Trabajo o Favorito) para pedir un remis con un solo toque.
+</p>
+
+<p>
+También podés cargar teléfonos para el <b>botón de pánico SOS</b>.  
+Si alguna vez estás en una situación de emergencia, al mantener presionado el botón se enviará automáticamente un mensaje de <b>AUXILIO con tu ubicación</b>.
+</p>
+
+<p><b>Este timbre te permite:</b></p>
+
+<p>
+• Pedir un remis desde Casa, Trabajo o Favorito<br>
+• Pedir un móvil desde tu ubicación actual<br>
+• Acceder a servicios domiciliarios<br>
+• Usar el botón de pánico SOS
+</p>
+
+<div style="margin-top:25px">
+
+<button onclick="irConfiguracion()" style="
+padding:12px 20px;
+font-size:16px;
+margin:5px;
+border:none;
 border-radius:6px;
-}
-
-#botonPanico.activo{
-background:lime;
-box-shadow:0 0 0 120px rgba(0,255,0,0.6);
-}
-
-</style>
-</head>
-
-<body>
-
-<header>
-<img src="logo.png">
-<h1>Timbre Remis 🔔</h1>
-</header>
-
-<div class="container" id="menuPrincipal">
-
-<button class="remis" onclick="abrirMenu('menuRemis')">Remis</button>
-
-<button class="servicios" onclick="abrirMenu('menuServicios')">
-Servicios Domiciliarios
+background:#28a745;
+color:white">
+Ir a Configuración
 </button>
 
-<button class="emergencia" onclick="abrirMenu('menuEmergencias')">
-Teléfonos de Emergencia
-</button>
-
-<button class="util" onclick="abrirMenu('menuUtiles')">
-Teléfonos Útiles
-</button>
-
-<button class="farmacia" onclick="abrirFarmacia()">
-Farmacias de Turno
-</button>
-
-<button class="eventos"
-onclick="window.open('https://www.instagram.com/eventos.cdelu/','_blank')">
-Eventos
+<button onclick="cerrarBienvenida()" style="
+padding:12px 20px;
+font-size:16px;
+margin:5px;
+border:none;
+border-radius:6px;
+background:#666;
+color:white">
+Omitir por ahora
 </button>
 
 </div>
 
-<div class="container hidden" id="menuServicios">
-
-<button class="util" onclick="llamar('3442666445')">Mecánico</button>
-<button class="util" onclick="llamar('3442424688')">Electricista</button>
-<button class="util" onclick="llamar('3442')">Gasista</button>
-<button class="util" onclick="llamar('3442406327')">Costurera</button>
-<button class="util" onclick="llamar('3442406327')">Estética Uñas y Cejas</button>
-<button class="util" onclick="llamar('34246327')">Peluquería</button>
-<button class="util" onclick="llamar('3442677247')">Zapatería</button>
-<button class="util" onclick="llamar('3442426688')">Plomero</button>
-<button class="util" onclick="llamar('3442583937')">Limpieza Casas / Oficinas</button>
-<button class="util" onclick="llamar('3442485255')">Cuidado Señoras / Niños</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
 </div>
-
-<div class="container hidden" id="menuRemis">
-
-<button class="casa" onclick="pedirDesde('casa')">
-Desde Casa
-<span class="small" id="dirCasaTexto"></span>
-</button>
-
-<button class="trabajo" onclick="pedirDesde('trabajo')">
-Desde Trabajo
-<span class="small" id="dirTrabajoTexto"></span>
-</button>
-
-<button class="favorito" onclick="pedirDesde('favorito')">
-Desde Favorito
-<span class="small" id="dirFavoritoTexto"></span>
-</button>
-
-<button class="ubicacion" onclick="pedirUbicacion()">Ubicación Actual</button>
-
-<button class="config" onclick="abrirMenu('configuracion')">Configuración</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
 </div>
-
-<div class="container hidden" id="menuEmergencias">
-
-<button class="emergencia" onclick="llamar('101')">Policía 101</button>
-<button class="emergencia" onclick="llamar('100')">Bomberos 100</button>
-<button class="emergencia" onclick="llamar('107')">Ambulancia Hospital 107</button>
-<button class="emergencia" onclick="llamar('3442660877')">Vida Emergencias Médicas</button>
-<button class="emergencia" onclick="llamar('424242')">Círculo Católico Emergencia</button>
-<button class="emergencia" onclick="llamar('425294')">ALERTA Emergencias</button>
-<button class="emergencia" onclick="llamar('08007770080')">ENERSA Cable Suelto</button>
-<button class="emergencia" onclick="llamar('0800777427632')">GAS NEA Fuga Gas</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
-</div>
-
-<div class="container hidden" id="menuUtiles">
-
-<button class="util" onclick="llamar('443901')">Hospital 443901</button>
-<button class="util" onclick="llamar('422352')">Terminal Ómnibus 422352</button>
-<button class="util" onclick="llamar('103')">Guardia Urbana 103</button>
-<button class="util" onclick="llamar('106')">Prefectura 106</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
-</div>
-
-<div class="container hidden" id="configuracion">
-
-<input type="text" id="apellido" placeholder="Apellido">
-
-<input type="text" id="dirCasa" placeholder="Dirección Casa">
-<input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
-<input type="text" id="dirFavorito" placeholder="Dirección Favorito">
-
-<input type="text" id="contacto1" placeholder="Contacto Emergencia 1">
-<input type="text" id="contacto2" placeholder="Contacto Emergencia 2">
-<input type="text" id="contacto3" placeholder="Contacto Emergencia 3">
-
-<button class="guardar" onclick="guardarConfig()">Guardar</button>
-
-<button class="volver" onclick="abrirMenu('menuRemis')">Volver</button>
-
-</div>
-
-<div id="textoSOS">SOS</div>
-<div id="botonPanico"></div>
-
-<audio id="sirena">
-<source src="sirena.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-
-const telefonoEmpresa="5493442641200"
-
-let panicoTimer=null
-
-document.getElementById("botonPanico").addEventListener("touchstart",activarHold)
-document.addEventListener("touchend",cancelarHold)
-
-function activarHold(){
-
-panicoTimer=setTimeout(()=>{
-
-document.getElementById("botonPanico").classList.add("activo")
-
-setTimeout(()=>{
-document.getElementById("botonPanico").classList.remove("activo")
-},3000)
-
-document.getElementById("sirena").play()
-
-enviarPanico()
-
-},2000)
-
-}
-
-function cancelarHold(){
-clearTimeout(panicoTimer)
-}
-
-function abrirMenu(menu){
-
-document.getElementById("menuPrincipal").classList.add("hidden")
-document.getElementById("menuRemis").classList.add("hidden")
-document.getElementById("menuEmergencias").classList.add("hidden")
-document.getElementById("menuUtiles").classList.add("hidden")
-document.getElementById("menuServicios").classList.add("hidden")
-document.getElementById("configuracion").classList.add("hidden")
-
-document.getElementById(menu).classList.remove("hidden")
-
-}
-
-function volverPrincipal(){
-
-document.getElementById("menuPrincipal").classList.remove("hidden")
-document.getElementById("menuRemis").classList.add("hidden")
-document.getElementById("menuEmergencias").classList.add("hidden")
-document.getElementById("menuUtiles").classList.add("hidden")
-document.getElementById("menuServicios").classList.add("hidden")
-document.getElementById("configuracion").classList.add("hidden")
-
-}
-
-function llamar(numero){
-window.location.href="tel:"+numero
-}
-
-function abrirFarmacia(){
-window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank")
-}
-
-function pedirDesde(tipo){
-
-const apellido=localStorage.getItem("apellido")
-
-if(!apellido){
-abrirMenu("configuracion")
-return
-}
-
-let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1))
-
-if(!direccion){
-abrirMenu("configuracion")
-return
-}
-
-enviarWhatsApp(apellido,direccion)
-
-}
-
-function pedirUbicacion(){
-
-const apellido=localStorage.getItem("apellido")
-
-if(!apellido){
-abrirMenu("configuracion")
-return
-}
-
-navigator.geolocation.getCurrentPosition(function(pos){
-
-const lat=pos.coords.latitude
-const lon=pos.coords.longitude
-
-const link="https://maps.google.com/?q="+lat+","+lon
-
-enviarWhatsApp(apellido,link)
-
-})
-
-}
-
-function enviarWhatsApp(apellido,origen){
-
-const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen
-
-const url="whatsapp://send?phone="+telefonoEmpresa+"&text="+encodeURIComponent(mensaje)
-
-window.location.href=url
-
-}
-
-function enviarPanico(){
-
-navigator.geolocation.getCurrentPosition(function(pos){
-
-const lat=pos.coords.latitude
-const lon=pos.coords.longitude
-
-const mapa="https://maps.google.com/?q="+lat+","+lon
-
-const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Acción Remises. Estoy en una situación de emergencia. Mi ubicación: "+mapa
-
-let contactos=[
-localStorage.getItem("contacto1"),
-localStorage.getItem("contacto2"),
-localStorage.getItem("contacto3")
-]
-
-contactos.forEach(c=>{
-
-if(c){
-
-window.open("https://wa.me/"+c+"?text="+encodeURIComponent(mensaje))
-
-}
-
-})
-
-})
-
-}
-
-window.onload=function(){
-
-if(!localStorage.getItem("bienvenida")){
-alert("Bienvenido. Por única vez deberá cargar en CONFIGURACIÓN los domicilios desde donde suele pedir remis y también los teléfonos de contacto para el botón de pánico.")
-localStorage.setItem("bienvenida","ok")
-}
-
-document.getElementById("apellido").value=localStorage.getItem("apellido")||""
-document.getElementById("dirCasa").value=localStorage.getItem("dirCasa")||""
-document.getElementById("dirTrabajo").value=localStorage.getItem("dirTrabajo")||""
-document.getElementById("dirFavorito").value=localStorage.getItem("dirFavorito")||""
-
-document.getElementById("contacto1").value=localStorage.getItem("contacto1")||""
-document.getElementById("contacto2").value=localStorage.getItem("contacto2")||""
-document.getElementById("contacto3").value=localStorage.getItem("contacto3")||""
-
-actualizarTextos()
-
-}
-
-function actualizarTextos(){
-
-document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||""
-document.getElementById("dirTrabajoTexto").innerText=localStorage.getItem("dirTrabajo")||""
-document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirFavorito")||""
-
-}
-
-function guardarConfig(){
-
-localStorage.setItem("apellido",document.getElementById("apellido").value)
-localStorage.setItem("dirCasa",document.getElementById("dirCasa").value)
-localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value)
-localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value)
-
-localStorage.setItem("contacto1",document.getElementById("contacto1").value)
-localStorage.setItem("contacto2",document.getElementById("contacto2").value)
-localStorage.setItem("contacto3",document.getElementById("contacto3").value)
-
-actualizarTextos()
-
-abrirMenu("menuRemis")
-
-}
-
-</script>
-
-</body>
-</html>
