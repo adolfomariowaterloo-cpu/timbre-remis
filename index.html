@@ -1,70 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Acción Remises</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#111;
+color:white;
+text-align:center;
+}
+
+button{
+padding:15px;
+margin:10px;
+font-size:16px;
+border:none;
+border-radius:6px;
+}
+
+.hidden{
+display:none;
+}
+
+.container{
+margin-top:30px;
+}
+
+.util{
+background:#444;
+color:white;
+width:80%;
+}
+
+.volver{
+background:#666;
+color:white;
+width:80%;
+}
+
+#textoSOS{
+position:fixed;
+bottom:115px;
+right:35px;
+font-weight:bold;
+font-size:20px;
+color:white;
+}
+
+#botonPanico{
+position:fixed;
+bottom:40px;
+right:30px;
+width:70px;
+height:70px;
+background:red;
+border-radius:50%;
+}
+
+#botonPanico.activo{
+box-shadow:0 0 0 40px rgba(0,255,0,0.8);
+}
+
+</style>
+
+</head>
+<body>
+
+<h2>Acción Remises</h2>
+
+<div class="container">
+
+<button onclick="pedirDesde('casa')">Casa</button>
+<button onclick="pedirDesde('trabajo')">Trabajo</button>
+<button onclick="pedirDesde('favorito')">Favorito</button>
+<button onclick="pedirUbicacion()">Mi Ubicación</button>
+
+<br>
+
+<button onclick="abrirMenu('menuServicios')">Servicios domiciliarios</button>
+<button onclick="abrirMenu('menuConfiguracion')">Configuración</button>
+
+</div>
+
+
+<div class="container hidden" id="menuServicios">
+
+<button class="util" onclick="llamar('3442666445')">Mecánico</button>
+<button class="util" onclick="llamar('3442424688')">Electricista</button>
+<button class="util" onclick="llamar('3442')">Gasista</button>
+<button class="util" onclick="llamar('3442406327')">Costurera</button>
+<button class="util" onclick="llamar('3442406327')">Estética uñas y cejas</button>
+<button class="util" onclick="llamar('34246327')">Peluquería</button>
+<button class="util" onclick="llamar('3442677247')">Zapatería</button>
+<button class="util" onclick="llamar('3442426688')">Plomero</button>
+<button class="util" onclick="llamar('3442583937')">Limpieza casa/oficina</button>
+<button class="util" onclick="llamar('3442485255')">Cuidado de niños</button>
+
+<button class="volver" onclick="volverPrincipal()">Volver</button>
+
+</div>
+
+
+<div class="container hidden" id="menuConfiguracion">
+
+<p>Apellido</p>
+<input id="apellido">
+
+<p>Casa</p>
+<input id="dirCasa">
+
+<p>Trabajo</p>
+<input id="dirTrabajo">
+
+<p>Favorito</p>
+<input id="dirFavorito">
+
+<p>Teléfono pánico 1</p>
+<input id="panico1">
+
+<p>Teléfono pánico 2</p>
+<input id="panico2">
+
+<p>Teléfono pánico 3</p>
+<input id="panico3">
+
+<br><br>
+
+<button onclick="guardar()">Guardar</button>
+<button onclick="volverPrincipal()">Volver</button>
+
+</div>
+
+
+<div id="textoSOS">SOS</div>
+<div id="botonPanico"></div>
+
+
 <div id="bienvenida" style="
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.85);
+background:black;
 color:white;
 display:none;
 align-items:center;
 justify-content:center;
 text-align:center;
-z-index:9999;
 padding:25px;
-font-family:Arial">
+z-index:9999">
 
 <div style="max-width:500px">
 
 <h2>Bienvenido al Timbre de Acción Remises</h2>
 
 <p>
-Para que el sistema funcione correctamente, <b>solo esta primera vez</b> vas a tener que cargar algunos datos en <b>Configuración</b>.
+Solo esta primera vez tendrás que cargar algunos datos en configuración.
 </p>
 
 <p>
-Podés guardar tus domicilios habituales (Casa, Trabajo o Favorito) para pedir un remis con un solo toque.
+Podrás guardar tus domicilios habituales (casa, trabajo o favorito) para pedir un móvil con un solo toque.
 </p>
 
 <p>
-También podés cargar teléfonos para el <b>botón de pánico SOS</b>.  
-Si alguna vez estás en una situación de emergencia, al mantener presionado el botón se enviará automáticamente un mensaje de <b>AUXILIO con tu ubicación</b>.
+También podrás cargar teléfonos para el botón de pánico SOS que enviará automáticamente un mensaje de auxilio con tu ubicación.
 </p>
-
-<p><b>Este timbre te permite:</b></p>
 
 <p>
-• Pedir un remis desde Casa, Trabajo o Favorito<br>
-• Pedir un móvil desde tu ubicación actual<br>
-• Acceder a servicios domiciliarios<br>
-• Usar el botón de pánico SOS
+El timbre permite pedir remises, usar servicios domiciliarios y enviar una alerta de emergencia.
 </p>
 
-<div style="margin-top:25px">
+<br>
 
-<button onclick="irConfiguracion()" style="
-padding:12px 20px;
-font-size:16px;
-margin:5px;
-border:none;
-border-radius:6px;
-background:#28a745;
-color:white">
-Ir a Configuración
-</button>
-
-<button onclick="cerrarBienvenida()" style="
-padding:12px 20px;
-font-size:16px;
-margin:5px;
-border:none;
-border-radius:6px;
-background:#666;
-color:white">
-Omitir por ahora
-</button>
+<button onclick="irConfiguracion()">Ir a configuración</button>
+<button onclick="cerrarBienvenida()">Omitir</button>
 
 </div>
 
 </div>
-</div>
+
+
+<script>
+
+const telefonoEmpresa="5493442000000"
+
+function abrirMenu(id){
+
+document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"))
+document.getElementById(id).classList.remove("hidden")
+
+}
+
+function volverPrincipal(){
+
+document.querySelectorAll(".container").forEach(c=>c.classList.remove("hidden"))
+document.getElementById("menuServicios").classList.add("hidden")
+document.getElementById("menuConfiguracion").classList.add("hidden")
+
+}
+
+function llamar(num){
+
+window.location.href="tel:"+num
+
+}
+
+function guardar(){
+
+localStorage.setItem("apellido",document.getElementById("apellido").value)
+localStorage.setItem("dirCasa",document.getElementById("dirCasa").value)
+localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value)
+localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value)
+
+localStorage.setItem("panico1",document.getElementById("panico1").value)
+localStorage.setItem("panico2",document.getElementById("panico2").value)
+localStorage.setItem("panico3",document.getElementById("panico3").value)
+
+alert("Datos guardados")
+
+}
+
+function pedirDesde(tipo){
+
+const apellido=localStorage.getItem("apellido")
+
+let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1))
+
+const mensaje="Hola soy "+apellido+" enviame un móvil a "+direccion
+
+window.location.href="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje)
+
+}
+
+function pedirUbicacion(){
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+const lat=pos.coords.latitude
+const lon=pos.coords.longitude
+
+const link="https://maps.google.com/?q="+lat+","+lon
+
+const apellido=localStorage.getItem("apellido")
+
+const mensaje="Hola soy "+apellido+" enviame un móvil a mi ubicación "+link
+
+window.location.href="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje)
+
+})
+
+}
+
+
+let panicoTimer
+
+const boton=document.getElementById("botonPanico")
+
+boton.addEventListener("touchstart",activarHold)
+boton.addEventListener("mousedown",activarHold)
+
+boton.addEventListener("touchend",cancelarHold)
+boton.addEventListener("mouseup",cancelarHold)
+
+function activarHold(){
+
+panicoTimer=setTimeout(()=>{
+
+boton.classList.add("activo")
+
+setTimeout(()=>{boton.classList.remove("activo")},3000)
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+const lat=pos.coords.latitude
+const lon=pos.coords.longitude
+
+const link="https://maps.google.com/?q="+lat+","+lon
+
+const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Acción Remises. Estoy en una situación de emergencia. Mi ubicación: "+link
+
+const contactos=[
+
+localStorage.getItem("panico1"),
+localStorage.getItem("panico2"),
+localStorage.getItem("panico3")
+
+]
+
+contactos.forEach(c=>{
+
+if(c){
+
+window.open("https://wa.me/"+c+"?text="+encodeURIComponent(mensaje))
+
+}
+
+})
+
+})
+
+},2000)
+
+}
+
+function cancelarHold(){
+
+clearTimeout(panicoTimer)
+
+}
+
+
+function revisarBienvenida(){
+
+if(!localStorage.getItem("bienvenidaVista")){
+
+document.getElementById("bienvenida").style.display="flex"
+
+}
+
+}
+
+function cerrarBienvenida(){
+
+localStorage.setItem("bienvenidaVista","si")
+document.getElementById("bienvenida").style.display="none"
+
+}
+
+function irConfiguracion(){
+
+localStorage.setItem("bienvenidaVista","si")
+document.getElementById("bienvenida").style.display="none"
+document.getElementById("menuConfiguracion").classList.remove("hidden")
+
+}
+
+window.onload=function(){
+
+revisarBienvenida()
+
+}
+
+</script>
+
+</body>
+</html>
