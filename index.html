@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
+<div id="instalarBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#111; padding:15px;">
+<button onclick="instalarApp()" style="background:#28a745;">
+Instalar Acción Remises en tu celular
+</button>
+</div>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
 <meta charset="UTF-8">
@@ -449,7 +453,31 @@ actualizarTextos()
 abrirMenu("menuRemis")
 
 }
+let deferredPrompt;
 
+window.addEventListener("beforeinstallprompt",(e)=>{
+
+e.preventDefault();
+
+deferredPrompt = e;
+
+document.getElementById("instalarBanner").style.display="block";
+
+});
+
+function instalarApp(){
+
+document.getElementById("instalarBanner").style.display="none";
+
+deferredPrompt.prompt();
+
+deferredPrompt.userChoice.then(()=>{
+
+deferredPrompt = null;
+
+});
+
+}
 </script>
 
 </body>
