@@ -1,483 +1,434 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<div id="instalarBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#111; padding:15px;">
-<button onclick="instalarApp()" style="background:#28a745;">
-Instalar Acción Remises en tu celular
-</button>
-</div>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Timbre Remis 🔔</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo.png">
 
-<title>Timbre Remis</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #000;
+            color: white;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<style>
+        header {
+            padding: 25px 20px;
+            background: linear-gradient(to bottom, #111, #000);
+        }
 
-body{
-margin:0;
-font-family:Arial, Helvetica, sans-serif;
-background:#000;
-color:white;
-text-align:center;
-}
+        header img {
+            width: 140px;
+            height: auto;
+        }
 
-header{
-padding:20px;
-}
+        header h1 {
+            margin: 10px 0;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
 
-header img{
-width:160px;
-}
+       .container {
+            padding: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
 
-header h1{
-margin:10px 0;
-font-size:28px;
-}
+        /* Botones Optimizados para pantallas táctiles */
+        button {
+            width: 100%;
+            margin: 14px 0;
+            padding: 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            display: block;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+            transition: transform 0.1s, background 0.3s;
+        }
 
-.container{
-padding:20px;
-}
+        button:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.3);
+        }
 
-button{
-width:90%;
-max-width:420px;
-margin:12px auto;
-padding:18px;
-font-size:20px;
-border:none;
-border-radius:18px;
-cursor:pointer;
-display:block;
-color:white;
-font-weight:bold;
-box-shadow:0 6px 0 rgba(0,0,0,0.5);
-}
+        /* Colores y degradados sugeridos */
+       .remis { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+       .servicios { background: linear-gradient(135deg, #2193b0, #6dd5ed); }
+       .emergencia { background: linear-gradient(135deg, #ed213a, #93291e); }
+       .util { background: linear-gradient(135deg, #2c3e50, #4ca1af); }
+       .farmacia { background: linear-gradient(135deg, #11998e, #38ef7d); }
+       .eventos { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); }
+        
+       .casa { background: #e53935; }
+       .trabajo { background: #fb8c00; }
+       .favorito { background: #8e24aa; }
+       .ubicacion { background: #1e88e5; }
+       .config { background: #455a64; margin-top: 30px; }
+       .volver { background: #222; margin-top: 20px; border: 1px solid #444; }
+       .guardar { background: #2e7d32; }
 
-button:active{
-transform:translateY(4px);
-box-shadow:0 2px 0 rgba(0,0,0,0.5);
-}
+        input {
+            width: 90%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #111;
+            color: white;
+        }
 
-.casa{background:linear-gradient(#ff2b2b,#b30000);}
-.trabajo{background:linear-gradient(#ff8c00,#cc5500);}
-.favorito{background:linear-gradient(#9b59b6,#5e3370);}
-.ubicacion{background:linear-gradient(#2a9df4,#0b5fa5);}
-.config{background:#555;}
+       .small {
+            font-size: 13px;
+            display: block;
+            margin-top: 6px;
+            opacity: 0.9;
+            font-weight: normal;
+        }
 
-.remis{background:linear-gradient(#ff2b2b,#b30000);}
-.emergencia{background:linear-gradient(#ff0000,#7a0000);}
-.util{background:linear-gradient(#0066cc,#003366);}
-.eventos{background:linear-gradient(#e1306c,#833ab4);}
-.farmacia{background:linear-gradient(#00c853,#007e33);}
-.servicios{background:linear-gradient(#00aaff,#006699);}
-.volver{background:#444;}
+       .hidden { display: none; }
 
-input{
-width:85%;
-padding:10px;
-margin:10px 0;
-font-size:16px;
-border-radius:8px;
-border:none;
-}
+        /* Banner de Instalación corregido */
+        #instalarBanner {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            padding: 20px;
+            border-top: 2px solid #333;
+            z-index: 1000;
+        }
 
-.guardar{
-background:#28a745;
-}
+        #instalarBanner button {
+            background: #28a745;
+            margin: 0;
+            box-shadow: none;
+        }
 
-.small{
-font-size:14px;
-display:block;
-margin-top:5px;
-}
+        /* Botón de Pánico */
+        #botonPanico {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            width: 85px;
+            height: 85px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(255,0,0,0.4);
+            z-index: 999;
+            touch-action: none;
+        }
 
-.hidden{display:none;}
+        #textoSOS {
+            position: fixed;
+            bottom: 120px;
+            right: 35px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #ff4b2b;
+            text-shadow: 0 0 5px black;
+        }
 
-#botonPanico{
-position:fixed;
-bottom:25px;
-right:20px;
-width:80px;
-height:80px;
-background:red;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 6px 0 rgba(0,0,0,0.5);
-user-select:none;
--webkit-user-select:none;
-}
+        #botonPanico.activo {
+            background: #00ff00;
+            box-shadow: 0 0 0 100vw rgba(0, 255, 0, 0.4);
+            animation: pulse 1s infinite;
+        }
 
-#botonPanico:active{
-transform:translateY(4px);
-box-shadow:0 2px 0 rgba(0,0,0,0.5);
-}
-
-#textoSOS{
-position:fixed;
-bottom:110px;
-right:28px;
-font-weight:bold;
-font-size:18px;
-background:red;
-color:white;
-padding:4px 10px;
-border-radius:6px;
-}
-
-#botonPanico.activo{
-background:lime;
-box-shadow:0 0 0 120px rgba(0,255,0,0.6);
-}
-
-</style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
-
 <body>
 
+<div id="instalarBanner">
+    <button onclick="instalarApp()">Instalar en el celular</button>
+</div>
+
 <header>
-<img src="logo.png">
-<h1>Timbre Remis 🔔</h1>
+    <img src="logo.png" alt="Acción Remises">
+    <h1>Timbre Remis 🔔</h1>
 </header>
 
 <div class="container" id="menuPrincipal">
-
-<button class="remis" onclick="abrirMenu('menuRemis')">Remis</button>
-
-<button class="servicios" onclick="abrirMenu('menuServicios')">
-Servicios Domiciliarios
-</button>
-
-<button class="emergencia" onclick="abrirMenu('menuEmergencias')">
-Teléfonos de Emergencia
-</button>
-
-<button class="util" onclick="abrirMenu('menuUtiles')">
-Teléfonos Útiles
-</button>
-
-<button class="farmacia" onclick="abrirFarmacia()">
-Farmacias de Turno
-</button>
-
-<button class="eventos"
-onclick="window.open('https://www.instagram.com/eventos.cdelu/','_blank')">
-Eventos
-</button>
-
+    <button class="remis" onclick="abrirMenu('menuRemis')">Pedir un Remis</button>
+    <button class="servicios" onclick="abrirMenu('menuServicios')">Servicios Domicilio</button>
+    <button class="emergencia" onclick="abrirMenu('menuEmergencias')">Emergencias</button>
+    <button class="util" onclick="abrirMenu('menuUtiles')">Teléfonos Útiles</button>
+    <button class="farmacia" onclick="abrirFarmacia()">Farmacias de Turno</button>
+    <button class="eventos" onclick="abrirInstagram()">Eventos locales</button>
 </div>
 
 <div class="container hidden" id="menuServicios">
-
-<button class="util" onclick="llamar('3442666445')">Mecánico</button>
-<button class="util" onclick="llamar('3442424688')">Electricista</button>
-<button class="util" onclick="llamar('3442')">Gasista</button>
-<button class="util" onclick="llamar('3442406327')">Costurera</button>
-<button class="util" onclick="llamar('3442406327')">Estética Uñas y Cejas</button>
-<button class="util" onclick="llamar('34246327')">Peluquería</button>
-<button class="util" onclick="llamar('3442677247')">Zapatería</button>
-<button class="util" onclick="llamar('3442426688')">Plomero</button>
-<button class="util" onclick="llamar('3442583937')">Limpieza Casas / Oficinas</button>
-<button class="util" onclick="llamar('3442485255')">Cuidado Señoras / Niños</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
+    <button class="util" onclick="llamar('3442666445')">Mecánico</button>
+    <button class="util" onclick="llamar('3442424688')">Electricista</button>
+    <button class="util" onclick="llamar('3442426688')">Plomero</button>
+    <button class="util" onclick="llamar('3442583937')">Limpieza Casas</button>
+    <button class="util" onclick="llamar('3442485255')">Cuidado Niños/Abuelos</button>
+    <button class="volver" onclick="volverPrincipal()">← Volver al inicio</button>
 </div>
 
 <div class="container hidden" id="menuRemis">
-
-<button class="casa" onclick="pedirDesde('casa')">
-Desde Casa
-<span class="small" id="dirCasaTexto"></span>
-</button>
-
-<button class="trabajo" onclick="pedirDesde('trabajo')">
-Desde Trabajo
-<span class="small" id="dirTrabajoTexto"></span>
-</button>
-
-<button class="favorito" onclick="pedirDesde('favorito')">
-Desde Favorito
-<span class="small" id="dirFavoritoTexto"></span>
-</button>
-
-<button class="ubicacion" onclick="pedirUbicacion()">Ubicación Actual</button>
-
-<button class="config" onclick="abrirMenu('configuracion')">Configuración</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
+    <button class="casa" onclick="pedirDesde('casa')">
+        Desde Casa
+        <span class="small" id="dirCasaTexto"></span>
+    </button>
+    <button class="trabajo" onclick="pedirDesde('trabajo')">
+        Desde el Trabajo
+        <span class="small" id="dirTrabajoTexto"></span>
+    </button>
+    <button class="favorito" onclick="pedirDesde('favorito')">
+        Desde Favorito
+        <span class="small" id="dirFavoritoTexto"></span>
+    </button>
+    <button class="ubicacion" onclick="pedirUbicacion()">Mi Ubicación Actual</button>
+    <button class="config" onclick="abrirMenu('configuracion')">⚙️ Configurar Direcciones</button>
+    <button class="volver" onclick="volverPrincipal()">← Volver</button>
 </div>
 
 <div class="container hidden" id="menuEmergencias">
-
-<button class="emergencia" onclick="llamar('101')">Policía 101</button>
-<button class="emergencia" onclick="llamar('100')">Bomberos 100</button>
-<button class="emergencia" onclick="llamar('107')">Ambulancia Hospital 107</button>
-<button class="emergencia" onclick="llamar('3442660877')">Vida Emergencias Médicas</button>
-<button class="emergencia" onclick="llamar('424242')">Círculo Católico Emergencia</button>
-<button class="emergencia" onclick="llamar('425294')">ALERTA Emergencias</button>
-<button class="emergencia" onclick="llamar('08007770080')">ENERSA Cable Suelto</button>
-<button class="emergencia" onclick="llamar('0800777427632')">GAS NEA Fuga Gas</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
+    <button class="emergencia" onclick="llamar('101')">POLICÍA (101)</button>
+    <button class="emergencia" onclick="llamar('100')">BOMBEROS (100)</button>
+    <button class="emergencia" onclick="llamar('107')">HOSPITAL URQUIZA (107)</button>
+    <button class="emergencia" onclick="llamar('3442660877')">VIDA Emergencias</button>
+    <button class="emergencia" onclick="llamar('08007770080')">ENERSA (Corte Luz)</button>
+    <button class="emergencia" onclick="llamar('0800777427632')">GAS NEA (Fuga de Gas)</button>
+    <button class="volver" onclick="volverPrincipal()">← Volver</button>
 </div>
 
 <div class="container hidden" id="menuUtiles">
-
-<button class="util" onclick="llamar('443901')">Hospital 443901</button>
-<button class="util" onclick="llamar('422352')">Terminal Ómnibus 422352</button>
-<button class="util" onclick="llamar('103')">Guardia Urbana 103</button>
-<button class="util" onclick="llamar('106')">Prefectura 106</button>
-
-<button class="volver" onclick="volverPrincipal()">Volver</button>
-
+    <button class="util" onclick="llamar('3442443900')">Hospital Urquiza</button>
+    <button class="util" onclick="llamar('3442422352')">Terminal Ómnibus</button>
+    <button class="util" onclick="llamar('103')">Defensa Civil (103)</button>
+    <button class="util" onclick="llamar('106')">Prefectura (106)</button>
+    <button class="volver" onclick="volverPrincipal()">← Volver</button>
 </div>
 
 <div class="container hidden" id="configuracion">
-
-<input type="text" id="apellido" placeholder="Apellido">
-
-<input type="text" id="dirCasa" placeholder="Dirección Casa">
-<input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
-<input type="text" id="dirFavorito" placeholder="Dirección Favorito">
-
-<input type="text" id="contacto1" placeholder="Contacto Emergencia 1">
-<input type="text" id="contacto2" placeholder="Contacto Emergencia 2">
-<input type="text" id="contacto3" placeholder="Contacto Emergencia 3">
-
-<button class="guardar" onclick="guardarConfig()">Guardar</button>
-
-<button class="volver" onclick="abrirMenu('menuRemis')">Volver</button>
-
+    <h3>Tus Datos</h3>
+    <input type="text" id="apellido" placeholder="Tu Apellido">
+    <input type="text" id="dirCasa" placeholder="Dirección Casa">
+    <input type="text" id="dirTrabajo" placeholder="Dirección Trabajo">
+    <input type="text" id="dirFavorito" placeholder="Otra Dirección">
+    <h3>Contactos de Pánico (WhatsApp)</h3>
+    <input type="tel" id="contacto1" placeholder="Ej: 5493442000000">
+    <input type="tel" id="contacto2" placeholder="Ej: 5493442111111">
+    <input type="tel" id="contacto3" placeholder="Ej: 5493442222222">
+    <button class="guardar" onclick="guardarConfig()">GUARDAR DATOS</button>
+    <button class="volver" onclick="abrirMenu('menuRemis')">Cancelar</button>
 </div>
 
-<div id="textoSOS">SOS</div>
-<div id="botonPanico"></div>
+<div id="textoSOS">MANTENER PARA SOS</div>
+<div id="botonPanico">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+</div>
 
-<audio id="sirena">
-<source src="sirena.mp3" type="audio/mpeg">
+<audio id="sirena" loop>
+    <source src="sirena.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-
-const telefonoEmpresa="5493442641200"
-
-let panicoTimer=null
-
-document.getElementById("botonPanico").addEventListener("touchstart",activarHold)
-document.addEventListener("touchend",cancelarHold)
-
-function activarHold(){
-
-panicoTimer=setTimeout(()=>{
-
-document.getElementById("botonPanico").classList.add("activo")
-
-setTimeout(()=>{
-document.getElementById("botonPanico").classList.remove("activo")
-},3000)
-
-document.getElementById("sirena").play()
-
-enviarPanico()
-
-},2000)
-
-}
-
-function cancelarHold(){
-clearTimeout(panicoTimer)
-}
-
-function abrirMenu(menu){
-
-document.getElementById("menuPrincipal").classList.add("hidden")
-document.getElementById("menuRemis").classList.add("hidden")
-document.getElementById("menuEmergencias").classList.add("hidden")
-document.getElementById("menuUtiles").classList.add("hidden")
-document.getElementById("menuServicios").classList.add("hidden")
-document.getElementById("configuracion").classList.add("hidden")
-
-document.getElementById(menu).classList.remove("hidden")
-
-}
-
-function volverPrincipal(){
-
-document.getElementById("menuPrincipal").classList.remove("hidden")
-document.getElementById("menuRemis").classList.add("hidden")
-document.getElementById("menuEmergencias").classList.add("hidden")
-document.getElementById("menuUtiles").classList.add("hidden")
-document.getElementById("menuServicios").classList.add("hidden")
-document.getElementById("configuracion").classList.add("hidden")
-
-}
-
-function llamar(numero){
-window.location.href="tel:"+numero
-}
-
-function abrirFarmacia(){
-window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank")
-}
-
-function pedirDesde(tipo){
-
-const apellido=localStorage.getItem("apellido")
-
-if(!apellido){
-abrirMenu("configuracion")
-return
-}
-
-let direccion=localStorage.getItem("dir"+tipo.charAt(0).toUpperCase()+tipo.slice(1))
-
-if(!direccion){
-abrirMenu("configuracion")
-return
-}
-
-enviarWhatsApp(apellido,direccion)
-
-}
-
-function pedirUbicacion(){
-
-const apellido=localStorage.getItem("apellido")
-
-if(!apellido){
-abrirMenu("configuracion")
-return
-}
-
-navigator.geolocation.getCurrentPosition(function(pos){
-
-const lat=pos.coords.latitude
-const lon=pos.coords.longitude
-
-const link="https://maps.google.com/?q="+lat+","+lon
-
-enviarWhatsApp(apellido,link)
-
-})
-
-}
-
-function enviarWhatsApp(apellido,origen){
-
-const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen
-
-const url="whatsapp://send?phone="+telefonoEmpresa+"&text="+encodeURIComponent(mensaje)
-
-window.location.href=url
-
-}
-
-function enviarPanico(){
-
-navigator.geolocation.getCurrentPosition(function(pos){
-
-const lat=pos.coords.latitude
-const lon=pos.coords.longitude
-
-const mapa="https://maps.google.com/?q="+lat+","+lon
-
-const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Acción Remises. Estoy en una situación de emergencia. Mi ubicación: "+mapa
-
-let contactos=[
-localStorage.getItem("contacto1"),
-localStorage.getItem("contacto2"),
-localStorage.getItem("contacto3")
-]
-
-contactos.forEach(c=>{
-
-if(c){
-
-window.open("https://wa.me/"+c+"?text="+encodeURIComponent(mensaje))
-
-}
-
-})
-
-})
-
-}
-
-window.onload=function(){
-
-if(!localStorage.getItem("bienvenida")){
-alert("Bienvenido. Por única vez deberá cargar en CONFIGURACIÓN los domicilios desde donde suele pedir remis y también los teléfonos de contacto para el botón de pánico.")
-localStorage.setItem("bienvenida","ok")
-}
-
-document.getElementById("apellido").value=localStorage.getItem("apellido")||""
-document.getElementById("dirCasa").value=localStorage.getItem("dirCasa")||""
-document.getElementById("dirTrabajo").value=localStorage.getItem("dirTrabajo")||""
-document.getElementById("dirFavorito").value=localStorage.getItem("dirFavorito")||""
-
-document.getElementById("contacto1").value=localStorage.getItem("contacto1")||""
-document.getElementById("contacto2").value=localStorage.getItem("contacto2")||""
-document.getElementById("contacto3").value=localStorage.getItem("contacto3")||""
-
-actualizarTextos()
-
-}
-
-function actualizarTextos(){
-
-document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||""
-document.getElementById("dirTrabajoTexto").innerText=localStorage.getItem("dirTrabajo")||""
-document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirFavorito")||""
-
-}
-
-function guardarConfig(){
-
-localStorage.setItem("apellido",document.getElementById("apellido").value)
-localStorage.setItem("dirCasa",document.getElementById("dirCasa").value)
-localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value)
-localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value)
-
-localStorage.setItem("contacto1",document.getElementById("contacto1").value)
-localStorage.setItem("contacto2",document.getElementById("contacto2").value)
-localStorage.setItem("contacto3",document.getElementById("contacto3").value)
-
-actualizarTextos()
-
-abrirMenu("menuRemis")
-
-}
-let deferredPrompt;
-
-window.addEventListener("beforeinstallprompt",(e)=>{
-
-e.preventDefault();
-
-deferredPrompt = e;
-
-document.getElementById("instalarBanner").style.display="block";
-
-});
-
-function instalarApp(){
-
-document.getElementById("instalarBanner").style.display="none";
-
-deferredPrompt.prompt();
-
-deferredPrompt.userChoice.then(()=>{
-
-deferredPrompt = null;
-
-});
-
-}
+    // Configuración General
+    const telefonoEmpresa = "5493442641200";
+    let panicoTimer = null;
+
+    // --- LÓGICA BOTÓN DE PÁNICO ---
+    const btnPanico = document.getElementById("botonPanico");
+    btnPanico.addEventListener("touchstart", (e) => { e.preventDefault(); activarHold(); });
+    btnPanico.addEventListener("touchend", cancelarHold);
+    btnPanico.addEventListener("mousedown", activarHold);
+    btnPanico.addEventListener("mouseup", cancelarHold);
+
+    function activarHold() {
+        panicoTimer = setTimeout(() => {
+            btnPanico.classList.add("activo");
+            document.getElementById("sirena").play();
+            enviarPanico();
+            
+            setTimeout(() => {
+                btnPanico.classList.remove("activo");
+                document.getElementById("sirena").pause();
+            }, 5000);
+        }, 2000); // 2 segundos manteniendo para activar
+    }
+
+    function cancelarHold() {
+        clearTimeout(panicoTimer);
+    }
+
+    // --- NAVEGACIÓN ---
+    function abrirMenu(menuId) {
+        document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
+        document.getElementById(menuId).classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+
+    function volverPrincipal() {
+        abrirMenu('menuPrincipal');
+    }
+
+    function llamar(numero) {
+        window.location.href = "tel:" + numero;
+    }
+
+    function abrirFarmacia() {
+        window.open("[https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/](https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/)", "_blank");
+    }
+    
+    function abrirInstagram() {
+        window.open("[https://www.instagram.com/eventos.cdelu/](https://www.instagram.com/eventos.cdelu/)", "_blank");
+    }
+
+    // --- LÓGICA REMIS ---
+    function pedirDesde(tipo) {
+        const apellido = localStorage.getItem("apellido");
+        const direccion = localStorage.getItem("dir" + tipo.charAt(0).toUpperCase() + tipo.slice(1));
+
+        if (!apellido ||!direccion) {
+            alert("Por favor, configura tu apellido y dirección primero.");
+            abrirMenu("configuracion");
+            return;
+        }
+        enviarWhatsApp(apellido, direccion);
+    }
+
+    function pedirUbicacion() {
+        const apellido = localStorage.getItem("apellido");
+        if (!apellido) { abrirMenu("configuracion"); return; }
+
+        // Configuración de GPS de alta precisión
+        const gpsOptions = {
+            enableHighAccuracy: true,
+            timeout: 10000, // espera hasta 10 segundos
+            maximumAge: 0
+        };
+
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            const link = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+            enviarWhatsApp(apellido, link);
+        }, function(err) {
+            alert("No se pudo obtener la ubicación. Revisa los permisos de tu GPS.");
+        }, gpsOptions);
+    }
+
+    function enviarWhatsApp(apellido, origen) {
+        const mensaje = `Hola, soy ${apellido}. Solicito un móvil a --> ${origen}`;
+        // Formato wa.me es el estándar recomendado para 2025
+        const url = `https://wa.me/${telefonoEmpresa}?text=${encodeURIComponent(mensaje)}`;
+        window.location.href = url;
+    }
+
+    function enviarPanico() {
+        const gpsOptions = { enableHighAccuracy: true, timeout: 5000 };
+
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            const link = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
+            const mensaje = `🚨 ¡AUXILIO! Estoy en una emergencia. Mi ubicación: ${link}`;
+
+            let contactos =;
+
+            // Abrimos el primer contacto disponible
+            let enviado = false;
+            contactos.forEach(c => {
+                if (c &&!enviado) {
+                    window.open(`https://wa.me/${c}?text=${encodeURIComponent(mensaje)}`, '_blank');
+                    enviado = true; // Evitamos bloqueos abriendo solo el principal primero
+                }
+            });
+        }, null, gpsOptions);
+    }
+
+    // --- CONFIGURACIÓN ---
+    function guardarConfig() {
+        localStorage.setItem("apellido", document.getElementById("apellido").value);
+        localStorage.setItem("dirCasa", document.getElementById("dirCasa").value);
+        localStorage.setItem("dirTrabajo", document.getElementById("dirTrabajoTexto").innerText = document.getElementById("dirTrabajo").value);
+        localStorage.setItem("dirFavorito", document.getElementById("dirFavorito").value);
+        localStorage.setItem("contacto1", document.getElementById("contacto1").value);
+        localStorage.setItem("contacto2", document.getElementById("contacto2").value);
+        localStorage.setItem("contacto3", document.getElementById("contacto3").value);
+
+        actualizarTextos();
+        abrirMenu('menuRemis');
+    }
+
+    function actualizarTextos() {
+        document.getElementById("dirCasaTexto").innerText = localStorage.getItem("dirCasa") |
+
+| "Sin configurar";
+        document.getElementById("dirTrabajoTexto").innerText = localStorage.getItem("dirTrabajo") |
+
+| "Sin configurar";
+        document.getElementById("dirFavoritoTexto").innerText = localStorage.getItem("dirFavorito") |
+
+| "Sin configurar";
+    }
+
+    window.onload = function() {
+        if (!localStorage.getItem("bienvenida")) {
+            alert("Bienvenido. Por favor carga tus datos en CONFIGURACIÓN para empezar.");
+            localStorage.setItem("bienvenida", "ok");
+        }
+
+        document.getElementById("apellido").value = localStorage.getItem("apellido") |
+
+| "";
+        document.getElementById("dirCasa").value = localStorage.getItem("dirCasa") |
+
+| "";
+        document.getElementById("dirTrabajo").value = localStorage.getItem("dirTrabajo") |
+
+| "";
+        document.getElementById("dirFavorito").value = localStorage.getItem("dirFavorito") |
+
+| "";
+        document.getElementById("contacto1").value = localStorage.getItem("contacto1") |
+
+| "";
+        document.getElementById("contacto2").value = localStorage.getItem("contacto2") |
+
+| "";
+        document.getElementById("contacto3").value = localStorage.getItem("contacto3") |
+
+| "";
+
+        actualizarTextos();
+    };
+
+    // --- INSTALACIÓN PWA ---
+    let deferredPrompt;
+    window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById("instalarBanner").style.display = "block";
+    });
+
+    function instalarApp() {
+        document.getElementById("instalarBanner").style.display = "none";
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+    }
 </script>
 
 </body>
