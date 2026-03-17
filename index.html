@@ -4,7 +4,6 @@
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -64,13 +63,11 @@ box-shadow:0 2px 0 rgba(0,0,0,0.5);
 .config{background:#555;}
 
 .remis{background:linear-gradient(#ff2b2b,#b30000);}
-.flete{background:linear-gradient(#ff6600,#993300);}
 .emergencia{background:linear-gradient(#ff0000,#7a0000);}
 .util{background:linear-gradient(#0066cc,#003366);}
 .eventos{background:linear-gradient(#e1306c,#833ab4);}
 .farmacia{background:linear-gradient(#00c853,#007e33);}
 .servicios{background:linear-gradient(#00aaff,#006699);}
-.instalar{background:linear-gradient(#00c853,#007e33);}
 .volver{background:#444;}
 
 input{
@@ -106,6 +103,13 @@ display:flex;
 align-items:center;
 justify-content:center;
 box-shadow:0 6px 0 rgba(0,0,0,0.5);
+user-select:none;
+-webkit-user-select:none;
+}
+
+#botonPanico:active{
+transform:translateY(4px);
+box-shadow:0 2px 0 rgba(0,0,0,0.5);
 }
 
 #textoSOS{
@@ -118,6 +122,11 @@ background:red;
 color:white;
 padding:4px 10px;
 border-radius:6px;
+}
+
+#botonPanico.activo{
+background:lime;
+box-shadow:0 0 0 120px rgba(0,255,0,0.6);
 }
 
 </style>
@@ -155,9 +164,22 @@ onclick="window.open('https://www.instagram.com/eventos.cdelu/','_blank')">
 Eventos
 </button>
 
-<button id="instalarApp" class="instalar hidden">
-Instalar App
-</button>
+</div>
+
+<div class="container hidden" id="menuServicios">
+
+<button class="util" onclick="llamar('3442666445')">Mecánico</button>
+<button class="util" onclick="llamar('3442424688')">Electricista</button>
+<button class="util" onclick="llamar('3442')">Gasista</button>
+<button class="util" onclick="llamar('3442406327')">Costurera</button>
+<button class="util" onclick="llamar('3442406327')">Estética Uñas y Cejas</button>
+<button class="util" onclick="llamar('34246327')">Peluquería</button>
+<button class="util" onclick="llamar('3442677247')">Zapatería</button>
+<button class="util" onclick="llamar('3442426688')">Plomero</button>
+<button class="util" onclick="llamar('3442583937')">Limpieza Casas / Oficinas</button>
+<button class="util" onclick="llamar('3442485255')">Cuidado Señoras / Niños</button>
+
+<button class="volver" onclick="volverPrincipal()">Volver</button>
 
 </div>
 
@@ -186,9 +208,27 @@ Desde Favorito
 
 </div>
 
-<div class="container hidden" id="menuServicios">
+<div class="container hidden" id="menuEmergencias">
 
-<button class="flete" onclick="pedirFlete()">Fletes</button>
+<button class="emergencia" onclick="llamar('101')">Policía 101</button>
+<button class="emergencia" onclick="llamar('100')">Bomberos 100</button>
+<button class="emergencia" onclick="llamar('107')">Ambulancia Hospital 107</button>
+<button class="emergencia" onclick="llamar('3442660877')">Vida Emergencias Médicas</button>
+<button class="emergencia" onclick="llamar('424242')">Círculo Católico Emergencia</button>
+<button class="emergencia" onclick="llamar('425294')">ALERTA Emergencias</button>
+<button class="emergencia" onclick="llamar('08007770080')">ENERSA Cable Suelto</button>
+<button class="emergencia" onclick="llamar('0800777427632')">GAS NEA Fuga Gas</button>
+
+<button class="volver" onclick="volverPrincipal()">Volver</button>
+
+</div>
+
+<div class="container hidden" id="menuUtiles">
+
+<button class="util" onclick="llamar('443901')">Hospital 443901</button>
+<button class="util" onclick="llamar('422352')">Terminal Ómnibus 422352</button>
+<button class="util" onclick="llamar('103')">Guardia Urbana 103</button>
+<button class="util" onclick="llamar('106')">Prefectura 106</button>
 
 <button class="volver" onclick="volverPrincipal()">Volver</button>
 
@@ -215,16 +255,71 @@ Desde Favorito
 <div id="textoSOS">SOS</div>
 <div id="botonPanico"></div>
 
+<audio id="sirena">
+<source src="sirena.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 
 const telefonoEmpresa="5493442641200"
 
-function pedirFlete(){
+let panicoTimer=null
 
-const mensaje="Hola, necesito consultar por un FLETE"
+document.getElementById("botonPanico").addEventListener("touchstart",activarHold)
+document.addEventListener("touchend",cancelarHold)
 
-window.location.href="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje)
+function activarHold(){
 
+panicoTimer=setTimeout(()=>{
+
+document.getElementById("botonPanico").classList.add("activo")
+
+setTimeout(()=>{
+document.getElementById("botonPanico").classList.remove("activo")
+},3000)
+
+document.getElementById("sirena").play()
+
+enviarPanico()
+
+},2000)
+
+}
+
+function cancelarHold(){
+clearTimeout(panicoTimer)
+}
+
+function abrirMenu(menu){
+
+document.getElementById("menuPrincipal").classList.add("hidden")
+document.getElementById("menuRemis").classList.add("hidden")
+document.getElementById("menuEmergencias").classList.add("hidden")
+document.getElementById("menuUtiles").classList.add("hidden")
+document.getElementById("menuServicios").classList.add("hidden")
+document.getElementById("configuracion").classList.add("hidden")
+
+document.getElementById(menu).classList.remove("hidden")
+
+}
+
+function volverPrincipal(){
+
+document.getElementById("menuPrincipal").classList.remove("hidden")
+document.getElementById("menuRemis").classList.add("hidden")
+document.getElementById("menuEmergencias").classList.add("hidden")
+document.getElementById("menuUtiles").classList.add("hidden")
+document.getElementById("menuServicios").classList.add("hidden")
+document.getElementById("configuracion").classList.add("hidden")
+
+}
+
+function llamar(numero){
+window.location.href="tel:"+numero
+}
+
+function abrirFarmacia(){
+window.open("https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/","_blank")
 }
 
 function pedirDesde(tipo){
@@ -243,15 +338,18 @@ abrirMenu("configuracion")
 return
 }
 
-const mensaje="Hola soy "+apellido+". Enviame un móvil a "+direccion
-
-window.location.href="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje)
+enviarWhatsApp(apellido,direccion)
 
 }
 
 function pedirUbicacion(){
 
 const apellido=localStorage.getItem("apellido")
+
+if(!apellido){
+abrirMenu("configuracion")
+return
+}
 
 navigator.geolocation.getCurrentPosition(function(pos){
 
@@ -260,27 +358,78 @@ const lon=pos.coords.longitude
 
 const link="https://maps.google.com/?q="+lat+","+lon
 
-const mensaje="Hola soy "+apellido+". Enviame un móvil a mi ubicación "+link
-
-window.location.href="https://wa.me/"+telefonoEmpresa+"?text="+encodeURIComponent(mensaje)
+enviarWhatsApp(apellido,link)
 
 })
 
 }
 
-function abrirMenu(menu){
+function enviarWhatsApp(apellido,origen){
 
-document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"))
+const mensaje="Hola, soy "+apellido+". Enviame un móvil a --> "+origen
 
-document.getElementById(menu).classList.remove("hidden")
+const url="whatsapp://send?phone="+telefonoEmpresa+"&text="+encodeURIComponent(mensaje)
+
+window.location.href=url
 
 }
 
-function volverPrincipal(){
+function enviarPanico(){
 
-document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"))
+navigator.geolocation.getCurrentPosition(function(pos){
 
-document.getElementById("menuPrincipal").classList.remove("hidden")
+const lat=pos.coords.latitude
+const lon=pos.coords.longitude
+
+const mapa="https://maps.google.com/?q="+lat+","+lon
+
+const mensaje="AUXILIO: mensaje enviado a través del botón de pánico de Acción Remises. Estoy en una situación de emergencia. Mi ubicación: "+mapa
+
+let contactos=[
+localStorage.getItem("contacto1"),
+localStorage.getItem("contacto2"),
+localStorage.getItem("contacto3")
+]
+
+contactos.forEach(c=>{
+
+if(c){
+
+window.open("https://wa.me/"+c+"?text="+encodeURIComponent(mensaje))
+
+}
+
+})
+
+})
+
+}
+
+window.onload=function(){
+
+if(!localStorage.getItem("bienvenida")){
+alert("Bienvenido. Por única vez deberá cargar en CONFIGURACIÓN los domicilios desde donde suele pedir remis y también los teléfonos de contacto para el botón de pánico.")
+localStorage.setItem("bienvenida","ok")
+}
+
+document.getElementById("apellido").value=localStorage.getItem("apellido")||""
+document.getElementById("dirCasa").value=localStorage.getItem("dirCasa")||""
+document.getElementById("dirTrabajo").value=localStorage.getItem("dirTrabajo")||""
+document.getElementById("dirFavorito").value=localStorage.getItem("dirFavorito")||""
+
+document.getElementById("contacto1").value=localStorage.getItem("contacto1")||""
+document.getElementById("contacto2").value=localStorage.getItem("contacto2")||""
+document.getElementById("contacto3").value=localStorage.getItem("contacto3")||""
+
+actualizarTextos()
+
+}
+
+function actualizarTextos(){
+
+document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")||""
+document.getElementById("dirTrabajoTexto").innerText=localStorage.getItem("dirTrabajo")||""
+document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirFavorito")||""
 
 }
 
@@ -291,62 +440,15 @@ localStorage.setItem("dirCasa",document.getElementById("dirCasa").value)
 localStorage.setItem("dirTrabajo",document.getElementById("dirTrabajo").value)
 localStorage.setItem("dirFavorito",document.getElementById("dirFavorito").value)
 
-document.getElementById("dirCasaTexto").innerText=document.getElementById("dirCasa").value
-document.getElementById("dirTrabajoTexto").innerText=document.getElementById("dirTrabajo").value
-document.getElementById("dirFavoritoTexto").innerText=document.getElementById("dirFavorito").value
+localStorage.setItem("contacto1",document.getElementById("contacto1").value)
+localStorage.setItem("contacto2",document.getElementById("contacto2").value)
+localStorage.setItem("contacto3",document.getElementById("contacto3").value)
+
+actualizarTextos()
 
 abrirMenu("menuRemis")
 
 }
-
-function cargarDirecciones(){
-
-if(localStorage.getItem("dirCasa"))
-document.getElementById("dirCasaTexto").innerText=localStorage.getItem("dirCasa")
-
-if(localStorage.getItem("dirTrabajo"))
-document.getElementById("dirTrabajoTexto").innerText=localStorage.getItem("dirTrabajo")
-
-if(localStorage.getItem("dirFavorito"))
-document.getElementById("dirFavoritoTexto").innerText=localStorage.getItem("dirFavorito")
-
-}
-
-let deferredPrompt
-
-window.addEventListener("beforeinstallprompt",(e)=>{
-
-e.preventDefault()
-
-deferredPrompt=e
-
-document.getElementById("instalarApp").classList.remove("hidden")
-
-})
-
-document.getElementById("instalarApp").addEventListener("click",async()=>{
-
-if(deferredPrompt){
-
-deferredPrompt.prompt()
-
-await deferredPrompt.userChoice
-
-deferredPrompt=null
-
-document.getElementById("instalarApp").classList.add("hidden")
-
-}
-
-})
-
-if('serviceWorker' in navigator){
-
-navigator.serviceWorker.register('sw.js')
-
-}
-
-window.onload=cargarDirecciones
 
 </script>
 
