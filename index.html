@@ -391,20 +391,11 @@
 
         // Lógica de Instalación (PWA)
         window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-
-    if (!localStorage.getItem('app_instalada')) {
-        document.getElementById('install-modal').style.display = 'flex';
-    }
-});, (e) => {
             e.preventDefault();
             deferredPrompt = e;
         });
 
         function verificarInstalacion() {
-    // No hacer nada
-} {
             if (!localStorage.getItem('app_instalada')) {
                 document.getElementById('install-modal').style.display = 'flex';
             }
