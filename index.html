@@ -386,14 +386,13 @@
             inicializarDatos();
             scrollMonitor();
             verificarInstalacion();
-           window.addEventListener('beforeinstallprompt', (e) => {
+            window.addEventListener('scroll', scrollMonitor);
+        };
+
+        // Lógica de Instalación (PWA)
+        window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-
-    if (!localStorage.getItem('app_instalada')) {
-        document.getElementById('install-modal').style.display = 'flex';
-    }
-});
 
     if (!localStorage.getItem('app_instalada')) {
         document.getElementById('install-modal').style.display = 'flex';
@@ -405,7 +404,7 @@
 
         function verificarInstalacion() {
     // No hacer nada
-}
+} {
             if (!localStorage.getItem('app_instalada')) {
                 document.getElementById('install-modal').style.display = 'flex';
             }
