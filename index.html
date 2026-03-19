@@ -532,6 +532,56 @@
             new QRCode(box, { text: window.location.href, width: 200, height: 200 });
             document.getElementById('qr-modal').style.display = 'flex';
         }
+// --- INSTALACIÓN EN PANTALLA PRINCIPAL ---
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    mostrarCartelInstalacion();
+});
+
+function mostrarCartelInstalacion() {
+    const cartel = document.createElement("div");
+    cartel.style.position = "fixed";
+    cartel.style.bottom = "20px";
+    cartel.style.left = "20px";
+    cartel.style.right = "20px";
+    cartel.style.background = "#000";
+    cartel.style.color = "#fff";
+    cartel.style.padding = "15px";
+    cartel.style.borderRadius = "12px";
+    cartel.style.textAlign = "center";
+    cartel.style.zIndex = "10001";
+    cartel.style.border = "1px solid #333";
+
+    cartel.innerHTML = `
+        <p style="margin-bottom:10px; font-weight:bold;">
+            ¿Querés instalar Acción Remis en tu pantalla?
+        </p>
+        <button id="instalarApp" style="margin:5px; padding:10px 15px; background:#ff2b2b; color:white; border:none; border-radius:8px;">
+            INSTALAR
+        </button>
+        <button id="cerrarInstalacion" style="margin:5px; padding:10px 15px; background:#444; color:white; border:none; border-radius:8px;">
+            NO
+        </button>
+    `;
+
+    document.body.appendChild(cartel);
+
+    document.getElementById("instalarApp").onclick = async () => {
+        cartel.remove();
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+        }
+    };
+
+    document.getElementById("cerrarInstalacion").onclick = () => {
+        cartel.remove();
+    };
+}
     </script>
 </body>
 </html>
