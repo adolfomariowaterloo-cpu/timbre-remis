@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#000000">
     <title>Acción Remis - Cdelu Oficial</title>
     
+    <!-- Librerías de soporte -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
@@ -20,6 +21,7 @@
             --naranja: #ff5722;
         }
 
+        /* Reset y Base */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
@@ -36,12 +38,14 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* Animaciones */
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
             40% {transform: translateY(-10px) translateX(-50%);}
             60% {transform: translateY(-5px) translateX(-50%);}
         }
 
+        /* Header */
         header { 
             padding: 30px 20px; 
             background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%); 
@@ -65,14 +69,16 @@
             text-transform: uppercase;
         }
 
+        /* Contenedores de Vista */
         .container {
-            padding: 20px 15px 160px; 
+            padding: 20px 15px 120px;
             max-width: 600px;
             margin: 0 auto;
             min-height: calc(100vh - 150px);
         }
         .hidden { display: none !important; }
 
+        /* Botonera Principal */
         .btn {
             width: 100%;
             margin-bottom: 15px;
@@ -105,6 +111,7 @@
 
         .sub-label { font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px; text-transform: none; }
 
+        /* Tarjetas */
         .card { 
             background: #111; 
             padding: 20px; 
@@ -142,6 +149,7 @@
             font-weight: bold;
         }
 
+        /* Inputs */
         input {
             width: 100%; 
             padding: 16px; 
@@ -154,78 +162,56 @@
         }
         label { display: block; font-size: 13px; color: #aaa; margin-left: 10px; margin-bottom: 6px; }
 
+        /* SOS Pantalla */
         #sos-overlay {
             position: fixed; inset: 0; background: rgba(183, 28, 28, 0.98);
             z-index: 9999; display: none; flex-direction: column;
             justify-content: center; align-items: center; padding: 40px; text-align: center;
         }
 
-        #panic-row { 
-            position: fixed; bottom: 20px; left: 0; width: 100%; 
-            display: flex; justify-content: space-around; padding: 0 10px; z-index: 1500;
+        /* Pánico Flotante */
+        #panic-trigger { position: fixed; bottom: 30px; right: 25px; z-index: 1500; }
+        #panic-circle {
+            width: 80px; height: 80px; background: #ff0000; border-radius: 50%;
+            border: 5px solid white; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; position: relative;
         }
-        .panic-btn {
-            flex: 1; margin: 0 5px; height: 85px; border-radius: 15px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; font-weight: 900; font-size: 11px; border: 3px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .panic-btn span { font-size: 24px; margin-bottom: 5px; }
-        
-        #panic-fire { background: #e65100; }
-        #panic-rob { background: #1a237e; }
-        #panic-med { background: #c2185b; }
+        .panic-label { position: absolute; top: -25px; width: 100px; text-align: center; left: -10px; font-size: 11px; font-weight: 900; color: #ff0000; text-transform: uppercase; }
 
+        /* Flecha de Scroll */
         #scroll-arrow {
-            position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%);
-            z-index: 2000; animation: bounce 2s infinite; background: rgba(255,255,255,0.1);
-            border-radius: 50%; padding: 5px; display: none; pointer-events: none;
+            position: fixed; 
+            bottom: 120px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            z-index: 2000; 
+            animation: bounce 2s infinite; 
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            padding: 5px;
+            display: none;
+            pointer-events: none;
         }
 
+        /* Modal QR */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
         #qr-box { background: white; padding: 20px; border-radius: 15px; }
-
-        /* ESTILO DEL CARTEL DE INSTALACIÓN */
-        #install-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            z-index: 11000; display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .install-card {
-            background: #1a1a1a; border: 2px solid var(--rojo-accion); padding: 30px;
-            border-radius: 25px; text-align: center; max-width: 400px; width: 100%;
-        }
-        .install-logo-btn {
-            background: white; width: 80px; height: 80px; border-radius: 20px;
-            margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border: 3px solid var(--rojo-accion);
-        }
-        .install-logo-btn img { width: 100%; height: auto; }
 
     </style>
 </head>
 <body>
 
-    <div id="install-modal">
-        <div class="install-card">
-            <div class="install-logo-btn">
-                <img src="logo.png" alt="Acción" onerror="this.src='https://via.placeholder.com/80/ff2b2b/ffffff?text=A'">
-            </div>
-            <h2 style="margin-bottom:10px">Instalar Aplicación</h2>
-            <p style="color:#aaa; font-size:14px; margin-bottom:25px">Agregá Acción Remis a tu pantalla de inicio para pedir autos más rápido.</p>
-            <button class="btn btn-remis" id="btn-install-now" style="margin-bottom:10px">INSTALAR AHORA</button>
-            <button onclick="cerrarInstalacion()" style="background:none; border:none; color:#666; font-size:12px; text-decoration:underline">MÁS TARDE</button>
-        </div>
-    </div>
-
+    <!-- MODO EMERGENCIA SOS -->
     <div id="sos-overlay">
-        <div style="font-size: 80px; margin-bottom: 20px;">🚨</div>
-        <h2 id="sos-title" style="font-size: 28px; font-weight: 900;">ALERTA ACTIVADA</h2>
+        <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
+        <h2 style="font-size: 28px; font-weight: 900;">¡PÁNICO ACTIVADO!</h2>
         <p style="margin: 20px 0; font-size: 18px;">Se envió tu ubicación al contacto 1.<br>Avisar a los demás:</p>
         <button class="btn" style="background:#ff9800" id="sos-extra-1">AVISAR A CONTACTO 2</button>
         <button class="btn" style="background:#e91e63" id="sos-extra-2">AVISAR A CONTACTO 3</button>
         <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; border:none; background: black;">CANCELAR ALERTA</button>
     </div>
 
+    <!-- Indicador Visual de Scroll -->
     <div id="scroll-arrow">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
     </div>
@@ -235,6 +221,7 @@
         <h1>Acción Remis</h1>
     </header>
 
+    <!-- VISTA: MENÚ PRINCIPAL -->
     <div class="container" id="view-main">
         <button class="btn btn-remis" onclick="navegar('view-remis')">
             🚕 PEDIR UN REMIS
@@ -246,11 +233,13 @@
             <span class="sub-label">Oficios y Reparaciones</span>
         </button>
 
+        <!-- ENLACE DIRECTO A FARMACIAS EL MIERCOLES DIGITAL -->
         <a href="https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/" target="_blank" class="btn btn-farm">
             💊 FARMACIAS DE TURNO
             <span class="sub-label">Consultar en El Miércoles Digital</span>
         </a>
 
+        <!-- ENLACE DIRECTO A INSTAGRAM EVENTOS -->
         <a href="https://www.instagram.com/eventos.cdelu/" target="_blank" class="btn btn-event">
             🎟️ EVENTOS CDELU
             <span class="sub-label">Qué hacer hoy en la ciudad</span>
@@ -271,65 +260,92 @@
         </div>
     </div>
 
+    <!-- VISTA: PEDIR REMIS -->
     <div class="container hidden" id="view-remis">
         <h2 style="margin-bottom:20px; border-left: 5px solid var(--rojo-accion); padding-left: 10px;">Solicitar Móvil</h2>
-        <button class="btn btn-remis" onclick="solicitar('casa')">MI CASA<span class="sub-label" id="lbl-casa">...</span></button>
-        <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('trab')">MI TRABAJO<span class="sub-label" id="lbl-trab">...</span></button>
-        <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('fav')">DESTINO FAVORITO<span class="sub-label" id="lbl-fav">...</span></button>
+        
+        <button class="btn btn-remis" onclick="solicitar('casa')">
+            MI CASA
+            <span class="sub-label" id="lbl-casa">...</span>
+        </button>
+        
+        <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('trab')">
+            MI TRABAJO
+            <span class="sub-label" id="lbl-trab">...</span>
+        </button>
+
+        <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('fav')">
+            DESTINO FAVORITO
+            <span class="sub-label" id="lbl-fav">...</span>
+        </button>
+
         <div class="card" style="background: #1a1a1a; margin-top: 20px;">
             <p style="text-align:center; margin-bottom:15px; font-weight:bold;">¿Estás en otro lugar?</p>
             <button class="btn btn-serv" onclick="enviarUbicacion()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
         </div>
+
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
     </div>
 
+    <!-- VISTA: SERVICIOS Y OFICIOS (Restaurados + Cerrojo) -->
     <div class="container hidden" id="view-servicios">
         <h2>Servicios Domiciliarios</h2>
+        
         <div class="card">
             <h3>Cerrajerías</h3>
             <div class="list-item"><span>CERRAJERÍA EL CERROJO</span><button class="call-action" onclick="call('3442426688')">📞</button></div>
             <div class="list-item"><span>CERRAJERÍA EL LLAVERO</span><button class="call-action" onclick="call('3442422233')">📞</button></div>
         </div>
+
         <div class="card">
             <h3>Electricistas y Gas</h3>
             <div class="list-item"><span>ELECTRICISTA MAT. (GÓMEZ)</span><button class="call-action" onclick="call('3442556677')">📞</button></div>
             <div class="list-item"><span>GASISTA MATRICULADO</span><button class="call-action" onclick="call('3442668899')">📞</button></div>
         </div>
+
         <div class="card">
             <h3>Plomería y Destapes</h3>
             <div class="list-item"><span>PLOMERÍA RÁPIDA</span><button class="call-action" onclick="call('3442991122')">📞</button></div>
             <div class="list-item"><span>DESTAPES CDELU</span><button class="call-action" onclick="call('3442456789')">📞</button></div>
         </div>
+
         <div class="card">
             <h3>Mecánica y Auxilio</h3>
             <div class="list-item"><span>MECÁNICO EL GRINGO</span><button class="call-action" onclick="call('3442666445')">📞</button></div>
             <div class="list-item"><span>GOMERÍA 24HS</span><button class="call-action" onclick="call('3442424688')">📞</button></div>
         </div>
+
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
+    <!-- VISTA: EMERGENCIAS -->
     <div class="container hidden" id="view-emergencias">
         <h2 style="color:red">Central de Emergencias</h2>
+        
         <div class="card" style="border-top-color: red;">
             <h3>Servicios Públicos</h3>
             <button class="btn btn-sos" style="margin-bottom:10px; padding:15px; background:red" onclick="call('101')">🚔 POLICÍA (101)</button>
             <button class="btn btn-sos" style="margin-bottom:10px; padding:15px; background:red" onclick="call('100')">🔥 BOMBEROS (100)</button>
             <button class="btn btn-sos" style="margin-bottom:10px; padding:15px; background:red" onclick="call('107')">🚑 HOSPITAL URQUIZA (107)</button>
         </div>
+
         <div class="card" style="border-top-color: #7B1FA2;">
             <h3>Emergencias Privadas</h3>
             <div class="list-item"><span>VIDA EMERGENCIAS</span><button class="call-action" onclick="call('423120')">📞</button></div>
             <div class="list-item"><span>ALERTA S.A.</span><button class="call-action" onclick="call('425000')">📞</button></div>
             <div class="list-item"><span>CÍRCULO CATÓLICO</span><button class="call-action" onclick="call('427500')">📞</button></div>
         </div>
+
         <div class="card" style="border-top-color: #FF9800;">
             <h3>Riesgos Vía Pública</h3>
             <button class="btn btn-danger" style="margin-bottom:8px;" onclick="call('422110')">⚡ CABLES ELÉCTRICOS</button>
             <button class="btn btn-danger" style="background:#ef6c00" onclick="call('08005553676')">⛽ PÉRDIDA DE GAS</button>
         </div>
+
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
     </div>
 
+    <!-- VISTA: GUÍA ÚTIL -->
     <div class="container hidden" id="view-guia">
         <h2>Guía de la Ciudad</h2>
         <div class="card">
@@ -341,26 +357,38 @@
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
+    <!-- VISTA: CONFIGURACIÓN -->
     <div class="container hidden" id="view-config">
         <h2>Ajustes Personales</h2>
         <div class="card">
             <h3>Mis Datos para Remis</h3>
-            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Perez Juan">
-            <label>Dirección Casa:</label><input type="text" id="cfg-casa" placeholder="Ej: Urquiza 123">
-            <label>Dirección Trabajo:</label><input type="text" id="cfg-trab" placeholder="Ej: San Martin 456">
-            <label>Lugar Favorito:</label><input type="text" id="cfg-fav" placeholder="Ej: Club Regatas">
+            <label>Apellido y Nombre:</label>
+            <input type="text" id="cfg-ape" placeholder="Ej: Perez Juan">
+            <label>Dirección Casa:</label>
+            <input type="text" id="cfg-casa" placeholder="Ej: Urquiza 123">
+            <label>Dirección Trabajo:</label>
+            <input type="text" id="cfg-trab" placeholder="Ej: San Martin 456">
+            <label>Lugar Favorito:</label>
+            <input type="text" id="cfg-fav" placeholder="Ej: Club Regatas">
         </div>
+
         <div class="card" style="border-top-color: #9C27B0;">
             <h3>Contactos SOS</h3>
             <div class="input-group"><label>Principal (Celular):</label><input type="number" id="cfg-s1"></div>
             <div class="input-group"><label>Contacto 2:</label><input type="number" id="cfg-s2"></div>
             <div class="input-group"><label>Contacto 3:</label><input type="number" id="cfg-s3"></div>
         </div>
+
         <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR AJUSTES</button>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
-    <div class="modal" id="qr-modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:20px; font-weight:bold;">Escanea el código</p></div>
+    <!-- VISTA: COMPARTIR -->
+    <div class="modal" id="qr-modal" onclick="this.style.display='none'">
+        <div id="qr-box"></div>
+        <p style="color:white; margin-top:20px; font-weight:bold;">Escanea el código</p>
+    </div>
+
     <div class="container hidden" id="view-share">
         <h2>Compartir Aplicación</h2>
         <div class="card">
@@ -370,72 +398,39 @@
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
-    <div id="panic-row">
-        <div id="panic-fire" class="panic-btn" onmousedown="startPanicTimer('FUEGO / INCENDIO')" ontouchstart="startPanicTimer('FUEGO / INCENDIO')" onmouseup="stopPanicTimer()" ontouchend="stopPanicTimer()"><span>🔥</span>INCENDIO</div>
-        <div id="panic-rob" class="panic-btn" onmousedown="startPanicTimer('ROBO / SEGURIDAD')" ontouchstart="startPanicTimer('ROBO / SEGURIDAD')" onmouseup="stopPanicTimer()" ontouchend="stopPanicTimer()"><span>👮</span>ROBO</div>
-        <div id="panic-med" class="panic-btn" onmousedown="startPanicTimer('SALUD / INFARTO')" ontouchstart="startPanicTimer('SALUD / INFARTO')" onmouseup="stopPanicTimer()" ontouchend="stopPanicTimer()"><span>🚑</span>INFARTO</div>
+    <!-- BOTÓN DE PÁNICO FLOTANTE -->
+    <div id="panic-trigger">
+        <div class="panic-label">MANTENER</div>
+        <div id="panic-circle" 
+             onmousedown="startPanicTimer()" 
+             ontouchstart="startPanicTimer()" 
+             onmouseup="stopPanicTimer()" 
+             ontouchend="stopPanicTimer()">
+            <svg viewBox="0 0 24 24" width="45" fill="white"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16" /></svg>
+        </div>
     </div>
 
     <audio id="sos-alarm" loop><source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
 
     <script>
         const WHATSAPP_CENTRAL = "5493442641200";
-        let panicTimer, currentEmergency = "", deferredPrompt;
+        let panicTimer;
 
         window.onload = () => {
             inicializarDatos();
             scrollMonitor();
-            verificarInstalacion();
             window.addEventListener('scroll', scrollMonitor);
         };
 
-        // Lógica de Instalación (PWA)
-        window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-
-    if (!localStorage.getItem('app_instalada')) {
-        document.getElementById('install-modal').style.display = 'flex';
-    }
-});, (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        function verificarInstalacion() {
-    // No hacer nada
-} {
-            if (!localStorage.getItem('app_instalada')) {
-                document.getElementById('install-modal').style.display = 'flex';
-            }
-        }
-
-        function cerrarInstalacion() {
-            document.getElementById('install-modal').style.display = 'none';
-            localStorage.setItem('app_instalada', 'true');
-        }
-
-        document.getElementById('btn-install-now').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    localStorage.setItem('app_instalada', 'true');
-                    cerrarInstalacion();
-                }
-                deferredPrompt = null;
-            } else {
-                alert("Para instalar: toca los 3 puntos del navegador y selecciona 'Instalar aplicación' o 'Agregar a pantalla de inicio'.");
-                cerrarInstalacion();
-            }
-        });
-
-        // Resto de funciones (Sin cambios)
         function scrollMonitor() {
             const arrow = document.getElementById('scroll-arrow');
             const scrollTotal = document.documentElement.scrollHeight;
             const scrollCurrent = window.innerHeight + window.pageYOffset;
-            arrow.style.display = (scrollTotal > window.innerHeight + 60 && scrollCurrent < scrollTotal - 60) ? 'block' : 'none';
+            if (scrollTotal > window.innerHeight + 60 && scrollCurrent < scrollTotal - 60) {
+                arrow.style.display = 'block';
+            } else {
+                arrow.style.display = 'none';
+            }
         }
 
         function navegar(id) {
@@ -448,50 +443,76 @@
         function call(n) { window.location.href = "tel:" + n; }
 
         function solicitar(lugar) {
-            const ape = localStorage.getItem('acc_ape'), dir = localStorage.getItem('acc_' + lugar);
-            if(!ape || !dir) return navegar('view-config');
+            const ape = localStorage.getItem('acc_ape');
+            const dir = localStorage.getItem('acc_' + lugar);
+            if(!ape || !dir) {
+                alert("Primero debes configurar tu nombre y dirección en Ajustes.");
+                return navegar('view-config');
+            }
             const msg = `Hola Acción! Soy ${ape}. Solicito un móvil en ${lugar.toUpperCase()}: ${dir}.`;
             window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
         }
 
         function enviarUbicacion() {
             navigator.geolocation.getCurrentPosition(p => {
-                const msg = `Hola Acción! Soy ${localStorage.getItem('acc_ape') || "Cliente"}. Necesito un móvil aquí: https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                const ape = localStorage.getItem('acc_ape') || "Cliente";
+                const msg = `Hola Acción! Soy ${ape}. Necesito un móvil aquí: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
                 window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
-            }, () => alert("GPS desactivado."));
+            }, () => alert("GPS desactivado."), {enableHighAccuracy: true});
         }
 
         function guardarAjustes() {
-            ['acc_ape','acc_casa','acc_trab','acc_fav','acc_s1','acc_s2','acc_s3'].forEach(k => {
-                localStorage.setItem(k, document.getElementById('cfg-' + k.split('_')[1]).value);
-            });
+            localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
+            localStorage.setItem('acc_casa', document.getElementById('cfg-casa').value);
+            localStorage.setItem('acc_trab', document.getElementById('cfg-trab').value);
+            localStorage.setItem('acc_fav', document.getElementById('cfg-fav').value);
+            localStorage.setItem('acc_s1', document.getElementById('cfg-s1').value);
+            localStorage.setItem('acc_s2', document.getElementById('cfg-s2').value);
+            localStorage.setItem('acc_s3', document.getElementById('cfg-s3').value);
             alert("Guardado.");
             inicializarDatos();
             navegar('view-main');
         }
 
         function inicializarDatos() {
-            const get = (k) => localStorage.getItem(k) || "";
-            ['ape','casa','trab','fav','s1','s2','s3'].forEach(k => {
-                const el = document.getElementById('cfg-' + k);
-                if(el) el.value = get('acc_' + k);
-            });
-            ['casa','trab','fav'].forEach(k => document.getElementById('lbl-' + k).innerText = get('acc_' + k) || "Sin configurar");
+            const get = (key) => localStorage.getItem(key) || "";
+            document.getElementById('cfg-ape').value = get('acc_ape');
+            document.getElementById('cfg-casa').value = get('acc_casa');
+            document.getElementById('cfg-trab').value = get('acc_trab');
+            document.getElementById('cfg-fav').value = get('acc_fav');
+            document.getElementById('cfg-s1').value = get('acc_s1');
+            document.getElementById('cfg-s2').value = get('acc_s2');
+            document.getElementById('cfg-s3').value = get('acc_s3');
+            document.getElementById('lbl-casa').innerText = get('acc_casa') || "Sin configurar";
+            document.getElementById('lbl-trab').innerText = get('acc_trab') || "Sin configurar";
+            document.getElementById('lbl-fav').innerText = get('acc_fav') || "Sin configurar";
         }
 
-        function startPanicTimer(tipo) { currentEmergency = tipo; panicTimer = setTimeout(activarSOS, 2000); }
-        function stopPanicTimer() { clearTimeout(panicTimer); }
+        function startPanicTimer() {
+            document.getElementById('panic-circle').style.background = "#ffcc00";
+            panicTimer = setTimeout(activarSOS, 2000);
+        }
+
+        function stopPanicTimer() {
+            document.getElementById('panic-circle').style.background = "#ff0000";
+            clearTimeout(panicTimer);
+        }
 
         function activarSOS() {
             const s1 = localStorage.getItem('acc_s1');
-            if(!s1) return alert("Configurá un contacto SOS.");
-            document.getElementById('sos-title').innerText = "¡" + currentEmergency + "!";
+            if(!s1) return alert("Configura un número SOS.");
             document.getElementById('sos-alarm').play();
             document.getElementById('sos-overlay').style.display = 'flex';
             navigator.geolocation.getCurrentPosition(pos => {
-                const m = `🚨 SOS URGENTE: ${currentEmergency}. Ubicación: https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                const m = `🚨 SOS AYUDA! Ubicación: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
                 window.location.href = `https://wa.me/${s1}?text=${encodeURIComponent(m)}`;
-            }, () => window.location.href = `https://wa.me/${s1}?text=🚨 SOS URGENTE: ${currentEmergency}`);
+            }, () => {
+                window.location.href = `https://wa.me/${s1}?text=🚨 SOS AYUDA!`;
+            });
+            const s2 = localStorage.getItem('acc_s2');
+            const s3 = localStorage.getItem('acc_s3');
+            document.getElementById('sos-extra-1').onclick = () => s2 && (window.location.href = `https://wa.me/${s2}?text=🚨 SOS AYUDA!`);
+            document.getElementById('sos-extra-2').onclick = () => s3 && (window.location.href = `https://wa.me/${s3}?text=🚨 SOS AYUDA!`);
         }
 
         function detenerSOS() {
@@ -500,9 +521,14 @@
             document.getElementById('sos-alarm').currentTime = 0;
         }
 
-        function compartirWhatsApp() { window.location.href = `https://wa.me/?text=${encodeURIComponent('App Acción Remis: ' + window.location.href)}`; }
+        function compartirWhatsApp() {
+            const msg = `Te comparto la App de Acción Remis Cdelu: ${window.location.href}`;
+            window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        }
+
         function mostrarCodigoQR() {
-            const box = document.getElementById('qr-box'); box.innerHTML = "";
+            const box = document.getElementById('qr-box');
+            box.innerHTML = "";
             new QRCode(box, { text: window.location.href, width: 200, height: 200 });
             document.getElementById('qr-modal').style.display = 'flex';
         }
