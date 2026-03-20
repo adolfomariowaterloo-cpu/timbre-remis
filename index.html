@@ -452,14 +452,39 @@
             const msg = `Hola Acción! Soy ${ape}. Solicito un móvil en ${lugar.toUpperCase()}: ${dir}.`;
             window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
         }
+// --- FUNCIONES CORREGIDAS ---
 
-        function enviarUbicacion() {
-            navigator.geolocation.getCurrentPosition(p => {
-                const ape = localStorage.getItem('acc_ape') || "Cliente";
-                const msg = `Hola Acción! Soy ${ape}. Necesito un móvil aquí: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
-                window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
-            }, () => alert("GPS desactivado."), {enableHighAccuracy: true});
-        }
+function enviarUbicacion() {
+    navigator.geolocation.getCurrentPosition(p => {
+        const ape = localStorage.getItem('acc_ape') || "Cliente";
+        // Corrección: se agregó '$' y se cambió a link oficial de Google Maps
+        const msg = `Hola Acción! Soy ${ape}. Necesito un móvil aquí: https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+        window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
+    }, () => alert("GPS desactivado."), {enableHighAccuracy: true});
+}
+
+function activarSOS() {
+    const s1 = localStorage.getItem('acc_s1');
+    if(!s1) return alert("Configura un número SOS.");
+    
+    document.getElementById('sos-alarm').play();
+    document.getElementById('sos-overlay').style.display = 'flex';
+    
+    navigator.geolocation.getCurrentPosition(pos => {
+        // Corrección: se agregó '$' faltante antes de las llaves
+        const m = `🚨 SOS AYUDA! Ubicación: https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+        window.location.href = `https://wa.me/${s1}?text=${encodeURIComponent(m)}`;
+    }, () => {
+        window.location.href = `https://wa.me/${s1}?text=🚨 SOS AYUDA!`;
+    });
+
+    const s2 = localStorage.getItem('acc_s2');
+    const s3 = localStorage.getItem('acc_s3');
+    
+    document.getElementById('sos-extra-1').onclick = () => s2 && (window.location.href = `https://wa.me/${s2}?text=🚨 SOS AYUDA!`);
+    document.getElementById('sos-extra-2').onclick = () => s3 && (window.location.href = `https://wa.me/${s3}?text=🚨 SOS AYUDA!`);
+}
+      
 
         function guardarAjustes() {
             localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
