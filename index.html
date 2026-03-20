@@ -444,40 +444,40 @@
             document.getElementById('sos-overlay').style.display = 'none';
         }
 
-        function enviarUbicacion() {
-            navigator.geolocation.getCurrentPosition(posicion => {
-                const apellido = localStorage.getItem('acc_ape') || "Cliente";
-                const lat = posicion.coords.latitude;
-                const lng = posicion.coords.longitude;
-                // CORRECCIÓN: Se agregó el $ para capturar la ubicación real
-                const mensaje = `Hola Acción! Soy ${apellido}. Necesito un móvil aquí: https://www.google.com/maps?q=$${lat},${lng}`;
-                window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(mensaje)}`;
-            }, () => alert("GPS desactivado."), {enableHighAccuracy: true});
-        }
+       function enviarUbicacion() {
+    navigator.geolocation.getCurrentPosition(posicion => {
+        const apellido = localStorage.getItem('acc_ape') || "Cliente";
+        const lat = posicion.coords.latitude;
+        const lng = posicion.coords.longitude;
+        // Corregido: URL estándar de Google Maps
+        const mensaje = `Hola Acción! Soy ${apellido}. Necesito un móvil aquí: https://www.google.com/maps?q=${lat},${lng}`;
+        window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(mensaje)}`;
+    }, () => alert("GPS desactivado o sin permiso."), {enableHighAccuracy: true});
+}
 
-        function activarSOS() {
-            const contacto1 = localStorage.getItem('acc_s1');
-            if(!contacto1) return alert("Configura un número SOS.");
-            
-            document.getElementById('sos-alarm').play();
-            document.getElementById('sos-overlay').style.display = 'flex';
-            
-            navigator.geolocation.getCurrentPosition(posicion => {
-                const lat = posicion.coords.latitude;
-                const lng = posicion.coords.longitude;
-                // CORRECCIÓN: Se agregó el $ para el mapa de SOS
-                const mensajeEmergencia = `🚨 SOS AYUDA! Ubicación: https://www.google.com/maps?q=$${lat},${lng}`;
-                window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeEmergencia)}`;
-            }, () => {
-                window.location.href = `https://wa.me/${contacto1}?text=🚨 SOS AYUDA!`;
-            });
+function activarSOS() {
+    const contacto1 = localStorage.getItem('acc_s1');
+    if(!contacto1) return alert("Por favor, configura un número SOS en Ajustes.");
+    
+    document.getElementById('sos-alarm').play();
+    document.getElementById('sos-overlay').style.display = 'flex';
+    
+    navigator.geolocation.getCurrentPosition(posicion => {
+        const lat = posicion.coords.latitude;
+        const lng = posicion.coords.longitude;
+        // Corregido: Mensaje de emergencia con link funcional
+        const mensajeEmergencia = `🚨 ¡SOS AYUDA! Mi ubicación actual: https://www.google.com/maps?q=${lat},${lng}`;
+        window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeEmergencia)}`;
+    }, () => {
+        window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! (GPS no disponible)")}`;
+    });
 
-            const contacto2 = localStorage.getItem('acc_s2');
-            const contacto3 = localStorage.getItem('acc_s3');
-            document.getElementById('sos-extra-1').onclick = () => contacto2 && (window.location.href = `https://wa.me/${contacto2}?text=🚨 SOS AYUDA!`);
-            document.getElementById('sos-extra-2').onclick = () => contacto3 && (window.location.href = `https://wa.me/${contacto3}?text=🚨 SOS AYUDA!`);
-        }
-
+    // Lógica para contactos extra
+    const contacto2 = localStorage.getItem('acc_s2');
+    const contacto3 = localStorage.getItem('acc_s3');
+    document.getElementById('sos-extra-1').onclick = () => contacto2 && (window.location.href = `https://wa.me/${contacto2}?text=🚨 SOS AYUDA!`);
+    document.getElementById('sos-extra-2').onclick = () => contacto3 && (window.location.href = `https://wa.me/${contacto3}?text=🚨 SOS AYUDA!`);
+}
         // --- AJUSTES Y COMPARTIR ---
         function guardarAjustes() {
             localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
@@ -518,5 +518,19 @@
             document.getElementById('qr-modal').style.display = 'flex';
         }
     </script>
+    <div class="container hidden" id="view-share">
+    <h2>Compartir App</h2>
+    <div class="card" style="text-align:center">
+        <p style="margin-bottom:20px">Ayudanos a crecer compartiendo esta herramienta con tus conocidos.</p>
+        <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 ENVIAR POR WHATSAPP</button>
+        <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ MOSTRAR CÓDIGO QR</button>
+    </div>
+    <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+</div>
+
+<div id="qr-modal" class="modal" onclick="this.style.display='none'">
+    <div id="qr-box"></div>
+    <p style="margin-top:20px; color:white; font-weight:bold">TOCA PARA CERRAR</p>
+</div>
 </body>
 </html>
