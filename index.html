@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-   <link rel="icon" type="image/png" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Acción Remis">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#000000">
     <title>Acción Remis - Cdelu Oficial</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Acción Remis">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
@@ -25,12 +27,7 @@
             --naranja: #ff5722;
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; 
-            padding: 0; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -105,7 +102,6 @@
         .btn-event { background: linear-gradient(135deg, #FF9800 0%, #E65100 100%); }
         .btn-sos { background: linear-gradient(135deg, #9C27B0 0%, #4A148C 100%); }
         .btn-guia { background: #222; border: 1px solid #444; }
-        .btn-danger { background: #b71c1c; color: white; padding: 15px; font-size: 14px; }
         .btn-back { background: #333; margin-top: 25px; font-size: 15px; border: 1px dashed #666; }
 
         .sub-label { font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px; text-transform: none; }
@@ -196,7 +192,6 @@
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
         #qr-box { background: white; padding: 20px; border-radius: 15px; }
-
     </style>
 </head>
 <body>
@@ -205,8 +200,8 @@
         <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
         <h2 style="font-size: 28px; font-weight: 900;">¡PÁNICO ACTIVADO!</h2>
         <p style="margin: 20px 0; font-size: 18px;">Se envió tu ubicación al contacto 1.<br>Avisar a los demás:</p>
-        <button class="btn" style="background:#ff9800" id="sos-extra-1">AVISAR A CONTACTO 2</button>
-        <button class="btn" style="background:#e91e63" id="sos-extra-2">AVISAR A CONTACTO 3</button>
+        <button class="btn" style="background:#ff9800" onclick="enviarSOSExtra(2)">AVISAR A CONTACTO 2</button>
+        <button class="btn" style="background:#e91e63" onclick="enviarSOSExtra(3)">AVISAR A CONTACTO 3</button>
         <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; border:none; background: black;">CANCELAR ALERTA</button>
     </div>
 
@@ -224,31 +219,25 @@
             🚕 PEDIR UN REMIS
             <span class="sub-label">Solicite su móvil en un toque</span>
         </button>
-        
         <button class="btn btn-serv" onclick="navegar('view-servicios')">
             🛠️ SERVICIOS DOMICILIARIOS
             <span class="sub-label">Oficios y Reparaciones</span>
         </button>
-
         <a href="https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/" target="_blank" class="btn btn-farm">
             💊 FARMACIAS DE TURNO
             <span class="sub-label">Consultar en El Miércoles Digital</span>
         </a>
-
         <a href="https://www.instagram.com/eventos.cdelu/" target="_blank" class="btn btn-event">
             🎟️ EVENTOS CDELU
             <span class="sub-label">Qué hacer hoy en la ciudad</span>
         </a>
-
         <button class="btn btn-sos" onclick="navegar('view-emergencias')">
             🚑 EMERGENCIAS Y SALUD
             <span class="sub-label">Policía, Bomberos, Ambulancias</span>
         </button>
-        
         <button class="btn btn-guia" onclick="navegar('view-guia')">
             🏢 GUÍA ÚTIL CIUDAD
         </button>
-
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
             <button class="btn btn-guia" style="background:var(--verde-wa); color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-share')">📲 COMPARTIR</button>
             <button class="btn btn-guia" style="background:#444; color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-config')">⚙️ AJUSTES</button>
@@ -260,12 +249,35 @@
         <button class="btn btn-remis" onclick="solicitar('casa')">MI CASA<span class="sub-label" id="lbl-casa">...</span></button>
         <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('trab')">MI TRABAJO<span class="sub-label" id="lbl-trab">...</span></button>
         <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('fav')">DESTINO FAVORITO<span class="sub-label" id="lbl-fav">...</span></button>
-
         <div class="card" style="background: #1a1a1a; margin-top: 20px;">
             <p style="text-align:center; margin-bottom:15px; font-weight:bold;">¿Estás en otro lugar?</p>
             <button class="btn btn-serv" onclick="enviarUbicacion()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
         </div>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
+    </div>
+
+    <div class="container hidden" id="view-config">
+        <h2>Ajustes Personales</h2>
+        <div class="card">
+            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape">
+            <label>Casa:</label><input type="text" id="cfg-casa">
+            <label>Trabajo:</label><input type="text" id="cfg-trab">
+            <label>Lugar Favorito:</label><input type="text" id="cfg-fav">
+        </div>
+        <div class="card">
+            <h3>Contactos SOS (Sin 0 ni 15)</h3>
+            <label>Principal:</label><input type="number" id="cfg-s1">
+            <label>Contacto 2:</label><input type="number" id="cfg-s2">
+            <label>Contacto 3:</label><input type="number" id="cfg-s3">
+        </div>
+        <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
+        
+        <button class="btn" style="background:#222; border:1px solid #444; color:#aaa; font-size:14px; padding:15px; margin-top:10px;" onclick="enviarSugerencia()">
+            💬 SUGERENCIAS
+            <span style="font-size:10px; font-weight:normal; margin-top:3px;">Contacto directo con administración</span>
+        </button>
+
+        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
     <div class="container hidden" id="view-servicios">
@@ -301,24 +313,6 @@
             <div class="list-item"><span>MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞</button></div>
             <div class="list-item"><span>REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞</button></div>
         </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
-    </div>
-
-    <div class="container hidden" id="view-config">
-        <h2>Ajustes Personales</h2>
-        <div class="card">
-            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape">
-            <label>Casa:</label><input type="text" id="cfg-casa">
-            <label>Trabajo:</label><input type="text" id="cfg-trab">
-            <label>Lugar Favorito:</label><input type="text" id="cfg-fav">
-        </div>
-        <div class="card">
-            <h3>Contactos SOS (Sin 0 ni 15)</h3>
-            <label>Principal:</label><input type="number" id="cfg-s1">
-            <label>Contacto 2:</label><input type="number" id="cfg-s2">
-            <label>Contacto 3:</label><input type="number" id="cfg-s3">
-        </div>
-        <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR</button>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
@@ -377,9 +371,9 @@
 
         function enviarUbicacion() {
             navigator.geolocation.getCurrentPosition(p => {
-                const url = `http://maps.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                 const ape = localStorage.getItem('acc_ape') || "Cliente";
-                window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`;
+                window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación actual: " + url)}`;
             }, () => alert("Activa el GPS"));
         }
 
@@ -399,9 +393,25 @@
             document.getElementById('sos-alarm').play();
             document.getElementById('sos-overlay').style.display = 'flex';
             navigator.geolocation.getCurrentPosition(p => {
-                const url = `http://maps.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                 window.location.href = `https://wa.me/549${c1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
             });
+        }
+
+        function enviarSOSExtra(num) {
+            const contacto = localStorage.getItem('acc_s' + num);
+            if(!contacto) return alert("Contacto no configurado.");
+            navigator.geolocation.getCurrentPosition(p => {
+                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                window.location.href = `https://wa.me/549${contacto}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
+            });
+        }
+
+        // FUNCIÓN NUEVA: QUEJAS Y SUGERENCIAS
+        function enviarSugerencia() {
+            const ape = localStorage.getItem('acc_ape') || "un cliente";
+            const msg = `Hola Acción Remis, soy ${ape}. Quería dejar una sugerencia/queja: `;
+            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
         }
 
         function detenerSOS() {
