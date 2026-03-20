@@ -523,29 +523,50 @@ function activarSOS() {
             clearTimeout(panicTimer);
         }
 
-        function activarSOS() {
-            const s1 = localStorage.getItem('acc_s1');
-            if(!s1) return alert("Configura un número SOS.");
-            document.getElementById('sos-alarm').play();
-            document.getElementById('sos-overlay').style.display = 'flex';
-            navigator.geolocation.getCurrentPosition(pos => {
-                const m = `🚨 SOS AYUDA! Ubicación: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                window.location.href = `https://wa.me/${s1}?text=${encodeURIComponent(m)}`;
-            }, () => {
-                window.location.href = `https://wa.me/${s1}?text=🚨 SOS AYUDA!`;
-            });
-            const s2 = localStorage.getItem('acc_s2');
-            const s3 = localStorage.getItem('acc_s3');
-            document.getElementById('sos-extra-1').onclick = () => s2 && (window.location.href = `https://wa.me/${s2}?text=🚨 SOS AYUDA!`);
-            document.getElementById('sos-extra-2').onclick = () => s3 && (window.location.href = `https://wa.me/${s3}?text=🚨 SOS AYUDA!`);
-        }
+        let relojPanico; // Antes era panicTimer
 
-        function detenerSOS() {
-            document.getElementById('sos-overlay').style.display = 'none';
-            document.getElementById('sos-alarm').pause();
-            document.getElementById('sos-alarm').currentTime = 0;
-        }
+function iniciarRelojPanico(evento) {
+    if (evento) evento.preventDefault(); 
+    document.getElementById('panic-circle').style.background = "#ffcc00";
+    relojPanico = setTimeout(activarSOS, 2000);
+}
 
+function detenerRelojPanico(evento) {
+    if (evento) evento.preventDefault();
+    document.getElementById('panic-circle').style.background = "#ff0000";
+    clearTimeout(relojPanico);
+}
+
+function enviarUbicacion() {
+    navigator.geolocation.getCurrentPosition(posicion => {
+        const apellido = localStorage.getItem('acc_ape') || "Cliente";
+        // Aquí corregí el símbolo $ y el link de Google Maps
+        const mensaje = `Hola Acción! Soy ${apellido}. Necesito un móvil aquí: https://www.google.com/maps?q=${posicion.coords.latitude},${posicion.coords.longitude}`;
+        window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(mensaje)}`;
+    }, () => alert("GPS desactivado."), {enableHighAccuracy: true});
+}
+
+function activarSOS() {
+    const contacto1 = localStorage.getItem('acc_s1');
+    if(!contacto1) return alert("Configura un número SOS.");
+    
+    document.getElementById('sos-alarm').play();
+    document.getElementById('sos-overlay').style.display = 'flex';
+    
+    navigator.geolocation.getCurrentPosition(posicion => {
+        // Corregido el link de emergencia
+        const mensajeEmergencia = `🚨 SOS AYUDA! Ubicación: https://www.google.com/maps?q=${posicion.coords.latitude},${posicion.coords.longitude}`;
+        window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeEmergencia)}`;
+    }, () => {
+        window.location.href = `https://wa.me/${contacto1}?text=🚨 SOS AYUDA!`;
+    });
+
+    const contacto2 = localStorage.getItem('acc_s2');
+    const contacto3 = localStorage.getItem('acc_s3');
+    
+    document.getElementById('sos-extra-1').onclick = () => contacto2 && (window.location.href = `https://wa.me/${contacto2}?text=🚨 SOS AYUDA!`);
+    document.getElementById('sos-extra-2').onclick = () => contacto3 && (window.location.href = `https://wa.me/${contacto3}?text=🚨 SOS AYUDA!`);
+}
         function compartirWhatsApp() {
             const msg = `Te comparto la App de Acción Remis Cdelu: ${window.location.href}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
