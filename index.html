@@ -369,12 +369,30 @@
     <script>
         const WHATSAPP_CENTRAL = "5493442641200";
         let relojPanico;
+        let deferredPrompt; // ESTO ES LO NUEVO
 
         window.onload = () => {
             inicializarDatos();
             scrollMonitor();
             window.addEventListener('scroll', scrollMonitor);
         };
+
+        // --- LÓGICA DE INSTALACIÓN ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setTimeout(() => {
+                if (confirm("¿Desea instalar la App de Acción Remis en su pantalla de inicio?")) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        deferredPrompt = null;
+                    });
+                }
+            }, 3000);
+        });
+
+        function scrollMonitor() {
+        // ... resto del código igual
 
         function scrollMonitor() {
             const arrow = document.getElementById('scroll-arrow');
