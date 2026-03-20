@@ -271,12 +271,6 @@
             <label>Contacto 3:</label><input type="number" id="cfg-s3">
         </div>
         <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
-        
-        <button class="btn" style="background:#222; border:1px solid #444; color:#aaa; font-size:14px; padding:15px; margin-top:10px;" onclick="enviarSugerencia()">
-            💬 SUGERENCIAS
-            <span style="font-size:10px; font-weight:normal; margin-top:3px;">Contacto directo con administración</span>
-        </button>
-
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
@@ -404,14 +398,7 @@
             navigator.geolocation.getCurrentPosition(p => {
                 const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                 window.location.href = `https://wa.me/549${contacto}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
-            });
-        }
-
-        // FUNCIÓN NUEVA: QUEJAS Y SUGERENCIAS
-        function enviarSugerencia() {
-            const ape = localStorage.getItem('acc_ape') || "un cliente";
-            const msg = `Hola Acción Remis, soy ${ape}. Quería dejar una sugerencia/queja: `;
-            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
+            }, () => alert("Activa el GPS para enviar ubicación"));
         }
 
         function detenerSOS() {
@@ -447,7 +434,9 @@
         }
 
         function compartirWhatsApp() {
-            window.location.href = `https://wa.me/?text=${encodeURIComponent("App Acción Remis: " + window.location.href)}`;
+            const appUrl = window.location.href;
+            const msg = `🚖 *Acción Remis Cdelu*\nTu transporte seguro en un toque. Descargá nuestra App oficial aquí:\n${appUrl}`;
+            window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
         }
 
         function mostrarCodigoQR() {
