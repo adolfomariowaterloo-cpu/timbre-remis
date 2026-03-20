@@ -20,7 +20,6 @@
             --naranja: #ff5722;
         }
 
-        /* Reset y Base */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
@@ -37,14 +36,12 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Animaciones */
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
             40% {transform: translateY(-10px) translateX(-50%);}
             60% {transform: translateY(-5px) translateX(-50%);}
         }
 
-        /* Header */
         header { 
             padding: 30px 20px; 
             background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%); 
@@ -68,7 +65,6 @@
             text-transform: uppercase;
         }
 
-        /* Contenedores de Vista */
         .container {
             padding: 20px 15px 120px;
             max-width: 600px;
@@ -77,7 +73,6 @@
         }
         .hidden { display: none !important; }
 
-        /* Botonera Principal */
         .btn {
             width: 100%;
             margin-bottom: 15px;
@@ -110,7 +105,6 @@
 
         .sub-label { font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px; text-transform: none; }
 
-        /* Tarjetas */
         .card { 
             background: #111; 
             padding: 20px; 
@@ -148,7 +142,6 @@
             font-weight: bold;
         }
 
-        /* Inputs */
         input {
             width: 100%; 
             padding: 16px; 
@@ -161,22 +154,20 @@
         }
         label { display: block; font-size: 13px; color: #aaa; margin-left: 10px; margin-bottom: 6px; }
 
-        /* SOS Pantalla */
         #sos-overlay {
             position: fixed; inset: 0; background: rgba(183, 28, 28, 0.98);
             z-index: 9999; display: none; flex-direction: column;
             justify-content: center; align-items: center; padding: 40px; text-align: center;
         }
 
-        /* Pánico Flotante */
         #panic-trigger { 
-    position: fixed; 
-    bottom: 30px; 
-    right: 25px; 
-    z-index: 1500;
-    width: 80px; /* Importante: Definir ancho para que no bloquee el resto */
-    height: 80px;
-}
+            position: fixed; 
+            bottom: 30px; 
+            right: 25px; 
+            z-index: 1500;
+            width: 80px;
+            height: 80px;
+        }
         #panic-circle {
             width: 80px; height: 80px; background: #ff0000; border-radius: 50%;
             border: 5px solid white; display: flex; align-items: center; justify-content: center;
@@ -184,7 +175,6 @@
         }
         .panic-label { position: absolute; top: -25px; width: 100px; text-align: center; left: -10px; font-size: 11px; font-weight: 900; color: #ff0000; text-transform: uppercase; }
 
-        /* Flecha de Scroll */
         #scroll-arrow {
             position: fixed; 
             bottom: 120px; 
@@ -199,7 +189,6 @@
             pointer-events: none;
         }
 
-        /* Modal QR */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
         #qr-box { background: white; padding: 20px; border-radius: 15px; }
 
@@ -263,27 +252,14 @@
 
     <div class="container hidden" id="view-remis">
         <h2 style="margin-bottom:20px; border-left: 5px solid var(--rojo-accion); padding-left: 10px;">Solicitar Móvil</h2>
-        
-        <button class="btn btn-remis" onclick="solicitar('casa')">
-            MI CASA
-            <span class="sub-label" id="lbl-casa">...</span>
-        </button>
-        
-        <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('trab')">
-            MI TRABAJO
-            <span class="sub-label" id="lbl-trab">...</span>
-        </button>
-
-        <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('fav')">
-            DESTINO FAVORITO
-            <span class="sub-label" id="lbl-fav">...</span>
-        </button>
+        <button class="btn btn-remis" onclick="solicitar('casa')">MI CASA<span class="sub-label" id="lbl-casa">...</span></button>
+        <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('trab')">MI TRABAJO<span class="sub-label" id="lbl-trab">...</span></button>
+        <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('fav')">DESTINO FAVORITO<span class="sub-label" id="lbl-fav">...</span></button>
 
         <div class="card" style="background: #1a1a1a; margin-top: 20px;">
             <p style="text-align:center; margin-bottom:15px; font-weight:bold;">¿Estás en otro lugar?</p>
             <button class="btn btn-serv" onclick="enviarUbicacion()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
         </div>
-
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
     </div>
 
@@ -296,9 +272,7 @@
             <div class="list-item"><span>PLOMERO</span><button class="call-action" onclick="call('3442401688')">📞</button></div>
             <div class="list-item"><span>FLETE</span><button class="call-action" onclick="call('543442423030')">📞</button></div>
             <div class="list-item"><span>GASISTA</span><button class="call-action" onclick="call('3442425243')">📞</button></div>
-            <div class="list-item"><span>MODISTA</span><button class="call-action" onclick="call('3442406327')">📞</button></div>
-            <div class="list-item"><span>ESTÉTICA (UÑAS Y CEJAS)</span><button class="call-action" onclick="call('3442406327')">📞</button></div>
-            <div class="list-item"><span>PELUQUERÍA A DOMICILIO</span><button class="call-action" onclick="call('3442406327')">📞</button></div>
+            <div class="list-item"><span>ESTÉTICA / PELUQUERÍA</span><button class="call-action" onclick="call('3442406327')">📞</button></div>
             <div class="list-item"><span>ZAPATERO</span><button class="call-action" onclick="call('3442677247')">📞</button></div>
         </div>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
@@ -306,22 +280,11 @@
 
     <div class="container hidden" id="view-emergencias">
         <h2 style="color:red">Central de Emergencias</h2>
-        <div class="card" style="border-top-color: red;">
+        <div class="card">
             <h3>Servicios Públicos</h3>
-            <button class="btn btn-sos" style="margin-bottom:10px; padding:15px; background:red" onclick="call('101')">🚔 POLICÍA (101)</button>
-            <button class="btn btn-sos" style="margin-bottom:10px; padding:15px; background:red" onclick="call('100')">🔥 BOMBEROS (100)</button>
-            <button class="btn btn-sos" style="margin-bottom:10px; padding:15px; background:red" onclick="call('107')">🚑 HOSPITAL URQUIZA (107)</button>
-        </div>
-        <div class="card" style="border-top-color: #7B1FA2;">
-            <h3>Emergencias Privadas</h3>
-            <div class="list-item"><span>VIDA EMERGENCIAS</span><button class="call-action" onclick="call('423120')">📞</button></div>
-            <div class="list-item"><span>ALERTA S.A.</span><button class="call-action" onclick="call('425000')">📞</button></div>
-            <div class="list-item"><span>CÍRCULO CATÓLICO</span><button class="call-action" onclick="call('427500')">📞</button></div>
-        </div>
-        <div class="card" style="border-top-color: #FF9800;">
-            <h3>Riesgos Vía Pública</h3>
-            <button class="btn btn-danger" style="margin-bottom:8px;" onclick="call('422110')">⚡ CABLES ELÉCTRICOS</button>
-            <button class="btn btn-danger" style="background:#ef6c00" onclick="call('08005553676')">⛽ PÉRDIDA DE GAS</button>
+            <button class="btn btn-sos" style="background:red; margin-bottom:10px" onclick="call('101')">🚔 POLICÍA (101)</button>
+            <button class="btn btn-sos" style="background:red; margin-bottom:10px" onclick="call('100')">🔥 BOMBEROS (100)</button>
+            <button class="btn btn-sos" style="background:red" onclick="call('107')">🚑 HOSPITAL (107)</button>
         </div>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
     </div>
@@ -329,10 +292,9 @@
     <div class="container hidden" id="view-guia">
         <h2>Guía de la Ciudad</h2>
         <div class="card">
-            <div class="list-item"><span>TERMINAL DE ÓMNIBUS</span><button class="call-action" onclick="call('422352')">📞</button></div>
-            <div class="list-item"><span>CENTRO CÍVICO</span><button class="call-action" onclick="call('427626')">📞</button></div>
-            <div class="list-item"><span>REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞</button></div>
+            <div class="list-item"><span>TERMINAL</span><button class="call-action" onclick="call('422352')">📞</button></div>
             <div class="list-item"><span>MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞</button></div>
+            <div class="list-item"><span>REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞</button></div>
         </div>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
@@ -340,43 +302,43 @@
     <div class="container hidden" id="view-config">
         <h2>Ajustes Personales</h2>
         <div class="card">
-            <h3>Mis Datos para Remis</h3>
-            <label>Apellido y Nombre:</label>
-            <input type="text" id="cfg-ape" placeholder="Ej: Perez Juan">
-            <label>Dirección Casa:</label>
-            <input type="text" id="cfg-casa" placeholder="Ej: Urquiza 123">
-            <label>Dirección Trabajo:</label>
-            <input type="text" id="cfg-trab" placeholder="Ej: San Martin 456">
-            <label>Lugar Favorito:</label>
-            <input type="text" id="cfg-fav" placeholder="Ej: Club Regatas">
+            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape">
+            <label>Casa:</label><input type="text" id="cfg-casa">
+            <label>Trabajo:</label><input type="text" id="cfg-trab">
+            <label>Lugar Favorito:</label><input type="text" id="cfg-fav">
         </div>
-        <div class="card" style="border-top-color: #9C27B0;">
-            <h3>Contactos SOS</h3>
-            <div class="input-group"><label>Principal (Celular):</label><input type="number" id="cfg-s1"></div>
-            <div class="input-group"><label>Contacto 2:</label><input type="number" id="cfg-s2"></div>
-            <div class="input-group"><label>Contacto 3:</label><input type="number" id="cfg-s3"></div>
+        <div class="card">
+            <h3>Contactos SOS (Sin 0 ni 15)</h3>
+            <label>Principal:</label><input type="number" id="cfg-s1">
+            <label>Contacto 2:</label><input type="number" id="cfg-s2">
+            <label>Contacto 3:</label><input type="number" id="cfg-s3">
         </div>
-        <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR AJUSTES</button>
+        <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+    </div>
+
+    <div class="container hidden" id="view-share">
+        <h2>Compartir App</h2>
+        <div class="card" style="text-align:center">
+            <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 WHATSAPP</button>
+            <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ CÓDIGO QR</button>
+        </div>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
     <div id="panic-trigger">
         <div class="panic-label">MANTENER</div>
-        <div id="panic-circle" 
-             onmousedown="iniciarRelojPanico(event)" 
-             ontouchstart="iniciarRelojPanico(event)" 
-             onmouseup="detenerRelojPanico(event)" 
-             ontouchend="detenerRelojPanico(event)">
+        <div id="panic-circle" onmousedown="iniciarRelojPanico()" ontouchstart="iniciarRelojPanico()" onmouseup="detenerRelojPanico()" ontouchend="detenerRelojPanico()">
             <svg viewBox="0 0 24 24" width="45" fill="white"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16" /></svg>
         </div>
     </div>
 
     <audio id="sos-alarm" loop><source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
+    <div id="qr-modal" class="modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:10px">CERRAR</p></div>
 
     <script>
         const WHATSAPP_CENTRAL = "5493442641200";
         let relojPanico;
-        let deferredPrompt; // ESTO ES LO NUEVO
 
         window.onload = () => {
             inicializarDatos();
@@ -384,138 +346,64 @@
             window.addEventListener('scroll', scrollMonitor);
         };
 
-        // --- LÓGICA DE INSTALACIÓN ---
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            setTimeout(() => {
-                if (confirm("¿Desea instalar la App de Acción Remis en su pantalla de inicio?")) {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        deferredPrompt = null;
-                    });
-                }
-            }, 3000);
-        });
-
-        function scrollMonitor() {
-        // ... resto del código igual
+        function navegar(id) {
+            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            window.scrollTo(0,0);
+            setTimeout(scrollMonitor, 100);
+        }
 
         function scrollMonitor() {
             const arrow = document.getElementById('scroll-arrow');
-            const scrollTotal = document.documentElement.scrollHeight;
-            const scrollCurrent = window.innerHeight + window.pageYOffset;
-            if (scrollTotal > window.innerHeight + 60 && scrollCurrent < scrollTotal - 60) {
-                arrow.style.display = 'block';
-            } else {
-                arrow.style.display = 'none';
-            }
+            const total = document.documentElement.scrollHeight;
+            const current = window.innerHeight + window.pageYOffset;
+            arrow.style.display = (total > window.innerHeight + 60 && current < total - 60) ? 'block' : 'none';
         }
 
-// --- FUNCIONES DE NAVEGACIÓN CORREGIDAS ---
-function navegar(id) {
-    // Ocultamos todos los contenedores
-    const contenedores = document.querySelectorAll('.container');
-    contenedores.forEach(c => c.classList.add('hidden'));
-    
-    // Mostramos el seleccionado
-    const destino = document.getElementById(id);
-    if(destino) {
-        destino.classList.remove('hidden');
-        window.scrollTo(0,0);
-        // Pequeño delay para que el navegador procese el cambio de vista
-        setTimeout(scrollMonitor, 150);
-    } else {
-        console.error("No se encontró la vista:", id);
-    }
-}
+        function call(num) { window.location.href = "tel:" + num; }
 
-// --- AJUSTE EN EL PÁNICO PARA NO BLOQUEAR ---
-function iniciarRelojPanico(e) { 
-    if(e) {
-        e.stopPropagation(); // Evita que el evento suba a otros elementos
-    }
-    document.getElementById('panic-circle').style.background = "#ffcc00"; 
-    relojPanico = setTimeout(activarSOS, 2000); 
-}
+        function solicitar(tipo) {
+            const dir = localStorage.getItem('acc_' + tipo);
+            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            if(!dir) return alert("Configura esta dirección en Ajustes.");
+            const msg = `Hola Acción! Soy ${ape}. Necesito un móvil en ${dir}`;
+            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
+        }
 
-function detenerRelojPanico(e) { 
-    if(e) e.stopPropagation();
-    document.getElementById('panic-circle').style.background = "#ff0000"; 
-    clearTimeout(relojPanico); 
-}
+        function enviarUbicacion() {
+            navigator.geolocation.getCurrentPosition(p => {
+                const url = `http://maps.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                const ape = localStorage.getItem('acc_ape') || "Cliente";
+                window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`;
+            }, () => alert("Activa el GPS"));
+        }
+
+        function iniciarRelojPanico() {
+            document.getElementById('panic-circle').style.background = "#ffcc00";
+            relojPanico = setTimeout(activarSOS, 2000);
+        }
+
+        function detenerRelojPanico() {
+            document.getElementById('panic-circle').style.background = "#ff0000";
+            clearTimeout(relojPanico);
+        }
+
+        function activarSOS() {
+            const c1 = localStorage.getItem('acc_s1');
+            if(!c1) return alert("Configura SOS en Ajustes.");
+            document.getElementById('sos-alarm').play();
+            document.getElementById('sos-overlay').style.display = 'flex';
+            navigator.geolocation.getCurrentPosition(p => {
+                const url = `http://maps.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                window.location.href = `https://wa.me/549${c1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
+            });
+        }
 
         function detenerSOS() {
             document.getElementById('sos-alarm').pause();
-            document.getElementById('sos-alarm').currentTime = 0;
             document.getElementById('sos-overlay').style.display = 'none';
         }
 
-<script>
-    // ... (Mantén tus variables iniciales igual)
-
-    // CORRECCIÓN: Función de envío de ubicación para pedir Remis
-    function enviarUbicacion() {
-        if (!navigator.geolocation) {
-            alert("Tu navegador no soporta geolocalización.");
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(posicion => {
-            const apellido = localStorage.getItem('acc_ape') || "Cliente";
-            const lat = posicion.coords.latitude;
-            const lng = posicion.coords.longitude;
-            
-            // URL Estándar de Google Maps
-            const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-            const mensaje = `Hola Acción! Soy ${apellido}. Necesito un móvil aquí: ${mapUrl}`;
-            
-            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(mensaje)}`;
-        }, (error) => {
-            alert("Error al obtener ubicación. Asegúrate de tener el GPS activo.");
-        }, { enableHighAccuracy: true });
-    }
-
-    // CORRECCIÓN: Función de Pánico / SOS
-    function activarSOS() {
-        const contacto1 = localStorage.getItem('acc_s1');
-        if(!contacto1) {
-            alert("Por favor, configura un número SOS en Ajustes.");
-            detenerRelojPanico();
-            return;
-        }
-        
-        document.getElementById('sos-alarm').play();
-        document.getElementById('sos-overlay').style.display = 'flex';
-        
-        navigator.geolocation.getCurrentPosition(posicion => {
-            const lat = posicion.coords.latitude;
-            const lng = posicion.coords.longitude;
-            const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-            
-            const mensajeEmergencia = `🚨 ¡SOS AYUDA! Necesito asistencia urgente. Mi ubicación: ${mapUrl}`;
-            window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeEmergencia)}`;
-        }, () => {
-            // Fallback si el GPS falla o está desactivado
-            const mensajeSimple = "🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE (Ubicación no disponible)";
-            window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeSimple)}`;
-        });
-
-        // Configuración de botones extra en el overlay de pánico
-        const contacto2 = localStorage.getItem('acc_s2');
-        const contacto3 = localStorage.getItem('acc_s3');
-        
-        document.getElementById('sos-extra-1').onclick = () => {
-            if(contacto2) window.location.href = `https://wa.me/${contacto2}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE")}`;
-            else alert("Contacto 2 no configurado.");
-        };
-        document.getElementById('sos-extra-2').onclick = () => {
-            if(contacto3) window.location.href = `https://wa.me/${contacto3}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE")}`;
-            else alert("Contacto 3 no configurado.");
-        };
-    }
-</script>
-        // --- AJUSTES Y COMPARTIR ---
         function guardarAjustes() {
             localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
             localStorage.setItem('acc_casa', document.getElementById('cfg-casa').value);
@@ -524,13 +412,13 @@ function detenerRelojPanico(e) {
             localStorage.setItem('acc_s1', document.getElementById('cfg-s1').value);
             localStorage.setItem('acc_s2', document.getElementById('cfg-s2').value);
             localStorage.setItem('acc_s3', document.getElementById('cfg-s3').value);
-            alert("Guardado.");
+            alert("Guardado");
             inicializarDatos();
             navegar('view-main');
         }
 
         function inicializarDatos() {
-            const get = (key) => localStorage.getItem(key) || "";
+            const get = (k) => localStorage.getItem(k) || "";
             document.getElementById('cfg-ape').value = get('acc_ape');
             document.getElementById('cfg-casa').value = get('acc_casa');
             document.getElementById('cfg-trab').value = get('acc_trab');
@@ -538,14 +426,13 @@ function detenerRelojPanico(e) {
             document.getElementById('cfg-s1').value = get('acc_s1');
             document.getElementById('cfg-s2').value = get('acc_s2');
             document.getElementById('cfg-s3').value = get('acc_s3');
-            document.getElementById('lbl-casa').innerText = get('acc_casa') || "Sin configurar";
-            document.getElementById('lbl-trab').innerText = get('acc_trab') || "Sin configurar";
-            document.getElementById('lbl-fav').innerText = get('acc_fav') || "Sin configurar";
+            document.getElementById('lbl-casa').innerText = get('acc_casa') || "No configurado";
+            document.getElementById('lbl-trab').innerText = get('acc_trab') || "No configurado";
+            document.getElementById('lbl-fav').innerText = get('acc_fav') || "No configurado";
         }
 
         function compartirWhatsApp() {
-            const msg = `Te comparto la App de Acción Remis Cdelu: ${window.location.href}`;
-            window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.location.href = `https://wa.me/?text=${encodeURIComponent("App Acción Remis: " + window.location.href)}`;
         }
 
         function mostrarCodigoQR() {
@@ -555,19 +442,5 @@ function detenerRelojPanico(e) {
             document.getElementById('qr-modal').style.display = 'flex';
         }
     </script>
-    <div class="container hidden" id="view-share">
-    <h2>Compartir App</h2>
-    <div class="card" style="text-align:center">
-        <p style="margin-bottom:20px">Ayudanos a crecer compartiendo esta herramienta con tus conocidos.</p>
-        <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 ENVIAR POR WHATSAPP</button>
-        <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ MOSTRAR CÓDIGO QR</button>
-    </div>
-    <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
-</div>
-
-<div id="qr-modal" class="modal" onclick="this.style.display='none'">
-    <div id="qr-box"></div>
-    <p style="margin-top:20px; color:white; font-weight:bold">TOCA PARA CERRAR</p>
-</div>
 </body>
 </html>
