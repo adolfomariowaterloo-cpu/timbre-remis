@@ -444,12 +444,12 @@
             document.getElementById('sos-overlay').style.display = 'none';
         }
 
-      function enviarUbicacion() {
+  function enviarUbicacion() {
     navigator.geolocation.getCurrentPosition(posicion => {
         const apellido = localStorage.getItem('acc_ape') || "Cliente";
         const lat = posicion.coords.latitude;
         const lng = posicion.coords.longitude;
-        // URL corregida a Google Maps estándar
+        // URL corregida para que abra el mapa directamente en el celular del receptor
         const mensaje = `Hola Acción! Soy ${apellido}. Necesito un móvil aquí: https://www.google.com/maps?q=${lat},${lng}`;
         window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(mensaje)}`;
     }, () => alert("GPS desactivado o sin permiso."), {enableHighAccuracy: true});
@@ -465,18 +465,23 @@ function activarSOS() {
     navigator.geolocation.getCurrentPosition(posicion => {
         const lat = posicion.coords.latitude;
         const lng = posicion.coords.longitude;
-        // Mensaje SOS con link real
+        // Mensaje de emergencia con link funcional corregido
         const mensajeEmergencia = `🚨 ¡SOS AYUDA! Mi ubicación actual: https://www.google.com/maps?q=${lat},${lng}`;
         window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeEmergencia)}`;
     }, () => {
-        // Si el GPS falla, igual intenta mandar el aviso
-        window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! (GPS no disponible)")}`;
+        // Fallback si el GPS falla
+        window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! (Ubicación no disponible, por favor llamame)")}`;
     });
 
     const contacto2 = localStorage.getItem('acc_s2');
     const contacto3 = localStorage.getItem('acc_s3');
-    document.getElementById('sos-extra-1').onclick = () => contacto2 && (window.location.href = `https://wa.me/${contacto2}?text=🚨 SOS AYUDA!`);
-    document.getElementById('sos-extra-2').onclick = () => contacto3 && (window.location.href = `https://wa.me/${contacto3}?text=🚨 SOS AYUDA!`);
+    
+    document.getElementById('sos-extra-1').onclick = () => {
+        if(contacto2) window.location.href = `https://wa.me/${contacto2}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE")}`;
+    };
+    document.getElementById('sos-extra-2').onclick = () => {
+        if(contacto3) window.location.href = `https://wa.me/${contacto3}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE")}`;
+    };
 }
         // --- AJUSTES Y COMPARTIR ---
         function guardarAjustes() {
