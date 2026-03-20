@@ -169,7 +169,14 @@
         }
 
         /* Pánico Flotante */
-        #panic-trigger { position: fixed; bottom: 30px; right: 25px; z-index: 1500; }
+        #panic-trigger { 
+    position: fixed; 
+    bottom: 30px; 
+    right: 25px; 
+    z-index: 1500;
+    width: 80px; /* Importante: Definir ancho para que no bloquee el resto */
+    height: 80px;
+}
         #panic-circle {
             width: 80px; height: 80px; background: #ff0000; border-radius: 50%;
             border: 5px solid white; display: flex; align-items: center; justify-content: center;
@@ -405,38 +412,38 @@
             }
         }
 
-        function navegar(id) {
-            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            window.scrollTo(0,0);
-            setTimeout(scrollMonitor, 100);
-        }
+// --- FUNCIONES DE NAVEGACIÓN CORREGIDAS ---
+function navegar(id) {
+    // Ocultamos todos los contenedores
+    const contenedores = document.querySelectorAll('.container');
+    contenedores.forEach(c => c.classList.add('hidden'));
+    
+    // Mostramos el seleccionado
+    const destino = document.getElementById(id);
+    if(destino) {
+        destino.classList.remove('hidden');
+        window.scrollTo(0,0);
+        // Pequeño delay para que el navegador procese el cambio de vista
+        setTimeout(scrollMonitor, 150);
+    } else {
+        console.error("No se encontró la vista:", id);
+    }
+}
 
-        function call(n) { window.location.href = "tel:" + n; }
+// --- AJUSTE EN EL PÁNICO PARA NO BLOQUEAR ---
+function iniciarRelojPanico(e) { 
+    if(e) {
+        e.stopPropagation(); // Evita que el evento suba a otros elementos
+    }
+    document.getElementById('panic-circle').style.background = "#ffcc00"; 
+    relojPanico = setTimeout(activarSOS, 2000); 
+}
 
-        function solicitar(lugar) {
-            const ape = localStorage.getItem('acc_ape');
-            const dir = localStorage.getItem('acc_' + lugar);
-            if(!ape || !dir) {
-                alert("Primero debes configurar tu nombre y dirección en Ajustes.");
-                return navegar('view-config');
-            }
-            const msg = `Hola Acción! Soy ${ape}. Solicito un móvil en ${lugar.toUpperCase()}: ${dir}.`;
-            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
-        }
-
-        // --- FUNCIONES DE PÁNICO ---
-        function iniciarRelojPanico(evento) {
-            if (evento) evento.preventDefault(); 
-            document.getElementById('panic-circle').style.background = "#ffcc00";
-            relojPanico = setTimeout(activarSOS, 2000);
-        }
-
-        function detenerRelojPanico(evento) {
-            if (evento) evento.preventDefault();
-            document.getElementById('panic-circle').style.background = "#ff0000";
-            clearTimeout(relojPanico);
-        }
+function detenerRelojPanico(e) { 
+    if(e) e.stopPropagation();
+    document.getElementById('panic-circle').style.background = "#ff0000"; 
+    clearTimeout(relojPanico); 
+}
 
         function detenerSOS() {
             document.getElementById('sos-alarm').pause();
