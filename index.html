@@ -444,45 +444,70 @@
             document.getElementById('sos-overlay').style.display = 'none';
         }
 
-  function enviarUbicacion() {
-    navigator.geolocation.getCurrentPosition(posicion => {
-        const apellido = localStorage.getItem('acc_ape') || "Cliente";
-        const lat = posicion.coords.latitude;
-        const lng = posicion.coords.longitude;
-        // URL corregida para que abra el mapa directamente en el celular del receptor
-        const mensaje = `Hola Acción! Soy ${apellido}. Necesito un móvil aquí: https://www.google.com/maps?q=${lat},${lng}`;
-        window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(mensaje)}`;
-    }, () => alert("GPS desactivado o sin permiso."), {enableHighAccuracy: true});
-}
+<script>
+    // ... (Mantén tus variables iniciales igual)
 
-function activarSOS() {
-    const contacto1 = localStorage.getItem('acc_s1');
-    if(!contacto1) return alert("Por favor, configura un número SOS en Ajustes.");
-    
-    document.getElementById('sos-alarm').play();
-    document.getElementById('sos-overlay').style.display = 'flex';
-    
-    navigator.geolocation.getCurrentPosition(posicion => {
-        const lat = posicion.coords.latitude;
-        const lng = posicion.coords.longitude;
-        // Mensaje de emergencia con link funcional corregido
-        const mensajeEmergencia = `🚨 ¡SOS AYUDA! Mi ubicación actual: https://www.google.com/maps?q=${lat},${lng}`;
-        window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeEmergencia)}`;
-    }, () => {
-        // Fallback si el GPS falla
-        window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! (Ubicación no disponible, por favor llamame)")}`;
-    });
+    // CORRECCIÓN: Función de envío de ubicación para pedir Remis
+    function enviarUbicacion() {
+        if (!navigator.geolocation) {
+            alert("Tu navegador no soporta geolocalización.");
+            return;
+        }
 
-    const contacto2 = localStorage.getItem('acc_s2');
-    const contacto3 = localStorage.getItem('acc_s3');
-    
-    document.getElementById('sos-extra-1').onclick = () => {
-        if(contacto2) window.location.href = `https://wa.me/${contacto2}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE")}`;
-    };
-    document.getElementById('sos-extra-2').onclick = () => {
-        if(contacto3) window.location.href = `https://wa.me/${contacto3}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE")}`;
-    };
-}
+        navigator.geolocation.getCurrentPosition(posicion => {
+            const apellido = localStorage.getItem('acc_ape') || "Cliente";
+            const lat = posicion.coords.latitude;
+            const lng = posicion.coords.longitude;
+            
+            // URL Estándar de Google Maps
+            const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+            const mensaje = `Hola Acción! Soy ${apellido}. Necesito un móvil aquí: ${mapUrl}`;
+            
+            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(mensaje)}`;
+        }, (error) => {
+            alert("Error al obtener ubicación. Asegúrate de tener el GPS activo.");
+        }, { enableHighAccuracy: true });
+    }
+
+    // CORRECCIÓN: Función de Pánico / SOS
+    function activarSOS() {
+        const contacto1 = localStorage.getItem('acc_s1');
+        if(!contacto1) {
+            alert("Por favor, configura un número SOS en Ajustes.");
+            detenerRelojPanico();
+            return;
+        }
+        
+        document.getElementById('sos-alarm').play();
+        document.getElementById('sos-overlay').style.display = 'flex';
+        
+        navigator.geolocation.getCurrentPosition(posicion => {
+            const lat = posicion.coords.latitude;
+            const lng = posicion.coords.longitude;
+            const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+            
+            const mensajeEmergencia = `🚨 ¡SOS AYUDA! Necesito asistencia urgente. Mi ubicación: ${mapUrl}`;
+            window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeEmergencia)}`;
+        }, () => {
+            // Fallback si el GPS falla o está desactivado
+            const mensajeSimple = "🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE (Ubicación no disponible)";
+            window.location.href = `https://wa.me/${contacto1}?text=${encodeURIComponent(mensajeSimple)}`;
+        });
+
+        // Configuración de botones extra en el overlay de pánico
+        const contacto2 = localStorage.getItem('acc_s2');
+        const contacto3 = localStorage.getItem('acc_s3');
+        
+        document.getElementById('sos-extra-1').onclick = () => {
+            if(contacto2) window.location.href = `https://wa.me/${contacto2}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE")}`;
+            else alert("Contacto 2 no configurado.");
+        };
+        document.getElementById('sos-extra-2').onclick = () => {
+            if(contacto3) window.location.href = `https://wa.me/${contacto3}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! NECESITO ASISTENCIA URGENTE")}`;
+            else alert("Contacto 3 no configurado.");
+        };
+    }
+</script>
         // --- AJUSTES Y COMPARTIR ---
         function guardarAjustes() {
             localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
