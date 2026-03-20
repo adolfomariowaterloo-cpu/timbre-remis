@@ -215,6 +215,10 @@
     </header>
 
     <div class="container" id="view-main">
+        <button id="btn-instalar" class="btn btn-guia" style="display:none;" onclick="instalarApp()">
+    📲 INSTALAR APP
+    <span class="sub-label">Agregar a pantalla principal</span>
+</button>
         <button class="btn btn-remis" onclick="navegar('view-remis')">
             🚕 PEDIR UN REMIS
             <span class="sub-label">Solicite su móvil en un toque</span>
@@ -330,14 +334,37 @@
     <div id="qr-modal" class="modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:10px">CERRAR</p></div>
 
     <script>
+        let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Mostrar botón
+    document.getElementById('btn-instalar').style.display = 'block';
+});
+
+function instalarApp() {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+
+    deferredPrompt.userChoice.then((choiceResult) => {
+        deferredPrompt = null;
+    });
+}
         const WHATSAPP_CENTRAL = "5493442641200";
         let relojPanico;
 
-        window.onload = () => {
-            inicializarDatos();
-            scrollMonitor();
-            window.addEventListener('scroll', scrollMonitor);
-        };
+      window.onload = () => {
+    inicializarDatos();
+    scrollMonitor();
+    window.addEventListener('scroll', scrollMonitor);
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+};
 
         function navegar(id) {
             document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
