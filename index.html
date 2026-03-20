@@ -470,7 +470,10 @@ function instalarApp() {
             const box = document.getElementById('qr-box');
             box.innerHTML = "";
             new QRCode(box, { text: window.location.href, width: 200, height: 200 });
-            document.getElementById('qr-modal').style.display = 'flex';
+           setTimeout(() => {
+    const btn = document.getElementById('btn-instalar');
+    if (btn) btn.style.display = 'block';
+}, 500);
         }
     </script>
 </body>
