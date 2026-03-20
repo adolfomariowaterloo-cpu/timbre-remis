@@ -402,12 +402,12 @@
     <div id="panic-trigger">
         <div class="panic-label">MANTENER</div>
         <div id="panic-circle" 
-             onmousedown="startPanicTimer()" 
-             ontouchstart="startPanicTimer()" 
-             onmouseup="stopPanicTimer()" 
-             ontouchend="stopPanicTimer()">
-            <svg viewBox="0 0 24 24" width="45" fill="white"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16" /></svg>
-        </div>
+     onmousedown="startPanicTimer(event)" 
+     ontouchstart="startPanicTimer(event)" 
+     onmouseup="stopPanicTimer(event)" 
+     ontouchend="stopPanicTimer(event)">
+    <svg viewBox="0 0 24 24" width="45" fill="white"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16" /></svg>
+</div>
     </div>
 
     <audio id="sos-alarm" loop><source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
