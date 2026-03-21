@@ -374,14 +374,7 @@ setTimeout(() => {
         btn.innerText = "📲 INSTALAR APP (recomendado)";
     }
 }, 4000);
-        function instalarApp() {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                deferredPrompt = null;
-            });
-        }
-
+    });    
         const WHATSAPP_CENTRAL = "5493442641200";
         let relojPanico;
 
@@ -486,6 +479,7 @@ Por favor comunicarse o asistir inmediatamente.`;
 
     return mensaje;
 }
+      
         function enviarSOSATodos() {
     [1,2,3].forEach(n => {
         if (localStorage.getItem('acc_s' + n)) {
@@ -549,6 +543,15 @@ function enviarDirecto() {
             new QRCode(box, { text: window.location.href, width: 200, height: 200 });
             document.getElementById('qr-modal').style.display = 'flex';
         }
+        function instalarApp() {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+
+    deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+    });
+}
     </script>
 </body>
 </html>
