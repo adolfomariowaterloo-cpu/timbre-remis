@@ -205,8 +205,14 @@
         <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
         <h2 style="font-size: 28px; font-weight: 900;">¡PÁNICO ACTIVADO!</h2>
         <p style="margin: 20px 0; font-size: 18px;">Se envió tu ubicación al contacto 1.<br>Avisar a los demás:</p>
-        <button class="btn" style="background:#ff9800" onclick="enviarSOSExtra(2)">AVISAR A CONTACTO 2</button>
-        <button class="btn" style="background:#e91e63" onclick="enviarSOSExtra(3)">AVISAR A CONTACTO 3</button>
+        <button class="btn" style="background:#ff9800" onclick="enviarSOS(2)">
+    AVISAR A CONTACTO 2
+</button>
+
+<button class="btn" style="background:#e91e63" onclick="enviarSOS(3)">
+    AVISAR A CONTACTO 3
+</button>
+        <button onclick="enviarSOSATodos()">AVISAR A TODOS</button>
         <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; border:none; background: black;">CANCELAR ALERTA</button>
     </div>
 
@@ -445,34 +451,39 @@
 
     document.getElementById('sos-overlay').style.display = 'flex';
 
-    // 🚀 mensaje inmediato
+    // SOLO llama a la función universal
+    enviarSOS(1);
+}
+
+function enviarSOS(num) {
+    const contacto = localStorage.getItem('acc_s' + num);
+    if (!contacto) return alert("Contacto no configurado.");
+
     const mensaje = armarMensajeSOS();
 
-   window.open(`https://wa.me/549${c1}?text=${encodeURIComponent(mensaje)}`, "_blank");
+    // mensaje inmediato
+    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
 
-    // 📍 después ubicación
+    // ubicación después
     navigator.geolocation.getCurrentPosition(
         p => {
             const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
             const mensajeUbicacion = armarMensajeSOS(url);
 
             setTimeout(() => {
-                window.open(`https://wa.me/549${c1}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
+                window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
             }, 3000);
         },
         () => {}
     );
 }
-
- function enviarSOSExtra(num) {
-    const contacto = localStorage.getItem('acc_s' + num);
-    if (!contacto) return alert("Contacto no configurado.");
-
-    const mensaje = armarMensajeSOS();
-
-    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
+function enviarSOSATodos() {
+    [1,2,3].forEach(n => {
+        if (localStorage.getItem('acc_s' + n)) {
+            enviarSOS(n);
+        }
+    });
 }
-
       function detenerSOS() {
     document.getElementById('sos-overlay').style.display = 'none';
 }
