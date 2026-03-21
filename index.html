@@ -450,14 +450,28 @@
             }, () => alert("GPS desactivado"));
         }
 
-        function enviarSOSExtra(num) {
-            const contacto = localStorage.getItem('acc_s' + num);
-            if(!contacto) return alert("Contacto no configurado.");
-            navigator.geolocation.getCurrentPosition(p => {
-                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                window.location.href = `https://wa.me/549${contacto}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
-            }, () => alert("Activa el GPS para enviar ubicación"));
-        }
+       function enviarSOSExtra(num) {
+    const contacto = localStorage.getItem('acc_s' + num);
+    if (!contacto) return alert("Contacto no configurado.");
+
+    // Mensaje inicial sin ubicación (sale instantáneo)
+    const mensajeBase = "🚨 ¡SOS AYUDA! Intentando enviar ubicación...";
+
+    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensajeBase)}`, "_blank");
+
+    // Después intenta obtener ubicación
+    navigator.geolocation.getCurrentPosition(
+        p => {
+            const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+            const mensajeUbicacion = "📍 Mi ubicación: " + url;
+
+            setTimeout(() => {
+                window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
+            }, 2000);
+        },
+        () => alert("No se pudo obtener ubicación. Activá el GPS.")
+    );
+}
 
         function detenerSOS() {
             document.getElementById('sos-alarm').pause();
