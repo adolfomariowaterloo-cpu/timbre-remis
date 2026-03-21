@@ -370,7 +370,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 
-    document.getElementById('btn-instalar').style.display = 'block';
+    document.getElementById('btn-instalar').classList.remove('hidden');
 
     setTimeout(() => {
         const btn = document.getElementById('btn-instalar');
@@ -393,7 +393,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   .catch(err => console.log("Error SW:", err));
             }
        if (esModoApp()) {
-    document.getElementById('btn-instalar').style.display = 'none';
+    document.getElementById('btn-instalar').classList.add('hidden');
 }
         };
 
