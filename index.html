@@ -350,9 +350,11 @@
     // 👇 NUEVO: cartel automático SOLO la primera vez
     if (!localStorage.getItem('instalacion_mostrada')) {
         setTimeout(() => {
-            if (confirm("¿Querés instalar Acción Remis en tu celular?")) {
-                instalarApp();
-            }
+            if (window.confirm("¿Querés instalar Acción Remis en tu celular?")) {
+    setTimeout(() => {
+        instalarApp();
+    }, 500);
+}
             localStorage.setItem('instalacion_mostrada', 'si');
         }, 2000); // espera 2 segundos para no ser invasivo
     }
