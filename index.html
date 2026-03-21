@@ -326,6 +326,12 @@
     <div class="container hidden" id="view-share">
         <h2>Compartir App</h2>
         <div class="card" style="text-align:center">
+            <label>Enviar a número (sin 0 ni 15):</label>
+<input type="number" id="numero-directo" placeholder="Ej: 3442123456">
+
+<button class="btn" style="background:#25D366" onclick="enviarDirecto()">
+    📲 ENVIAR SIN AGENDAR
+</button>
             <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 WHATSAPP</button>
             <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ CÓDIGO QR</button>
         </div>
@@ -490,7 +496,20 @@
             const msg = `🚖 *Acción Remis Cdelu*\n\nTu transporte seguro en un toque. Descargá nuestra App oficial aquí:\n\n${appUrl}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
         }
+function enviarDirecto() {
+    const numero = document.getElementById('numero-directo').value;
 
+    if (!numero) {
+        alert("Ingresá un número");
+        return;
+    }
+
+    const appUrl = window.location.href;
+
+    const mensaje = `🚖 *Acción Remis Cdelu*\n\nPedí tu remis fácil desde acá:\n${appUrl}`;
+
+    window.location.href = `https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`;
+}
         function mostrarCodigoQR() {
             const box = document.getElementById('qr-box');
             box.innerHTML = "";
