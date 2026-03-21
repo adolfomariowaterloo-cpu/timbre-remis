@@ -226,7 +226,7 @@
     </header>
 
     <div class="container" id="view-main">
-        <button id="btn-instalar" class="btn btn-guia" style="display:none;" onclick="instalarApp()">
+        <button id="btn-instalar" class="btn btn-guia" onclick="instalarApp()">
             📲 INSTALAR APP
             <span class="sub-label">Agregar a pantalla principal</span>
         </button>
@@ -543,17 +543,21 @@ function enviarDirecto() {
             new QRCode(box, { text: window.location.href, width: 200, height: 200 });
             document.getElementById('qr-modal').style.display = 'flex';
         }
-        function instalarApp() {
-    if (!deferredPrompt) {
-    alert("Para instalar, usá el menú del navegador (Agregar a pantalla principal)");
-    return;
-}
+    function instalarApp() {
 
-    deferredPrompt.prompt();
+    // ANDROID (cuando existe el prompt automático)
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
 
-    deferredPrompt.userChoice.then(() => {
-        deferredPrompt = null;
-    });
+        deferredPrompt.userChoice.then(() => {
+            deferredPrompt = null;
+        });
+
+        return;
+    }
+
+    // iPhone o navegadores sin soporte
+    alert("Para instalar la app:\n\n1. Tocá el botón compartir 📤\n2. Elegí 'Agregar a pantalla de inicio'");
 }
     </script>
 </body>
