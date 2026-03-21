@@ -359,22 +359,27 @@
     <script>
         let deferredPrompt;
 
+function esModoApp() {
+    return window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
+    if (esModoApp()) return; // 🚫 NO mostrar si ya está instalada
+
     e.preventDefault();
     deferredPrompt = e;
 
-    // Mostrar botón
     document.getElementById('btn-instalar').style.display = 'block';
 
-    // Aviso suave después de unos segundos
- 
-setTimeout(() => {
-    const btn = document.getElementById('btn-instalar');
-    if (btn) {
-        btn.innerText = "📲 INSTALAR APP (recomendado)";
-    }
-}, 4000);
-    });    
+    setTimeout(() => {
+        const btn = document.getElementById('btn-instalar');
+        if (btn) {
+            btn.innerText = "📲 INSTALAR APP (recomendado)";
+        }
+    }, 4000);
+});
+    
         const WHATSAPP_CENTRAL = "5493442641200";
         let relojPanico;
 
