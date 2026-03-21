@@ -366,19 +366,19 @@
     // Mostrar botón (lo que ya tenías)
     document.getElementById('btn-instalar').style.display = 'block';
 
-    // 👇 NUEVO: cartel automático SOLO la primera vez
-    if (!localStorage.getItem('instalacion_mostrada')) {
-        setTimeout(() => {
-            if (window.confirm("¿Querés instalar Acción Remis en tu celular?")) {
-    setTimeout(() => {
-        instalarApp();
-    }, 500);
-}
-            localStorage.setItem('instalacion_mostrada', 'si');
-        }, 2000); // espera 2 segundos para no ser invasivo
-    }
-});
+   window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
 
+    // Mostrar botón
+    document.getElementById('btn-instalar').style.display = 'block';
+});
+setTimeout(() => {
+    const btn = document.getElementById('btn-instalar');
+    if (btn) {
+        btn.innerText = "📲 INSTALAR APP (recomendado)";
+    }
+}, 4000);
         function instalarApp() {
             if (!deferredPrompt) return;
             deferredPrompt.prompt();
