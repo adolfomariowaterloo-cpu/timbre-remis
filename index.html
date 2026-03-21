@@ -378,7 +378,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
             btn.innerText = "📲 INSTALAR APP (recomendado)";
         }
     }, 4000);
-});
+    });  
+ window.addEventListener('appinstalled', () => {
+    localStorage.setItem("app_instalada", "true");
+});   
     
         const WHATSAPP_CENTRAL = "5493442641200";
         let relojPanico;
@@ -498,7 +501,10 @@ Por favor comunicarse o asistir inmediatamente.`;
     });
 }
       function detenerSOS() {
-    document.getElementById('sos-overlay').style.display = 'none';
+    const instalada = localStorage.getItem("app_instalada") === "true";
+
+if (instalada || esModoApp()) {
+    document.getElementById('btn-instalar').style.display = 'none';
 }
 
         function guardarAjustes() {
