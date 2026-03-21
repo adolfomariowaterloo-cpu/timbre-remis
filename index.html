@@ -448,7 +448,7 @@
     // 🚀 mensaje inmediato
     const mensaje = armarMensajeSOS();
 
-    window.location.href = `https://wa.me/549${c1}?text=${encodeURIComponent(mensaje)}`;
+   window.open(`https://wa.me/549${c1}?text=${encodeURIComponent(mensaje)}`, "_blank");
 
     // 📍 después ubicación
     navigator.geolocation.getCurrentPosition(
