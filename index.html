@@ -351,7 +351,9 @@
         </div>
     </div>
 
-   // <audio id="sos-alarm" loop><source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
+   <!-- <audio id="sos-alarm" loop>
+<source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3">
+</audio> -->
     <div id="qr-modal" class="modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:10px">CERRAR</p></div>
 
     <script>
@@ -459,25 +461,37 @@ function enviarSOS(num) {
     const contacto = localStorage.getItem('acc_s' + num);
     if (!contacto) return alert("Contacto no configurado.");
 
-    const mensaje = armarMensajeSOS();
-
-    // mensaje inmediato
-    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
-
-    // ubicación después
     navigator.geolocation.getCurrentPosition(
         p => {
             const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-            const mensajeUbicacion = armarMensajeSOS(url);
+            const mensaje = armarMensajeSOS(url);
 
-            setTimeout(() => {
-                window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
-            }, 3000);
+            window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
         },
-        () => {}
+        () => {
+            // si falla GPS igual manda mensaje
+            const mensaje = armarMensajeSOS();
+            window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
+        }
     );
 }
-function enviarSOSATodos() {
+function armarMensajeSOS(url = "") {
+    const nombre = localStorage.getItem('acc_ape') || "Persona";
+
+    let mensaje = `🚨 *ALERTA SOS* 🚨
+${nombre} necesita ayuda URGENTE.
+
+Por favor comunicarse o asistir inmediatamente.`;
+
+    if (url) mensaje += `\n\n📍 Ubicación en tiempo real:\n${url}`;
+
+    try {
+        navigator.clipboard.writeText(mensaje);
+    } catch (e) {}
+
+    return mensaje;
+}
+        function enviarSOSATodos() {
     [1,2,3].forEach(n => {
         if (localStorage.getItem('acc_s' + n)) {
             enviarSOS(n);
