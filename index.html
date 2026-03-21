@@ -544,7 +544,10 @@ function enviarDirecto() {
             document.getElementById('qr-modal').style.display = 'flex';
         }
         function instalarApp() {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+    alert("Para instalar, usá el menú del navegador (Agregar a pantalla principal)");
+    return;
+}
 
     deferredPrompt.prompt();
 
