@@ -508,7 +508,7 @@ function enviarDirecto() {
 
     const mensaje = `🚖 *Acción Remis Cdelu*\n\nPedí tu remis fácil desde acá:\n${appUrl}`;
 
-    window.location.href = `https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`;
+   window.open(`https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
 }
         function mostrarCodigoQR() {
             const box = document.getElementById('qr-box');
