@@ -430,13 +430,18 @@ function solicitar(tipo) {
     window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
 }
 
+// Reemplaza tu función enviarUbicacion con esta:
 function enviarUbicacion() {
     navigator.geolocation.getCurrentPosition(p => {
-        const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+        const lat = p.coords.latitude;
+        const lng = p.coords.longitude;
+        const url = `https://www.google.com/maps?q=${lat},${lng}`;
         const ape = localStorage.getItem('acc_ape') || "Cliente";
-        window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`;
-    }, () => alert("Activa el GPS"));
+        const msg = `Hola Acción! Soy ${ape}. Mi ubicación actual es: ${url}`;
+        window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
+    }, () => alert("Por favor, activa el GPS para poder enviarte el móvil."));
 }
+    
 
 // 🔴 SOS
 let relojPanico;
