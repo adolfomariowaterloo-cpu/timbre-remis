@@ -359,8 +359,6 @@
     <script>
         let deferredPrompt;
 
-       let deferredPrompt;
-
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
@@ -369,13 +367,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     document.getElementById('btn-instalar').style.display = 'block';
 
     // Aviso suave después de unos segundos
-    setTimeout(() => {
-        const btn = document.getElementById('btn-instalar');
-        if (btn) {
-            btn.innerText = "📲 INSTALAR APP (recomendado)";
-        }
-    }, 4000);
-});
+ 
 setTimeout(() => {
     const btn = document.getElementById('btn-instalar');
     if (btn) {
@@ -504,17 +496,7 @@ Por favor comunicarse o asistir inmediatamente.`;
       function detenerSOS() {
     document.getElementById('sos-overlay').style.display = 'none';
 }
-function armarMensajeSOS(url = "") {
-    let mensaje = "🚨 ¡SOS AYUDA! Necesito ayuda urgente.";
-    if (url) mensaje += "\n📍 Mi ubicación: " + url;
 
-    // copiar automáticamente
-    try {
-        navigator.clipboard.writeText(mensaje);
-    } catch (e) {}
-
-    return mensaje;
-}
         function guardarAjustes() {
             localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
             localStorage.setItem('acc_casa', document.getElementById('cfg-casa').value);
