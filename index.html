@@ -345,7 +345,7 @@
         </div>
     </div>
 
-    <audio id="sos-alarm" loop><source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
+   // <audio id="sos-alarm" loop><source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
     <div id="qr-modal" class="modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:10px">CERRAR</p></div>
 
     <script>
@@ -439,23 +439,22 @@
             clearTimeout(relojPanico);
         }
 
-       function activarSOS() {
+ function activarSOS() {
     const c1 = localStorage.getItem('acc_s1');
     if (!c1) return alert("Configura SOS en Ajustes.");
 
-    // Mostrar pantalla de pánico inmediatamente
     document.getElementById('sos-overlay').style.display = 'flex';
 
-    // 🚀 MENSAJE RÁPIDO (sin esperar GPS)
-    const mensaje = "🚨 ¡SOS AYUDA! Necesito ayuda urgente.";
+    // 🚀 mensaje inmediato
+    const mensaje = armarMensajeSOS();
 
     window.location.href = `https://wa.me/549${c1}?text=${encodeURIComponent(mensaje)}`;
 
-    // 📍 UBICACIÓN EN SEGUNDO PLANO (no frena nada)
+    // 📍 después ubicación
     navigator.geolocation.getCurrentPosition(
         p => {
             const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-            const mensajeUbicacion = "📍 Mi ubicación: " + url;
+            const mensajeUbicacion = armarMensajeSOS(url);
 
             setTimeout(() => {
                 window.open(`https://wa.me/549${c1}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
@@ -465,33 +464,29 @@
     );
 }
 
-       function enviarSOSExtra(num) {
+ function enviarSOSExtra(num) {
     const contacto = localStorage.getItem('acc_s' + num);
     if (!contacto) return alert("Contacto no configurado.");
 
-    // Mensaje inicial sin ubicación (sale instantáneo)
-    const mensajeBase = "🚨 ¡SOS AYUDA! Intentando enviar ubicación...";
+    const mensaje = armarMensajeSOS();
 
-    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensajeBase)}`, "_blank");
-
-    // Después intenta obtener ubicación
-    navigator.geolocation.getCurrentPosition(
-        p => {
-            const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-            const mensajeUbicacion = "📍 Mi ubicación: " + url;
-
-            setTimeout(() => {
-                window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
-            }, 2000);
-        },
-        () => alert("No se pudo obtener ubicación. Activá el GPS.")
-    );
+    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
 }
 
       function detenerSOS() {
     document.getElementById('sos-overlay').style.display = 'none';
 }
+function armarMensajeSOS(url = "") {
+    let mensaje = "🚨 ¡SOS AYUDA! Necesito ayuda urgente.";
+    if (url) mensaje += "\n📍 Mi ubicación: " + url;
 
+    // copiar automáticamente
+    try {
+        navigator.clipboard.writeText(mensaje);
+    } catch (e) {}
+
+    return mensaje;
+}
         function guardarAjustes() {
             localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
             localStorage.setItem('acc_casa', document.getElementById('cfg-casa').value);
