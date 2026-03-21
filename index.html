@@ -392,6 +392,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
   .then(() => console.log("SW registrado"))
   .catch(err => console.log("Error SW:", err));
             }
+       if (esModoApp()) {
+    document.getElementById('btn-instalar').style.display = 'none';
+}
         };
 
         function navegar(id) {
