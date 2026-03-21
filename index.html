@@ -535,6 +535,45 @@ function instalarApp() {
         alert("Usá 'Agregar a pantalla de inicio'");
     }
 }
+       // 🔵 COMPARTIR
+function compartirWhatsApp() {
+    const appUrl = window.location.href;
+    const msg = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
+    window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+}
+
+function enviarDirecto() {
+    const numero = document.getElementById('numero-directo').value;
+
+    if (!numero) {
+        alert("Ingresá un número");
+        return;
+    }
+
+    const appUrl = window.location.href;
+    const mensaje = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
+
+    window.open(`https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
+}
+
+function mostrarCodigoQR() {
+    const box = document.getElementById('qr-box');
+    box.innerHTML = "";
+
+    new QRCode(box, {
+        text: window.location.href,
+        width: 200,
+        height: 200
+    });
+
+    document.getElementById('qr-modal').style.display = 'flex';
+}
+
+function enviarQueja() {
+    const ape = localStorage.getItem('acc_ape') || "Cliente";
+    const msg = `Hola Acción! Soy ${ape}. Quisiera dejar una sugerencia/reclamo: `;
+    window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
+}
 </script>
 </body>
 </html>
