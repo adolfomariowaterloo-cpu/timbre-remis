@@ -439,16 +439,31 @@
             clearTimeout(relojPanico);
         }
 
-        function activarSOS() {
-            const c1 = localStorage.getItem('acc_s1');
-            if(!c1) return alert("Configura SOS en Ajustes.");
-            document.getElementById('sos-alarm').play();
-            document.getElementById('sos-overlay').style.display = 'flex';
-            navigator.geolocation.getCurrentPosition(p => {
-                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                window.location.href = `https://wa.me/549${c1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
-            }, () => alert("GPS desactivado"));
-        }
+       function activarSOS() {
+    const c1 = localStorage.getItem('acc_s1');
+    if (!c1) return alert("Configura SOS en Ajustes.");
+
+    // Mostrar pantalla de pánico inmediatamente
+    document.getElementById('sos-overlay').style.display = 'flex';
+
+    // 🚀 MENSAJE RÁPIDO (sin esperar GPS)
+    const mensaje = "🚨 ¡SOS AYUDA! Necesito ayuda urgente.";
+
+    window.location.href = `https://wa.me/549${c1}?text=${encodeURIComponent(mensaje)}`;
+
+    // 📍 UBICACIÓN EN SEGUNDO PLANO (no frena nada)
+    navigator.geolocation.getCurrentPosition(
+        p => {
+            const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+            const mensajeUbicacion = "📍 Mi ubicación: " + url;
+
+            setTimeout(() => {
+                window.open(`https://wa.me/549${c1}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
+            }, 3000);
+        },
+        () => {}
+    );
+}
 
        function enviarSOSExtra(num) {
     const contacto = localStorage.getItem('acc_s' + num);
@@ -473,10 +488,9 @@
     );
 }
 
-        function detenerSOS() {
-            document.getElementById('sos-alarm').pause();
-            document.getElementById('sos-overlay').style.display = 'none';
-        }
+      function detenerSOS() {
+    document.getElementById('sos-overlay').style.display = 'none';
+}
 
         function guardarAjustes() {
             localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
