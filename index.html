@@ -216,9 +216,9 @@
 
     <div class="container" id="view-main">
         <button id="btn-instalar" class="btn btn-guia" style="display:none;" onclick="instalarApp()">
-    📲 INSTALAR APP
-    <span class="sub-label">Agregar a pantalla principal</span>
-</button>
+            📲 INSTALAR APP
+            <span class="sub-label">Agregar a pantalla principal</span>
+        </button>
         <button class="btn btn-remis" onclick="navegar('view-remis')">
             🚕 PEDIR UN REMIS
             <span class="sub-label">Solicite su móvil en un toque</span>
@@ -246,6 +246,10 @@
             <button class="btn btn-guia" style="background:var(--verde-wa); color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-share')">📲 COMPARTIR</button>
             <button class="btn btn-guia" style="background:#444; color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-config')">⚙️ AJUSTES</button>
         </div>
+        <button class="btn" style="background:#333; margin-top: 25px; border: 1px dashed #666;" onclick="enviarQueja()">
+            📩 SUGERENCIAS O RECLAMOS
+            <span class="sub-label">Hablar con la administración</span>
+        </button>
     </div>
 
     <div class="container hidden" id="view-remis">
@@ -304,177 +308,4 @@
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
     </div>
 
-    <div class="container hidden" id="view-guia">
-        <h2>Guía de la Ciudad</h2>
-        <div class="card">
-            <div class="list-item"><span>TERMINAL</span><button class="call-action" onclick="call('422352')">📞</button></div>
-            <div class="list-item"><span>MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞</button></div>
-            <div class="list-item"><span>REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞</button></div>
-        </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
-    </div>
-
-    <div class="container hidden" id="view-share">
-        <h2>Compartir App</h2>
-        <div class="card" style="text-align:center">
-            <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 WHATSAPP</button>
-            <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ CÓDIGO QR</button>
-        </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
-    </div>
-
-    <div id="panic-trigger">
-        <div class="panic-label">MANTENER</div>
-        <div id="panic-circle" onmousedown="iniciarRelojPanico()" ontouchstart="iniciarRelojPanico()" onmouseup="detenerRelojPanico()" ontouchend="detenerRelojPanico()">
-            <svg viewBox="0 0 24 24" width="45" fill="white"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16" /></svg>
-        </div>
-    </div>
-
-    <audio id="sos-alarm" loop><source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
-    <div id="qr-modal" class="modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:10px">CERRAR</p></div>
-
-    <script>
-        let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-
-    // Mostrar botón
-    document.getElementById('btn-instalar').style.display = 'block';
-});
-
-function instalarApp() {
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-
-    deferredPrompt.userChoice.then((choiceResult) => {
-        deferredPrompt = null;
-    });
-}
-        const WHATSAPP_CENTRAL = "5493442641200";
-        let relojPanico;
-
-      window.onload = () => {
-    inicializarDatos();
-    scrollMonitor();
-    window.addEventListener('scroll', scrollMonitor);
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
-};
-
-        function navegar(id) {
-            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            window.scrollTo(0,0);
-            setTimeout(scrollMonitor, 100);
-        }
-
-        function scrollMonitor() {
-            const arrow = document.getElementById('scroll-arrow');
-            const total = document.documentElement.scrollHeight;
-            const current = window.innerHeight + window.pageYOffset;
-            arrow.style.display = (total > window.innerHeight + 60 && current < total - 60) ? 'block' : 'none';
-        }
-
-        function call(num) { window.location.href = "tel:" + num; }
-
-        function solicitar(tipo) {
-            const dir = localStorage.getItem('acc_' + tipo);
-            const ape = localStorage.getItem('acc_ape') || "Cliente";
-            if(!dir) return alert("Configura esta dirección en Ajustes.");
-            const msg = `Hola Acción! Soy ${ape}. Necesito un móvil en ${dir}`;
-            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
-        }
-
-        function enviarUbicacion() {
-            navigator.geolocation.getCurrentPosition(p => {
-                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                const ape = localStorage.getItem('acc_ape') || "Cliente";
-                window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación actual: " + url)}`;
-            }, () => alert("Activa el GPS"));
-        }
-
-        function iniciarRelojPanico() {
-            document.getElementById('panic-circle').style.background = "#ffcc00";
-            relojPanico = setTimeout(activarSOS, 2000);
-        }
-
-        function detenerRelojPanico() {
-            document.getElementById('panic-circle').style.background = "#ff0000";
-            clearTimeout(relojPanico);
-        }
-
-        function activarSOS() {
-            const c1 = localStorage.getItem('acc_s1');
-            if(!c1) return alert("Configura SOS en Ajustes.");
-            document.getElementById('sos-alarm').play();
-            document.getElementById('sos-overlay').style.display = 'flex';
-            navigator.geolocation.getCurrentPosition(p => {
-                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                window.location.href = `https://wa.me/549${c1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
-            });
-        }
-
-        function enviarSOSExtra(num) {
-            const contacto = localStorage.getItem('acc_s' + num);
-            if(!contacto) return alert("Contacto no configurado.");
-            navigator.geolocation.getCurrentPosition(p => {
-                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                window.location.href = `https://wa.me/549${contacto}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
-            }, () => alert("Activa el GPS para enviar ubicación"));
-        }
-
-        function detenerSOS() {
-            document.getElementById('sos-alarm').pause();
-            document.getElementById('sos-overlay').style.display = 'none';
-        }
-
-        function guardarAjustes() {
-            localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
-            localStorage.setItem('acc_casa', document.getElementById('cfg-casa').value);
-            localStorage.setItem('acc_trab', document.getElementById('cfg-trab').value);
-            localStorage.setItem('acc_fav', document.getElementById('cfg-fav').value);
-            localStorage.setItem('acc_s1', document.getElementById('cfg-s1').value);
-            localStorage.setItem('acc_s2', document.getElementById('cfg-s2').value);
-            localStorage.setItem('acc_s3', document.getElementById('cfg-s3').value);
-            alert("Guardado");
-            inicializarDatos();
-            navegar('view-main');
-        }
-
-        function inicializarDatos() {
-            const get = (k) => localStorage.getItem(k) || "";
-            document.getElementById('cfg-ape').value = get('acc_ape');
-            document.getElementById('cfg-casa').value = get('acc_casa');
-            document.getElementById('cfg-trab').value = get('acc_trab');
-            document.getElementById('cfg-fav').value = get('acc_fav');
-            document.getElementById('cfg-s1').value = get('acc_s1');
-            document.getElementById('cfg-s2').value = get('acc_s2');
-            document.getElementById('cfg-s3').value = get('acc_s3');
-            document.getElementById('lbl-casa').innerText = get('acc_casa') || "No configurado";
-            document.getElementById('lbl-trab').innerText = get('acc_trab') || "No configurado";
-            document.getElementById('lbl-fav').innerText = get('acc_fav') || "No configurado";
-        }
-
-        function compartirWhatsApp() {
-            const appUrl = window.location.href;
-            const msg = `🚖 *Acción Remis Cdelu*\nTu transporte seguro en un toque. Descargá nuestra App oficial aquí:\n${appUrl}`;
-            window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-        }
-
-        function mostrarCodigoQR() {
-            const box = document.getElementById('qr-box');
-            box.innerHTML = "";
-            new QRCode(box, { text: window.location.href, width: 200, height: 200 });
-           setTimeout(() => {
-    const btn = document.getElementById('btn-instalar');
-    if (btn) btn.style.display = 'block';
-}, 500);
-        }
-    </script>
-</body>
-</html>
+    <div class="container hidden" id="view-gu
