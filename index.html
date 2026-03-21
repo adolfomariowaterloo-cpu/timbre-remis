@@ -359,19 +359,22 @@
     <script>
         let deferredPrompt;
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
+       let deferredPrompt;
 
-    // Mostrar botón (lo que ya tenías)
-    document.getElementById('btn-instalar').style.display = 'block';
-
-   window.addEventListener('beforeinstallprompt', (e) => {
+window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 
     // Mostrar botón
     document.getElementById('btn-instalar').style.display = 'block';
+
+    // Aviso suave después de unos segundos
+    setTimeout(() => {
+        const btn = document.getElementById('btn-instalar');
+        if (btn) {
+            btn.innerText = "📲 INSTALAR APP (recomendado)";
+        }
+    }, 4000);
 });
 setTimeout(() => {
     const btn = document.getElementById('btn-instalar');
