@@ -351,10 +351,7 @@
         </div>
     </div>
 
-   <!-- <audio id="sos-alarm" loop>
-<source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3">
-</audio> -->
-    <div id="qr-modal" class="modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:10px">CERRAR</p></div>
+   <div id="qr-modal" class="modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:10px">CERRAR</p></div>
 
    <script>
 let deferredPrompt;
@@ -424,7 +421,12 @@ const WHATSAPP_CENTRAL = "5493442641200";
 function solicitar(tipo) {
     const dir = localStorage.getItem('acc_' + tipo);
     const ape = localStorage.getItem('acc_ape') || "Cliente";
-    if(!dir) return alert("Configura esta dirección en Ajustes.");
+    
+    // REDIRECCIÓN SI NO ESTÁ CONFIGURADO
+    if(!dir || dir.trim() === "") {
+        navegar('view-config');
+        return;
+    }
 
     const msg = `Hola Acción! Soy ${ape}. Necesito un móvil en ${dir}`;
     window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
@@ -432,7 +434,7 @@ function solicitar(tipo) {
 
 function enviarUbicacion() {
     navigator.geolocation.getCurrentPosition(p => {
-        const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+        const url = `http://googleusercontent.com/maps.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
         const ape = localStorage.getItem('acc_ape') || "Cliente";
         window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`;
     }, () => alert("Activa el GPS"));
@@ -453,7 +455,10 @@ function detenerRelojPanico() {
 
 function activarSOS() {
     const c1 = localStorage.getItem('acc_s1');
-    if (!c1) return alert("Configura SOS en Ajustes.");
+    if (!c1) {
+        navegar('view-config');
+        return;
+    }
 
     document.getElementById('sos-overlay').style.display = 'flex';
     enviarSOS(1);
@@ -465,7 +470,7 @@ function enviarSOS(num) {
 
     navigator.geolocation.getCurrentPosition(
         p => {
-            const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+            const url = `http://googleusercontent.com/maps.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
             const mensaje = armarMensajeSOS(url);
             window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
         },
