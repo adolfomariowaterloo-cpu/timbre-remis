@@ -322,7 +322,7 @@
             🏢 GUÍA ÚTIL CIUDAD
         </button>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
-            <button class="btn btn-guia" style="background:var(--verde-wa); color:white; border:none; padding:15px; font-size:14px;" onclick="compartirApp()">📲 COMPARTIR</button>
+            <button class="btn btn-guia" style="background:var(--verde-wa); color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-share')">📲 COMPARTIR</button>
             <button class="btn btn-guia" style="background:#444; color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-config')">⚙️ AJUSTES</button>
         </div>
         <button class="btn" style="background:#333; margin-top: 25px; border: 1px dashed #666;" onclick="enviarQueja()">
@@ -394,6 +394,22 @@
             <div class="list-item"><span>TERMINAL</span><button class="call-action" onclick="call('422352')">📞</button></div>
             <div class="list-item"><span>MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞</button></div>
             <div class="list-item"><span>REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞</button></div>
+        </div>
+        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+    </div>
+
+    <!-- VISTA COMPARTIR RESTAURADA -->
+    <div class="container hidden" id="view-share">
+        <h2>Compartir App</h2>
+        <div class="card" style="text-align:center">
+            <label>Enviar a número (sin 0 ni 15):</label>
+            <input type="tel" id="numero-directo" placeholder="Ej: 3442123456">
+            <div class="warning-text" style="margin-bottom: 15px;">📱 Solo números, sin 0 ni 15</div>
+            <button class="btn" style="background:#25D366" onclick="enviarDirecto()">
+                📲 ENVIAR SIN AGENDAR
+            </button>
+            <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 WHATSAPP</button>
+            <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ CÓDIGO QR</button>
         </div>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
@@ -529,12 +545,12 @@
                     }
                 });
                 
-                document.getElementById('sos-status-text').innerHTML = "✅ ALERTA COMPLETA<br>📍 UBICACIÓN ENVIADA<br><br>🔄 VOLVIENDO A LA APP...";
+                document.getElementById('sos-status-text').innerHTML = "✅ ALERTA COMPLETA<br>📍 UBICACIÓN ENVIADA<br><br>🔄 VOLVIENDO...";
                 
                 setTimeout(() => {
                     detenerSOS();
-                    window.focus();
-                }, 3000);
+                    window.location.href = window.location.href;
+                }, 2000);
                 
             }, () => {
                 const errorMsg = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación automática.\n\n📱 Por favor comunicarse URGENTE con ${nombre} para conocer su ubicación.`;
@@ -549,19 +565,18 @@
                     }
                 });
                 
-                document.getElementById('sos-status-text').innerHTML = "⚠️ ALERTA ENVIADA<br>❌ UBICACIÓN NO DISPONIBLE<br><br>🔄 VOLVIENDO A LA APP...";
+                document.getElementById('sos-status-text').innerHTML = "⚠️ ALERTA ENVIADA<br>❌ UBICACIÓN NO DISPONIBLE<br><br>🔄 VOLVIENDO...";
                 
                 setTimeout(() => {
                     detenerSOS();
-                    window.focus();
-                }, 2500);
+                    window.location.href = window.location.href;
+                }, 2000);
             }, { enableHighAccuracy: true, timeout: 10000 });
         }
 
         function detenerSOS() {
             document.getElementById('sos-overlay').style.display = 'none';
             sosActivado = false;
-            window.focus();
         }
 
         // ==================== AJUSTES ====================
@@ -608,21 +623,26 @@
         }
 
         // ==================== COMPARTIR ====================
-        async function compartirApp() {
-            const url = window.location.href;
-            const texto = "🚖 Acción Remis Cdelu - Pedí tu remis desde acá:";
-            
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: "Acción Remis",
-                        text: texto,
-                        url: url
-                    });
-                    return;
-                } catch (err) {}
+        function compartirWhatsApp() {
+            const appUrl = window.location.href;
+            const msg = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
+            window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        }
+
+        function enviarDirecto() {
+            let numero = document.getElementById('numero-directo').value;
+            if (!numero) {
+                alert("⚠️ Ingresá un número de teléfono");
+                return;
             }
-            window.location.href = `https://wa.me/?text=${encodeURIComponent(texto + " " + url)}`;
+            numero = limpiarNumero(numero);
+            if (numero.length < 6) {
+                alert("⚠️ Ingresá un número válido (al menos 6 dígitos)");
+                return;
+            }
+            const appUrl = window.location.href;
+            const mensaje = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
+            window.open(`https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
         }
 
         function mostrarCodigoQR() {
