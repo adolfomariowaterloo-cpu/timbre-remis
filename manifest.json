@@ -1,24 +1,15 @@
 {
-  "short_name": "Acción Remis",
-  "name": "Acción Remis - Cdelu Oficial",
-  "icons": [
-    {
-      "src": "logo-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "logo-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ],
-  "start_url": "/",
-  "scope": "/",
+  "name": "Acción Remis",
+  "short_name": "Acción",
+  "start_url": "./",
+  "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "display": "standalone",
-  "orientation": "portrait"
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
 }
