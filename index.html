@@ -550,16 +550,107 @@
             document.getElementById('panic-circle').style.background = "#ff0000";
             clearTimeout(relojPanico);
         }
+// Variables para controlar envíos
+let sosActivado = false;
 
-        function activarSOS() {
-            const c1 = localStorage.getItem('acc_s1');
-            if (!c1 || c1.length < 6) {
-                alert("⚠️ Configura al menos un contacto SOS en Ajustes (número válido)");
-                return;
-            }
-            document.getElementById('sos-overlay').style.display = 'flex';
-            enviarSOS(1);
+function activarSOS() {
+    const c1 = localStorage.getItem('acc_s1');
+    if (!c1 || c1.length < 6) {
+        alert("⚠️ Configura al menos un contacto SOS en Ajustes (número válido)");
+        return;
+    }
+    
+    if (sosActivado) return; // Evita activar múltiples veces
+    sosActivado = true;
+    
+    document.getElementById('sos-overlay').style.display = 'flex';
+    
+    // PASO 1: Enviar mensaje de alerta URGENTE sin ubicación (más rápido)
+    enviarAlertaInmediata();
+    
+    // PASO 2: Obtener ubicación y enviarla (puede tardar unos segundos)
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            // Ubicación obtenida, enviar a todos los contactos
+            const url = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
+            enviarUbicacionATodos(url);
+        },
+        (error) => {
+            // Si falla el GPS, enviar mensaje de error
+            console.log("Error de geolocalización:", error);
+            enviarFalloUbicacion();
         }
+    );
+}
+
+// Función que envía alerta inmediata SIN ubicación (rápido)
+function enviarAlertaInmediata() {
+    const nombre = localStorage.getItem('acc_ape') || "Persona";
+    const mensaje = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} ha activado el botón de pánico.\n\n📍 Enviando ubicación en segundos...\n📞 Por favor comunicarse URGENTE.`;
+    
+    // Enviar a los 3 contactos
+    [1, 2, 3].forEach(num => {
+        const contacto = localStorage.getItem('acc_s' + num);
+        if (contacto && limpiarNumero(contacto).length >= 6) {
+            const numeroLimpio = limpiarNumero(contacto);
+            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+        }
+    });
+}
+
+// Función que envía ubicación a todos después de obtenerla
+function enviarUbicacionATodos(url) {
+    const nombre = localStorage.getItem('acc_ape') || "Persona";
+    const mensajeUbicacion = `📍 UBICACIÓN EN TIEMPO REAL\n\n${nombre} se encuentra en:\n${url}\n\n🚨 SITUACIÓN DE EMERGENCIA - ACTUAR RÁPIDO`;
+    
+    [1, 2, 3].forEach(num => {
+        const contacto = localStorage.getItem('acc_s' + num);
+        if (contacto && limpiarNumero(contacto).length >= 6) {
+            const numeroLimpio = limpiarNumero(contacto);
+            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
+        }
+    });
+}
+
+// Si no se pudo obtener ubicación, avisar a los contactos
+function enviarFalloUbicacion() {
+    const nombre = localStorage.getItem('acc_ape') || "Persona";
+    const mensajeError = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación automática.\n\n📱 Por favor comunicarse URGENTE con ${nombre} para conocer su ubicación.`;
+    
+    [1, 2, 3].forEach(num => {
+        const contacto = localStorage.getItem('acc_s' + num);
+        if (contacto && limpiarNumero(contacto).length >= 6) {
+            const numeroLimpio = limpiarNumero(contacto);
+            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeError)}`, "_blank");
+        }
+    });
+}
+
+// Función auxiliar para limpiar números (ya la tenés, pero la mantengo)
+function limpiarNumero(numero) {
+    if (!numero) return '';
+    let limpio = numero.toString().replace(/\D/g, '');
+    if (limpio.startsWith('15')) limpio = limpio.substring(2);
+    if (limpio.startsWith('0')) limpio = limpio.substring(1);
+    return limpio;
+}
+
+// Actualizar enviarSOSATodos para usar el nuevo sistema
+function enviarSOSATodos() {
+    // Re-enviar alerta y ubicación a todos
+    enviarAlertaInmediata();
+    
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const url = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
+            enviarUbicacionATodos(url);
+        },
+        () => {
+            enviarFalloUbicacion();
+        }
+    );
+}
+        
 
         function enviarSOS(num) {
             let contacto = localStorage.getItem('acc_s' + num);
