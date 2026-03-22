@@ -1,15 +1,73 @@
 {
-  "name": "Acción Remis",
-  "short_name": "Acción",
-  "start_url": "./",
+  "name": "Acción Remis - Cdelu",
+  "short_name": "Acción Remis",
+  "description": "Solicitá tu remis, emergencias y servicios en Concepción del Uruguay",
+  "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#000000",
-  "theme_color": "#000000",
+  "theme_color": "#ff2b2b",
+  "scope": "/",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Pantalla principal de Acción Remis"
+    }
+  ],
+  "categories": ["travel", "utilities", "business"],
+  "lang": "es-AR",
+  "dir": "ltr"
 }
