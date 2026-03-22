@@ -259,6 +259,13 @@
             color: #ffcc00;
             margin-top: 10px;
         }
+        .sos-status {
+            font-size: 14px;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -266,16 +273,17 @@
     <div id="sos-overlay">
         <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
         <h2 style="font-size: 28px; font-weight: 900;">¡PÁNICO ACTIVADO!</h2>
-        <p style="margin: 20px 0; font-size: 18px;">Se envió tu ubicación al contacto 1.<br>Avisar a los demás:</p>
+        <p style="margin: 20px 0; font-size: 18px;">Se envió alerta urgente a tus contactos.<br>Enviando ubicación...</p>
+        <div class="sos-status" id="sos-status-text">📱 Alerta enviada - Obteniendo ubicación...</div>
         <div class="sos-buttons">
-            <button class="btn" style="background:#ff9800" onclick="enviarSOS(2)">
-                AVISAR A CONTACTO 2
+            <button class="btn" style="background:#ff9800" onclick="enviarSOSManual(2)">
+                📢 REENVIAR ALERTA A CONTACTO 2
             </button>
-            <button class="btn" style="background:#e91e63" onclick="enviarSOS(3)">
-                AVISAR A CONTACTO 3
+            <button class="btn" style="background:#e91e63" onclick="enviarSOSManual(3)">
+                📢 REENVIAR ALERTA A CONTACTO 3
             </button>
-            <button class="btn" style="background:#2196F3" onclick="enviarSOSATodos()">
-                AVISAR A TODOS
+            <button class="btn" style="background:#2196F3" onclick="reenviarAlertaATodos()">
+                📢 REENVIAR ALERTA A TODOS
             </button>
         </div>
         <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; border:none; background: black;">CANCELAR ALERTA</button>
@@ -430,13 +438,11 @@
         let deferredPrompt;
         let relojPanico;
         let ubicacionCache = null;
+        let sosActivado = false;
 
-        // Función para limpiar números de teléfono
         function limpiarNumero(numero) {
             if (!numero) return '';
-            // Eliminar todo excepto números
             let limpio = numero.toString().replace(/\D/g, '');
-            // Eliminar 0 y 15 iniciales si existen
             if (limpio.startsWith('15')) limpio = limpio.substring(2);
             if (limpio.startsWith('0')) limpio = limpio.substring(1);
             return limpio;
@@ -447,40 +453,28 @@
                 || window.navigator.standalone === true;
         }
 
-        // Solicitar permisos de ubicación al inicio (opcional pero mejora velocidad)
         function solicitarPermisosUbicacion() {
             if ('geolocation' in navigator) {
                 navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        ubicacionCache = position;
-                    },
-                    () => {
-                        console.log("Permiso de ubicación denegado");
-                    }
+                    (position) => { ubicacionCache = position; },
+                    () => { console.log("Permiso de ubicación denegado"); }
                 );
             }
         }
 
-        // Instalación de la app
         window.addEventListener('beforeinstallprompt', (e) => {
             if (esModoApp()) return;
-
             e.preventDefault();
             deferredPrompt = e;
-
             const btn = document.getElementById('btn-instalar');
             if (btn) btn.classList.remove('hidden');
-
-            setTimeout(() => {
-                if (btn) btn.innerText = "📲 INSTALAR APP (recomendado)";
-            }, 4000);
+            setTimeout(() => { if (btn) btn.innerText = "📲 INSTALAR APP (recomendado)"; }, 4000);
         });
 
         window.addEventListener('appinstalled', () => {
             localStorage.setItem("app_instalada", "true");
         });
 
-        // Inicialización
         window.onload = () => {
             inicializarDatos();
             scrollMonitor();
@@ -499,7 +493,6 @@
             }
         };
 
-        // Navegación
         function navegar(id) {
             document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
@@ -514,11 +507,8 @@
             arrow.style.display = (total > window.innerHeight + 60 && current < total - 60) ? 'block' : 'none';
         }
 
-        function call(num) { 
-            window.location.href = "tel:" + num; 
-        }
+        function call(num) { window.location.href = "tel:" + num; }
 
-        // Remis
         const WHATSAPP_CENTRAL = "5493442641200";
 
         function solicitar(tipo) {
@@ -540,7 +530,7 @@
             );
         }
 
-        // SOS
+        // FUNCIONES SOS MEJORADAS
         function iniciarRelojPanico() {
             document.getElementById('panic-circle').style.background = "#ffcc00";
             relojPanico = setTimeout(activarSOS, 2000);
@@ -550,152 +540,100 @@
             document.getElementById('panic-circle').style.background = "#ff0000";
             clearTimeout(relojPanico);
         }
-// Variables para controlar envíos
-let sosActivado = false;
 
-function activarSOS() {
-    const c1 = localStorage.getItem('acc_s1');
-    if (!c1 || c1.length < 6) {
-        alert("⚠️ Configura al menos un contacto SOS en Ajustes (número válido)");
-        return;
-    }
-    
-    if (sosActivado) return; // Evita activar múltiples veces
-    sosActivado = true;
-    
-    document.getElementById('sos-overlay').style.display = 'flex';
-    
-    // PASO 1: Enviar mensaje de alerta URGENTE sin ubicación (más rápido)
-    enviarAlertaInmediata();
-    
-    // PASO 2: Obtener ubicación y enviarla (puede tardar unos segundos)
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            // Ubicación obtenida, enviar a todos los contactos
-            const url = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
-            enviarUbicacionATodos(url);
-        },
-        (error) => {
-            // Si falla el GPS, enviar mensaje de error
-            console.log("Error de geolocalización:", error);
-            enviarFalloUbicacion();
-        }
-    );
-}
-
-// Función que envía alerta inmediata SIN ubicación (rápido)
-function enviarAlertaInmediata() {
-    const nombre = localStorage.getItem('acc_ape') || "Persona";
-    const mensaje = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} ha activado el botón de pánico.\n\n📍 Enviando ubicación en segundos...\n📞 Por favor comunicarse URGENTE.`;
-    
-    // Enviar a los 3 contactos
-    [1, 2, 3].forEach(num => {
-        const contacto = localStorage.getItem('acc_s' + num);
-        if (contacto && limpiarNumero(contacto).length >= 6) {
-            const numeroLimpio = limpiarNumero(contacto);
-            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
-        }
-    });
-}
-
-// Función que envía ubicación a todos después de obtenerla
-function enviarUbicacionATodos(url) {
-    const nombre = localStorage.getItem('acc_ape') || "Persona";
-    const mensajeUbicacion = `📍 UBICACIÓN EN TIEMPO REAL\n\n${nombre} se encuentra en:\n${url}\n\n🚨 SITUACIÓN DE EMERGENCIA - ACTUAR RÁPIDO`;
-    
-    [1, 2, 3].forEach(num => {
-        const contacto = localStorage.getItem('acc_s' + num);
-        if (contacto && limpiarNumero(contacto).length >= 6) {
-            const numeroLimpio = limpiarNumero(contacto);
-            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
-        }
-    });
-}
-
-// Si no se pudo obtener ubicación, avisar a los contactos
-function enviarFalloUbicacion() {
-    const nombre = localStorage.getItem('acc_ape') || "Persona";
-    const mensajeError = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación automática.\n\n📱 Por favor comunicarse URGENTE con ${nombre} para conocer su ubicación.`;
-    
-    [1, 2, 3].forEach(num => {
-        const contacto = localStorage.getItem('acc_s' + num);
-        if (contacto && limpiarNumero(contacto).length >= 6) {
-            const numeroLimpio = limpiarNumero(contacto);
-            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeError)}`, "_blank");
-        }
-    });
-}
-
-// Función auxiliar para limpiar números (ya la tenés, pero la mantengo)
-function limpiarNumero(numero) {
-    if (!numero) return '';
-    let limpio = numero.toString().replace(/\D/g, '');
-    if (limpio.startsWith('15')) limpio = limpio.substring(2);
-    if (limpio.startsWith('0')) limpio = limpio.substring(1);
-    return limpio;
-}
-
-// Actualizar enviarSOSATodos para usar el nuevo sistema
-function enviarSOSATodos() {
-    // Re-enviar alerta y ubicación a todos
-    enviarAlertaInmediata();
-    
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const url = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
-            enviarUbicacionATodos(url);
-        },
-        () => {
-            enviarFalloUbicacion();
-        }
-    );
-}
-        
-
-        function enviarSOS(num) {
-            let contacto = localStorage.getItem('acc_s' + num);
-            if (!contacto) return;
+        function activarSOS() {
+            const c1 = localStorage.getItem('acc_s1');
+            if (!c1 || limpiarNumero(c1).length < 6) {
+                alert("⚠️ Configura al menos un contacto SOS en Ajustes (número válido)");
+                return;
+            }
             
-            contacto = limpiarNumero(contacto);
-            if (contacto.length < 6) return;
-
+            if (sosActivado) return;
+            sosActivado = true;
+            
+            document.getElementById('sos-overlay').style.display = 'flex';
+            document.getElementById('sos-status-text').innerHTML = "📱 Alerta enviada - Obteniendo ubicación...";
+            
+            // PASO 1: Enviar alerta inmediata SIN ubicación (más rápido)
+            enviarAlertaInmediata();
+            
+            // PASO 2: Obtener ubicación y enviarla
             navigator.geolocation.getCurrentPosition(
-                p => {
-                    const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                    const mensaje = armarMensajeSOS(url);
-                    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                (position) => {
+                    const url = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
+                    enviarUbicacionATodos(url);
+                    document.getElementById('sos-status-text').innerHTML = "✅ Alerta enviada\n📍 Ubicación enviada";
                 },
-                () => {
-                    const mensaje = armarMensajeSOS();
-                    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                (error) => {
+                    console.log("Error de geolocalización:", error);
+                    enviarFalloUbicacion();
+                    document.getElementById('sos-status-text').innerHTML = "⚠️ Alerta enviada\n❌ No se pudo obtener ubicación";
                 }
             );
         }
 
-        function armarMensajeSOS(url = "") {
+        function enviarAlertaInmediata() {
             const nombre = localStorage.getItem('acc_ape') || "Persona";
-            let mensaje = `🚨 ALERTA DE EMERGENCIA SOS 🚨\n\n`;
-            mensaje += `${nombre} ha activado la alerta de emergencia y necesita ayuda URGENTE.\n\n`;
-            mensaje += `📱 Por favor comunicarse inmediatamente.\n`;
-            if (url) mensaje += `📍 Ubicación en tiempo real:\n${url}\n\n`;
-            mensaje += `⚠️ Esta es una emergencia real. Actuar rápidamente.`;
-            return mensaje;
+            const mensaje = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} ha activado el botón de pánico.\n\n📍 Enviando ubicación en segundos...\n📞 Por favor comunicarse URGENTE.`;
+            
+            [1, 2, 3].forEach(num => {
+                const contacto = localStorage.getItem('acc_s' + num);
+                if (contacto && limpiarNumero(contacto).length >= 6) {
+                    const numeroLimpio = limpiarNumero(contacto);
+                    window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                }
+            });
         }
 
-        function enviarSOSATodos() {
-            [1,2,3].forEach(n => {
-                const contacto = localStorage.getItem('acc_s' + n);
-                if(contacto && limpiarNumero(contacto).length >= 6) enviarSOS(n);
+        function enviarUbicacionATodos(url) {
+            const nombre = localStorage.getItem('acc_ape') || "Persona";
+            const mensajeUbicacion = `📍 UBICACIÓN EN TIEMPO REAL\n\n${nombre} se encuentra en:\n${url}\n\n🚨 SITUACIÓN DE EMERGENCIA - ACTUAR RÁPIDO`;
+            
+            [1, 2, 3].forEach(num => {
+                const contacto = localStorage.getItem('acc_s' + num);
+                if (contacto && limpiarNumero(contacto).length >= 6) {
+                    const numeroLimpio = limpiarNumero(contacto);
+                    window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
+                }
             });
+        }
+
+        function enviarFalloUbicacion() {
+            const nombre = localStorage.getItem('acc_ape') || "Persona";
+            const mensajeError = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación automática.\n\n📱 Por favor comunicarse URGENTE con ${nombre} para conocer su ubicación.`;
+            
+            [1, 2, 3].forEach(num => {
+                const contacto = localStorage.getItem('acc_s' + num);
+                if (contacto && limpiarNumero(contacto).length >= 6) {
+                    const numeroLimpio = limpiarNumero(contacto);
+                    window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeError)}`, "_blank");
+                }
+            });
+        }
+
+        function enviarSOSManual(num) {
+            const contacto = localStorage.getItem('acc_s' + num);
+            if (!contacto || limpiarNumero(contacto).length < 6) {
+                alert("⚠️ Contacto no configurado");
+                return;
+            }
+            const nombre = localStorage.getItem('acc_ape') || "Persona";
+            const mensaje = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} necesita ayuda URGENTE.\n📞 Por favor comunicarse inmediatamente.`;
+            const numeroLimpio = limpiarNumero(contacto);
+            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+        }
+
+        function reenviarAlertaATodos() {
+            enviarAlertaInmediata();
+            alert("✅ Alerta reenviada a todos los contactos");
         }
 
         function detenerSOS() {
             document.getElementById('sos-overlay').style.display = 'none';
+            sosActivado = false;
         }
 
-        // Ajustes
         function guardarAjustes() {
-            // Limpiar y validar números antes de guardar
             const s1 = limpiarNumero(document.getElementById('cfg-s1').value);
             const s2 = limpiarNumero(document.getElementById('cfg-s2').value);
             const s3 = limpiarNumero(document.getElementById('cfg-s3').value);
@@ -734,7 +672,6 @@ function enviarSOSATodos() {
             document.getElementById('lbl-fav').innerText = get('acc_fav') || "No configurado";
         }
 
-        // Instalación manual
         function instalarApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -744,54 +681,5 @@ function enviarSOSATodos() {
             }
         }
 
-        // Compartir
         function compartirWhatsApp() {
-            const appUrl = window.location.href;
-            const msg = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
-            window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-        }
-
-        function enviarDirecto() {
-            let numero = document.getElementById('numero-directo').value;
-            
-            if (!numero) {
-                alert("⚠️ Ingresá un número de teléfono");
-                return;
-            }
-            
-            numero = limpiarNumero(numero);
-            if (numero.length < 6) {
-                alert("⚠️ Ingresá un número válido (al menos 6 dígitos)");
-                return;
-            }
-            
-            const appUrl = window.location.href;
-            const mensaje = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
-            window.open(`https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
-        }
-
-        function mostrarCodigoQR() {
-            const box = document.getElementById('qr-box');
-            box.innerHTML = "";
-            
-            new QRCode(box, {
-                text: window.location.href,
-                width: 200,
-                height: 200
-            });
-            
-            document.getElementById('qr-modal').style.display = 'flex';
-        }
-        
-        function cerrarModal() {
-            document.getElementById('qr-modal').style.display = 'none';
-        }
-
-        function enviarQueja() {
-            const ape = localStorage.getItem('acc_ape') || "Cliente";
-            const msg = `Hola Acción! Soy ${ape}. Quisiera dejar una sugerencia/reclamo: `;
-            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
-        }
-    </script>
-</body>
-</html>
+           
