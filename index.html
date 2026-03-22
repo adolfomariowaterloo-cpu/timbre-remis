@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
     <title>Acción Remis - Cdelu Oficial</title>
     
@@ -32,7 +32,6 @@
             -webkit-tap-highlight-color: transparent; 
             margin: 0; 
             padding: 0; 
-            touch-action: manipulation;
         }
         
         body {
@@ -100,6 +99,7 @@
             position: relative;
             text-decoration: none;
             text-align: center;
+            background: #222;
         }
         .btn:active { transform: scale(0.96); filter: brightness(1.2); }
 
@@ -110,6 +110,12 @@
         .btn-sos { background: linear-gradient(135deg, #9C27B0 0%, #4A148C 100%); }
         .btn-guia { background: #222; border: 1px solid #444; }
         .btn-back { background: #333; margin-top: 25px; font-size: 15px; border: 1px dashed #666; }
+        .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); border: none; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,87,34,0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255,87,34,0); }
+        }
 
         .sub-label { font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px; text-transform: none; }
 
@@ -273,18 +279,12 @@
     <div id="sos-overlay">
         <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
         <h2 style="font-size: 28px; font-weight: 900;">¡PÁNICO ACTIVADO!</h2>
-        <p style="margin: 20px 0; font-size: 18px;">Se envió alerta urgente a tus contactos.<br>Enviando ubicación...</p>
+        <p style="margin: 20px 0; font-size: 18px;">Se envió alerta urgente a tu contacto principal.<br>Compartí con los demás si es necesario:</p>
         <div class="sos-status" id="sos-status-text">📱 Alerta enviada - Obteniendo ubicación...</div>
         <div class="sos-buttons">
-            <button class="btn" style="background:#ff9800" onclick="enviarSOSManual(2)">
-                📢 REENVIAR ALERTA A CONTACTO 2
-            </button>
-            <button class="btn" style="background:#e91e63" onclick="enviarSOSManual(3)">
-                📢 REENVIAR ALERTA A CONTACTO 3
-            </button>
-            <button class="btn" style="background:#2196F3" onclick="reenviarAlertaATodos()">
-                📢 REENVIAR ALERTA A TODOS
-            </button>
+            <button class="btn" style="background:#ff9800" onclick="enviarSOSManual(2)">📢 AVISAR A CONTACTO 2</button>
+            <button class="btn" style="background:#e91e63" onclick="enviarSOSManual(3)">📢 AVISAR A CONTACTO 3</button>
+            <button class="btn" style="background:#2196F3" onclick="reenviarAlertaATodos()">📢 AVISAR A TODOS</button>
         </div>
         <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; border:none; background: black;">CANCELAR ALERTA</button>
         <div class="warning-text">⚠️ Mantené presionado 2 segundos el círculo rojo para activar SOS</div>
@@ -300,9 +300,9 @@
     </header>
 
     <div class="container" id="view-main">
-        <button id="btn-instalar" class="btn btn-guia hidden" onclick="instalarApp()">
-            📲 INSTALAR APP
-            <span class="sub-label">Agregar a pantalla principal</span>
+        <button id="btn-instalar" class="btn btn-install hidden" onclick="instalarApp()">
+            📲 INSTALAR APP GRATIS
+            <span class="sub-label">Agregar a pantalla principal - Funciona sin internet</span>
         </button>
         <button class="btn btn-remis" onclick="navegar('view-remis')">
             🚕 PEDIR UN REMIS
@@ -339,76 +339,76 @@
 
     <div class="container hidden" id="view-remis">
         <h2 style="margin-bottom:20px; border-left: 5px solid var(--rojo-accion); padding-left: 10px;">Solicitar Móvil</h2>
-        <button class="btn btn-remis" onclick="solicitar('casa')">MI CASA<span class="sub-label" id="lbl-casa">...</span></button>
-        <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('trab')">MI TRABAJO<span class="sub-label" id="lbl-trab">...</span></button>
-        <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('fav')">DESTINO FAVORITO<span class="sub-label" id="lbl-fav">...</span></button>
+        <button class="btn btn-remis" onclick="solicitar('casa')">🏠 MI CASA<span class="sub-label" id="lbl-casa">...</span></button>
+        <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('trab')">💼 MI TRABAJO<span class="sub-label" id="lbl-trab">...</span></button>
+        <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('fav')">⭐ DESTINO FAVORITO<span class="sub-label" id="lbl-fav">...</span></button>
         <div class="card" style="background: #1a1a1a; margin-top: 20px;">
             <p style="text-align:center; margin-bottom:15px; font-weight:bold;">¿Estás en otro lugar?</p>
-            <button class="btn btn-serv" onclick="enviarUbicacion()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
+            <button class="btn btn-serv" onclick="enviarUbicacionRemis()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
         </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
     </div>
 
     <div class="container hidden" id="view-config">
-        <h2>Ajustes Personales</h2>
+        <h2>⚙️ Ajustes Personales</h2>
         <div class="card">
-            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Juan Pérez">
-            <label>Casa:</label><input type="text" id="cfg-casa" placeholder="Ej: San Martín 123">
-            <label>Trabajo:</label><input type="text" id="cfg-trab" placeholder="Ej: Av. Argentina 456">
-            <label>Lugar Favorito:</label><input type="text" id="cfg-fav" placeholder="Ej: Plaza Central">
+            <label>👤 Apellido y Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Juan Pérez">
+            <label>🏠 Dirección de Casa:</label><input type="text" id="cfg-casa" placeholder="Ej: San Martín 123">
+            <label>💼 Dirección de Trabajo:</label><input type="text" id="cfg-trab" placeholder="Ej: Av. Argentina 456">
+            <label>⭐ Lugar Favorito:</label><input type="text" id="cfg-fav" placeholder="Ej: Plaza Central">
         </div>
         <div class="card">
-            <h3>Contactos SOS (Sin 0 ni 15)</h3>
-            <label>Principal (se enviará automáticamente):</label>
+            <h3>🆘 Contactos SOS (Sin 0 ni 15)</h3>
+            <label>📱 Contacto Principal (se envía automáticamente):</label>
             <input type="tel" id="cfg-s1" placeholder="Ej: 3442123456">
-            <label>Contacto 2:</label>
+            <label>📱 Contacto 2:</label>
             <input type="tel" id="cfg-s2" placeholder="Ej: 3442654321">
-            <label>Contacto 3:</label>
+            <label>📱 Contacto 3:</label>
             <input type="tel" id="cfg-s3" placeholder="Ej: 3442789012">
             <div class="warning-text" style="margin-top: 10px;">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div>
         </div>
         <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
     </div>
 
     <div class="container hidden" id="view-servicios">
-        <h2>Servicios Domiciliarios</h2>
+        <h2>🛠️ Servicios Domiciliarios</h2>
         <div class="card">
             <h3>Oficios y Servicios</h3>
-            <div class="list-item"><span>MECÁNICO</span><button class="call-action" onclick="call('3442666445')">📞</button></div>
-            <div class="list-item"><span>ELECTRICISTA</span><button class="call-action" onclick="call('3442401688')">📞</button></div>
-            <div class="list-item"><span>PLOMERO</span><button class="call-action" onclick="call('3442401688')">📞</button></div>
-            <div class="list-item"><span>FLETE</span><button class="call-action" onclick="call('543442423030')">📞</button></div>
-            <div class="list-item"><span>GASISTA</span><button class="call-action" onclick="call('3442425243')">📞</button></div>
-            <div class="list-item"><span>ESTÉTICA / PELUQUERÍA</span><button class="call-action" onclick="call('3442406327')">📞</button></div>
-            <div class="list-item"><span>ZAPATERO</span><button class="call-action" onclick="call('3442677247')">📞</button></div>
+            <div class="list-item"><span>🔧 MECÁNICO</span><button class="call-action" onclick="call('3442666445')">📞 Llamar</button></div>
+            <div class="list-item"><span>⚡ ELECTRICISTA</span><button class="call-action" onclick="call('3442401688')">📞 Llamar</button></div>
+            <div class="list-item"><span>💧 PLOMERO</span><button class="call-action" onclick="call('3442401688')">📞 Llamar</button></div>
+            <div class="list-item"><span>🚚 FLETE</span><button class="call-action" onclick="call('543442423030')">📞 Llamar</button></div>
+            <div class="list-item"><span>🔥 GASISTA</span><button class="call-action" onclick="call('3442425243')">📞 Llamar</button></div>
+            <div class="list-item"><span>✂️ ESTÉTICA / PELUQUERÍA</span><button class="call-action" onclick="call('3442406327')">📞 Llamar</button></div>
+            <div class="list-item"><span>👞 ZAPATERO</span><button class="call-action" onclick="call('3442677247')">📞 Llamar</button></div>
         </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
     </div>
 
     <div class="container hidden" id="view-emergencias">
-        <h2 style="color:red">Central de Emergencias</h2>
+        <h2 style="color:red">🚨 Central de Emergencias</h2>
         <div class="card">
             <h3>Servicios Públicos</h3>
             <button class="btn btn-sos" style="background:red; margin-bottom:10px" onclick="call('101')">🚔 POLICÍA (101)</button>
             <button class="btn btn-sos" style="background:red; margin-bottom:10px" onclick="call('100')">🔥 BOMBEROS (100)</button>
             <button class="btn btn-sos" style="background:red" onclick="call('107')">🚑 HOSPITAL (107)</button>
         </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
     </div>
 
     <div class="container hidden" id="view-guia">
-        <h2>Guía de la Ciudad</h2>
+        <h2>🏢 Guía de la Ciudad</h2>
         <div class="card">
-            <div class="list-item"><span>TERMINAL</span><button class="call-action" onclick="call('422352')">📞</button></div>
-            <div class="list-item"><span>MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞</button></div>
-            <div class="list-item"><span>REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞</button></div>
+            <div class="list-item"><span>🚌 TERMINAL DE ÓMNIBUS</span><button class="call-action" onclick="call('422352')">📞 Llamar</button></div>
+            <div class="list-item"><span>🏛️ MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞 Llamar</button></div>
+            <div class="list-item"><span>📄 REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞 Llamar</button></div>
         </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
     </div>
 
     <div class="container hidden" id="view-share">
-        <h2>Compartir App</h2>
+        <h2>📲 Compartir App</h2>
         <div class="card" style="text-align:center">
             <label>Enviar a número (sin 0 ni 15):</label>
             <input type="tel" id="numero-directo" placeholder="Ej: 3442123456">
@@ -416,10 +416,10 @@
             <button class="btn" style="background:#25D366" onclick="enviarDirecto()">
                 📲 ENVIAR SIN AGENDAR
             </button>
-            <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 WHATSAPP</button>
-            <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ CÓDIGO QR</button>
+            <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 COMPARTIR POR WHATSAPP</button>
+            <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ MOSTRAR CÓDIGO QR</button>
         </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
     </div>
 
     <div id="panic-trigger">
@@ -454,15 +454,22 @@
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         }
 
+        function vibrar() {
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        }
+
         function navegar(id) {
-            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+            const views = document.querySelectorAll('.container');
+            views.forEach(v => v.classList.add('hidden'));
+            const destino = document.getElementById(id);
+            if (destino) destino.classList.remove('hidden');
             window.scrollTo(0, 0);
             setTimeout(scrollMonitor, 100);
         }
 
         function scrollMonitor() {
             const arrow = document.getElementById('scroll-arrow');
+            if (!arrow) return;
             const total = document.documentElement.scrollHeight;
             const current = window.innerHeight + window.pageYOffset;
             arrow.style.display = (total > window.innerHeight + 60 && current < total - 60) ? 'block' : 'none';
@@ -481,7 +488,7 @@
             window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
         }
 
-        function enviarUbicacion() {
+        function enviarUbicacionRemis() {
             const ape = localStorage.getItem('acc_ape') || "Cliente";
             navigator.geolocation.getCurrentPosition(
                 p => {
@@ -512,62 +519,62 @@
             
             if (sosActivado) return;
             sosActivado = true;
+            vibrar();
             
             document.getElementById('sos-overlay').style.display = 'flex';
-            document.getElementById('sos-status-text').innerHTML = "📱 Alerta enviada - Obteniendo ubicación...";
+            document.getElementById('sos-status-text').innerHTML = "📱 Enviando alerta urgente...";
             
-            enviarAlertaInmediata();
+            // Enviar solo al contacto principal automáticamente
+            enviarAlertaPrincipal();
+            
+            // Luego obtener ubicación y enviarla al principal
+            document.getElementById('sos-status-text').innerHTML = "📱 Alerta enviada - Obteniendo ubicación...";
             
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const url = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
-                    enviarUbicacionATodos(url);
-                    document.getElementById('sos-status-text').innerHTML = "✅ Alerta enviada\n📍 Ubicación enviada";
+                    enviarUbicacionPrincipal(url);
+                    document.getElementById('sos-status-text').innerHTML = "✅ Alerta enviada\n📍 Ubicación enviada al contacto principal";
                 },
                 (error) => {
-                    enviarFalloUbicacion();
+                    enviarFalloUbicacionPrincipal();
                     document.getElementById('sos-status-text').innerHTML = "⚠️ Alerta enviada\n❌ No se pudo obtener ubicación";
                 }
             );
         }
 
-        function enviarAlertaInmediata() {
+        function enviarAlertaPrincipal() {
             const nombre = localStorage.getItem('acc_ape') || "Persona";
+            const contacto = localStorage.getItem('acc_s1');
+            if (!contacto || limpiarNumero(contacto).length < 6) return;
+            
             const mensaje = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} ha activado el botón de pánico.\n\n📍 Enviando ubicación en segundos...\n📞 Por favor comunicarse URGENTE.`;
-            
-            [1, 2, 3].forEach(num => {
-                const contacto = localStorage.getItem('acc_s' + num);
-                if (contacto && limpiarNumero(contacto).length >= 6) {
-                    const numeroLimpio = limpiarNumero(contacto);
-                    window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
-                }
-            });
+            const numeroLimpio = limpiarNumero(contacto);
+            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
         }
 
-        function enviarUbicacionATodos(url) {
+        function enviarUbicacionPrincipal(url) {
             const nombre = localStorage.getItem('acc_ape') || "Persona";
+            const contacto = localStorage.getItem('acc_s1');
+            if (!contacto || limpiarNumero(contacto).length < 6) return;
+            
             const mensajeUbicacion = `📍 UBICACIÓN EN TIEMPO REAL\n\n${nombre} se encuentra en:\n${url}\n\n🚨 SITUACIÓN DE EMERGENCIA - ACTUAR RÁPIDO`;
-            
-            [1, 2, 3].forEach(num => {
-                const contacto = localStorage.getItem('acc_s' + num);
-                if (contacto && limpiarNumero(contacto).length >= 6) {
-                    const numeroLimpio = limpiarNumero(contacto);
-                    window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
-                }
-            });
+            const numeroLimpio = limpiarNumero(contacto);
+            setTimeout(() => {
+                window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
+            }, 1000);
         }
 
-        function enviarFalloUbicacion() {
+        function enviarFalloUbicacionPrincipal() {
             const nombre = localStorage.getItem('acc_ape') || "Persona";
-            const mensajeError = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación automática.\n\n📱 Por favor comunicarse URGENTE con ${nombre} para conocer su ubicación.`;
+            const contacto = localStorage.getItem('acc_s1');
+            if (!contacto || limpiarNumero(contacto).length < 6) return;
             
-            [1, 2, 3].forEach(num => {
-                const contacto = localStorage.getItem('acc_s' + num);
-                if (contacto && limpiarNumero(contacto).length >= 6) {
-                    const numeroLimpio = limpiarNumero(contacto);
-                    window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeError)}`, "_blank");
-                }
-            });
+            const mensajeError = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación automática.\n\n📱 Por favor comunicarse URGENTE con ${nombre} para conocer su ubicación.`;
+            const numeroLimpio = limpiarNumero(contacto);
+            setTimeout(() => {
+                window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensajeError)}`, "_blank");
+            }, 1000);
         }
 
         function enviarSOSManual(num) {
@@ -583,7 +590,17 @@
         }
 
         function reenviarAlertaATodos() {
-            enviarAlertaInmediata();
+            [1, 2, 3].forEach(num => {
+                const contacto = localStorage.getItem('acc_s' + num);
+                if (contacto && limpiarNumero(contacto).length >= 6) {
+                    setTimeout(() => {
+                        const nombre = localStorage.getItem('acc_ape') || "Persona";
+                        const mensaje = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} necesita ayuda URGENTE.\n📞 Por favor comunicarse inmediatamente.`;
+                        const numeroLimpio = limpiarNumero(contacto);
+                        window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                    }, num * 500);
+                }
+            });
             alert("✅ Alerta reenviada a todos los contactos");
         }
 
@@ -619,13 +636,21 @@
         function inicializarDatos() {
             const get = (k) => localStorage.getItem(k) || "";
             
-            document.getElementById('cfg-ape').value = get('acc_ape');
-            document.getElementById('cfg-casa').value = get('acc_casa');
-            document.getElementById('cfg-trab').value = get('acc_trab');
-            document.getElementById('cfg-fav').value = get('acc_fav');
-            document.getElementById('cfg-s1').value = get('acc_s1');
-            document.getElementById('cfg-s2').value = get('acc_s2');
-            document.getElementById('cfg-s3').value = get('acc_s3');
+            const cfgApe = document.getElementById('cfg-ape');
+            const cfgCasa = document.getElementById('cfg-casa');
+            const cfgTrab = document.getElementById('cfg-trab');
+            const cfgFav = document.getElementById('cfg-fav');
+            const cfgS1 = document.getElementById('cfg-s1');
+            const cfgS2 = document.getElementById('cfg-s2');
+            const cfgS3 = document.getElementById('cfg-s3');
+            
+            if (cfgApe) cfgApe.value = get('acc_ape');
+            if (cfgCasa) cfgCasa.value = get('acc_casa');
+            if (cfgTrab) cfgTrab.value = get('acc_trab');
+            if (cfgFav) cfgFav.value = get('acc_fav');
+            if (cfgS1) cfgS1.value = get('acc_s1');
+            if (cfgS2) cfgS2.value = get('acc_s2');
+            if (cfgS3) cfgS3.value = get('acc_s3');
 
             const lblCasa = document.getElementById('lbl-casa');
             const lblTrab = document.getElementById('lbl-trab');
@@ -660,17 +685,20 @@
 
         function mostrarCodigoQR() {
             const box = document.getElementById('qr-box');
+            if (!box) return;
             box.innerHTML = "";
             new QRCode(box, {
                 text: window.location.href,
                 width: 200,
                 height: 200
             });
-            document.getElementById('qr-modal').style.display = 'flex';
+            const modal = document.getElementById('qr-modal');
+            if (modal) modal.style.display = 'flex';
         }
 
         function cerrarModal() {
-            document.getElementById('qr-modal').style.display = 'none';
+            const modal = document.getElementById('qr-modal');
+            if (modal) modal.style.display = 'none';
         }
 
         function enviarQueja() {
