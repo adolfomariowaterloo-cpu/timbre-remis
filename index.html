@@ -278,7 +278,7 @@
     <div id="sos-overlay">
         <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
         <h2 style="font-size: 28px; font-weight: 900;">¡AYUDA EN CAMINO!</h2>
-        <div class="sos-status" id="sos-status-text">🚨 Enviando alerta a todos tus contactos...</div>
+        <div class="sos-status" id="sos-status-text">🚨 Enviando alerta a tus contactos...</div>
         <div class="spinner"></div>
         <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; background: black; margin-top: 20px;">CANCELAR</button>
         <div class="warning-text">⚠️ Mantené presionado 2 segundos el círculo rojo para activar SOS</div>
@@ -398,7 +398,7 @@
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
     </div>
 
-    <!-- VISTA COMPARTIR RESTAURADA -->
+    <!-- VISTA COMPARTIR -->
     <div class="container hidden" id="view-share">
         <h2>Compartir App</h2>
         <div class="card" style="text-align:center">
@@ -416,7 +416,12 @@
 
     <div id="panic-trigger">
         <div class="panic-label">MANTENER 2s</div>
-        <div id="panic-circle" onmousedown="iniciarRelojPanico()" ontouchstart="iniciarRelojPanico()" onmouseup="detenerRelojPanico()" ontouchend="detenerRelojPanico()">
+        <div id="panic-circle" 
+             onmousedown="iniciarRelojPanico()" 
+             ontouchstart="iniciarRelojPanico()" 
+             onmouseup="detenerRelojPanico()" 
+             ontouchend="detenerRelojPanico()"
+             ontouchcancel="detenerRelojPanico()">
             <svg viewBox="0 0 24 24" width="45" fill="white"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16" /></svg>
         </div>
     </div>
@@ -431,9 +436,16 @@
         let deferredPrompt;
         let relojPanico;
         let sosActivado = false;
+        let timeoutsSOS = [];
+        let qrInstance = null;
         const WHATSAPP_CENTRAL = "5493442641200";
 
-        // ==================== FUNCIONES BASE ====================
+        // ==================== FUNCIONES UTILITARIAS ====================
+        function limpiarTexto(txt) {
+            if (!txt) return '';
+            return txt.toString().trim().replace(/\n/g, ' ').replace(/\r/g, '');
+        }
+
         function limpiarNumero(numero) {
             if (!numero) return '';
             let limpio = numero.toString().replace(/\D/g, '').replace('+', '');
@@ -442,13 +454,37 @@
             return limpio;
         }
 
+        function validarNumero(numero) {
+            const limpio = limpiarNumero(numero);
+            return limpio.length >= 6 && limpio.length <= 15;
+        }
+
+        function verificarInternet() {
+            if (!navigator.onLine) {
+                alert("⚠️ Sin conexión a internet. Verificá tu conexión.");
+                return false;
+            }
+            return true;
+        }
+
         function esModoApp() {
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         }
 
+        function guardarTimeout(id) {
+            timeoutsSOS.push(id);
+        }
+
+        function limpiarTimeoutsSOS() {
+            timeoutsSOS.forEach(id => clearTimeout(id));
+            timeoutsSOS = [];
+        }
+
+        // ==================== NAVEGACIÓN ====================
         function navegar(id) {
             document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+            const destino = document.getElementById(id);
+            if (destino) destino.classList.remove('hidden');
             window.scrollTo(0, 0);
             setTimeout(scrollMonitor, 100);
         }
@@ -462,30 +498,52 @@
         }
 
         function call(num) { 
+            if (!verificarInternet()) return;
             window.location.href = "tel:" + num; 
         }
 
         // ==================== REMIS ====================
         function solicitar(tipo) {
+            if (!verificarInternet()) return;
             const dir = localStorage.getItem('acc_' + tipo);
-            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            const ape = limpiarTexto(localStorage.getItem('acc_ape') || "Cliente");
             if(!dir) return alert("⚠️ Configura esta dirección en Ajustes.");
             const msg = `Hola Acción! Soy ${ape}. Necesito un móvil en ${dir}`;
-            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
+            window.open(`https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`, "_blank");
         }
 
         function enviarUbicacionRemis() {
-            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            if (!verificarInternet()) return;
+            const ape = limpiarTexto(localStorage.getItem('acc_ape') || "Cliente");
             navigator.geolocation.getCurrentPosition(
                 p => {
                     const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                    window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`;
+                    window.open(`https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`, "_blank");
                 }, 
-                () => alert("⚠️ Activa el GPS y los permisos de ubicación")
+                (err) => manejarErrorUbicacion(err)
             );
         }
 
-        // ==================== SOS MEJORADO - AUTOMÁTICO ====================
+        // ==================== MANEJO DE ERRORES DE UBICACIÓN ====================
+        function manejarErrorUbicacion(err) {
+            let mensaje = "";
+            switch(err.code) {
+                case err.PERMISSION_DENIED:
+                    mensaje = "⚠️ Permiso de ubicación denegado. Activá el GPS en ajustes.";
+                    break;
+                case err.POSITION_UNAVAILABLE:
+                    mensaje = "⚠️ Ubicación no disponible. Intentá de nuevo.";
+                    break;
+                case err.TIMEOUT:
+                    mensaje = "⚠️ La ubicación tardó demasiado. Verificá la señal GPS.";
+                    break;
+                default:
+                    mensaje = "⚠️ No se pudo obtener la ubicación. Activá el GPS.";
+            }
+            alert(mensaje);
+        }
+
+        // ==================== SOS MEJORADO ====================
         function iniciarRelojPanico() {
             document.getElementById('panic-circle').style.background = "#ffcc00";
             relojPanico = setTimeout(activarSOS, 2000);
@@ -496,15 +554,24 @@
             clearTimeout(relojPanico);
         }
 
+        function abrirWhatsAppSeguro(numero, mensaje) {
+            if (!numero || !validarNumero(numero)) return false;
+            if (!verificarInternet()) return false;
+            const numeroLimpio = limpiarNumero(numero);
+            // Usar window.open con _blank es más seguro que location.href
+            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+            return true;
+        }
+
         function activarSOS() {
+            if (!verificarInternet()) return;
+            
             const c1 = localStorage.getItem('acc_s1');
             const c2 = localStorage.getItem('acc_s2');
             const c3 = localStorage.getItem('acc_s3');
             
-            if ((!c1 || limpiarNumero(c1).length < 6) && 
-                (!c2 || limpiarNumero(c2).length < 6) && 
-                (!c3 || limpiarNumero(c3).length < 6)) {
-                alert("⚠️ Configurá al menos un contacto SOS en Ajustes");
+            if (!validarNumero(c1) && !validarNumero(c2) && !validarNumero(c3)) {
+                alert("⚠️ Configurá al menos un contacto SOS válido en Ajustes");
                 return;
             }
             
@@ -514,93 +581,106 @@
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
             
             document.getElementById('sos-overlay').style.display = 'flex';
-            document.getElementById('sos-status-text').innerHTML = "🚨 ENVIANDO ALERTA A TODOS TUS CONTACTOS...";
+            document.getElementById('sos-status-text').innerHTML = "🚨 ENVIANDO ALERTA A TUS CONTACTOS...";
             
-            const nombre = localStorage.getItem('acc_ape') || "Persona";
+            const nombre = limpiarTexto(localStorage.getItem('acc_ape') || "Persona");
             const alertaMsg = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} ha activado el botón de pánico.\n📍 Enviando ubicación en segundos...\n📞 COMUNICARSE URGENTE.`;
             
-            // Enviar alerta rápida a TODOS los contactos
-            [1, 2, 3].forEach(num => {
-                const contacto = localStorage.getItem('acc_s' + num);
-                if (contacto && limpiarNumero(contacto).length >= 6) {
-                    const numeroLimpio = limpiarNumero(contacto);
-                    window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(alertaMsg)}`, "_blank");
-                }
-            });
+            // Enviar solo al contacto principal automáticamente (más confiable que múltiples ventanas)
+            if (validarNumero(c1)) {
+                abrirWhatsAppSeguro(c1, alertaMsg);
+            } else if (validarNumero(c2)) {
+                abrirWhatsAppSeguro(c2, alertaMsg);
+            } else if (validarNumero(c3)) {
+                abrirWhatsAppSeguro(c3, alertaMsg);
+            }
             
             document.getElementById('sos-status-text').innerHTML = "📡 ALERTA ENVIADA<br>📍 OBTENIENDO UBICACIÓN...";
             
-            // Obtener ubicación y enviar a TODOS
+            // Obtener ubicación
             navigator.geolocation.getCurrentPosition(p => {
                 const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                 const ubicacionMsg = `📍 UBICACIÓN EN TIEMPO REAL\n\n${nombre} se encuentra en:\n${url}\n\n🚨 SITUACIÓN DE EMERGENCIA - ACTUAR RÁPIDO`;
                 
-                [1, 2, 3].forEach(num => {
-                    const contacto = localStorage.getItem('acc_s' + num);
-                    if (contacto && limpiarNumero(contacto).length >= 6) {
-                        const numeroLimpio = limpiarNumero(contacto);
-                        setTimeout(() => {
-                            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(ubicacionMsg)}`, "_blank");
-                        }, 800);
-                    }
-                });
+                // Enviar ubicación al mismo contacto que recibió la alerta
+                if (validarNumero(c1)) {
+                    const timeoutId = setTimeout(() => {
+                        abrirWhatsAppSeguro(c1, ubicacionMsg);
+                    }, 1500);
+                    guardarTimeout(timeoutId);
+                }
                 
                 document.getElementById('sos-status-text').innerHTML = "✅ ALERTA COMPLETA<br>📍 UBICACIÓN ENVIADA<br><br>🔄 VOLVIENDO...";
                 
-                setTimeout(() => {
+                const timeoutVuelta = setTimeout(() => {
                     detenerSOS();
                     window.location.href = window.location.href;
-                }, 2000);
+                }, 2500);
+                guardarTimeout(timeoutVuelta);
                 
-            }, () => {
-                const errorMsg = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación automática.\n\n📱 Por favor comunicarse URGENTE con ${nombre} para conocer su ubicación.`;
+            }, (err) => {
+                let errorMsg = "";
+                switch(err.code) {
+                    case err.PERMISSION_DENIED:
+                        errorMsg = `⚠️ ${nombre} activó el botón de pánico pero el GPS está desactivado.\n\n📱 Por favor comunicarse URGENTE con ${nombre}.`;
+                        break;
+                    case err.TIMEOUT:
+                        errorMsg = `⚠️ ${nombre} activó el botón de pánico pero no se pudo obtener la ubicación (timeout).\n\n📱 Comunicarse URGENTE.`;
+                        break;
+                    default:
+                        errorMsg = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación.\n\n📱 Por favor comunicarse URGENTE.`;
+                }
                 
-                [1, 2, 3].forEach(num => {
-                    const contacto = localStorage.getItem('acc_s' + num);
-                    if (contacto && limpiarNumero(contacto).length >= 6) {
-                        const numeroLimpio = limpiarNumero(contacto);
-                        setTimeout(() => {
-                            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(errorMsg)}`, "_blank");
-                        }, 800);
-                    }
-                });
+                if (validarNumero(c1)) {
+                    const timeoutId = setTimeout(() => {
+                        abrirWhatsAppSeguro(c1, errorMsg);
+                    }, 1500);
+                    guardarTimeout(timeoutId);
+                }
                 
                 document.getElementById('sos-status-text').innerHTML = "⚠️ ALERTA ENVIADA<br>❌ UBICACIÓN NO DISPONIBLE<br><br>🔄 VOLVIENDO...";
                 
-                setTimeout(() => {
+                const timeoutVuelta = setTimeout(() => {
                     detenerSOS();
                     window.location.href = window.location.href;
-                }, 2000);
+                }, 2500);
+                guardarTimeout(timeoutVuelta);
             }, { enableHighAccuracy: true, timeout: 10000 });
         }
 
         function detenerSOS() {
             document.getElementById('sos-overlay').style.display = 'none';
             sosActivado = false;
+            limpiarTimeoutsSOS();
         }
 
         // ==================== AJUSTES ====================
         function guardarAjustes() {
-            const s1 = limpiarNumero(document.getElementById('cfg-s1').value);
-            const s2 = limpiarNumero(document.getElementById('cfg-s2').value);
-            const s3 = limpiarNumero(document.getElementById('cfg-s3').value);
-            
-            if (s1 && s1.length < 6) {
-                alert("⚠️ El número de contacto principal debe tener al menos 6 dígitos");
-                return;
-            }
-            
-            localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
-            localStorage.setItem('acc_casa', document.getElementById('cfg-casa').value);
-            localStorage.setItem('acc_trab', document.getElementById('cfg-trab').value);
-            localStorage.setItem('acc_fav', document.getElementById('cfg-fav').value);
-            localStorage.setItem('acc_s1', s1);
-            localStorage.setItem('acc_s2', s2);
-            localStorage.setItem('acc_s3', s3);
+            try {
+                const s1 = limpiarNumero(document.getElementById('cfg-s1').value);
+                const s2 = limpiarNumero(document.getElementById('cfg-s2').value);
+                const s3 = limpiarNumero(document.getElementById('cfg-s3').value);
+                
+                if (s1 && s1.length < 6 && s1.length > 0) {
+                    alert("⚠️ El número de contacto principal debe tener al menos 6 dígitos");
+                    return;
+                }
+                
+                localStorage.setItem('acc_ape', limpiarTexto(document.getElementById('cfg-ape').value));
+                localStorage.setItem('acc_casa', limpiarTexto(document.getElementById('cfg-casa').value));
+                localStorage.setItem('acc_trab', limpiarTexto(document.getElementById('cfg-trab').value));
+                localStorage.setItem('acc_fav', limpiarTexto(document.getElementById('cfg-fav').value));
+                localStorage.setItem('acc_s1', s1);
+                localStorage.setItem('acc_s2', s2);
+                localStorage.setItem('acc_s3', s3);
 
-            alert("✅ Datos guardados correctamente");
-            inicializarDatos();
-            navegar('view-main');
+                alert("✅ Datos guardados correctamente");
+                inicializarDatos();
+                navegar('view-main');
+            } catch(e) {
+                alert("❌ Error al guardar datos");
+                console.error(e);
+            }
         }
 
         function inicializarDatos() {
@@ -624,20 +704,22 @@
 
         // ==================== COMPARTIR ====================
         function compartirWhatsApp() {
+            if (!verificarInternet()) return;
             const appUrl = window.location.href;
             const msg = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
-            window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
         }
 
         function enviarDirecto() {
+            if (!verificarInternet()) return;
             let numero = document.getElementById('numero-directo').value;
             if (!numero) {
                 alert("⚠️ Ingresá un número de teléfono");
                 return;
             }
             numero = limpiarNumero(numero);
-            if (numero.length < 6) {
-                alert("⚠️ Ingresá un número válido (al menos 6 dígitos)");
+            if (!validarNumero(numero)) {
+                alert("⚠️ Ingresá un número válido (entre 6 y 15 dígitos, sin 0 ni 15)");
                 return;
             }
             const appUrl = window.location.href;
@@ -647,8 +729,15 @@
 
         function mostrarCodigoQR() {
             const box = document.getElementById('qr-box');
+            if (!box) return;
             box.innerHTML = "";
-            new QRCode(box, {
+            try {
+                if (qrInstance) {
+                    // Intentar limpiar instancia previa
+                    qrInstance.clear();
+                }
+            } catch(e) {}
+            qrInstance = new QRCode(box, {
                 text: window.location.href,
                 width: 200,
                 height: 200
@@ -661,9 +750,10 @@
         }
 
         function enviarQueja() {
-            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            if (!verificarInternet()) return;
+            const ape = limpiarTexto(localStorage.getItem('acc_ape') || "Cliente");
             const msg = `Hola Acción! Soy ${ape}. Quisiera dejar una sugerencia/reclamo: `;
-            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
+            window.open(`https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`, "_blank");
         }
 
         function instalarApp() {
@@ -672,6 +762,24 @@
                 deferredPrompt.userChoice.then(() => deferredPrompt = null);
             } else {
                 alert("📱 Usá 'Agregar a pantalla de inicio' desde el menú del navegador");
+            }
+        }
+
+        // ==================== SERVICE WORKER ====================
+        function registrarServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => {
+                        console.log("✅ Service Worker registrado:", reg);
+                        reg.update();
+                    })
+                    .catch(err => console.log("⚠️ Error SW:", err));
+                
+                // Controlar actualizaciones
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    console.log("🔄 Service Worker actualizado");
+                    window.location.reload();
+                });
             }
         }
 
@@ -685,18 +793,19 @@
         });
 
         window.addEventListener('appinstalled', () => {
-            localStorage.setItem("app_instalada", "true");
+            try {
+                localStorage.setItem("app_instalada", "true");
+            } catch(e) {}
         });
 
         window.addEventListener('scroll', scrollMonitor);
+        window.addEventListener('online', () => console.log("📡 Conexión recuperada"));
+        window.addEventListener('offline', () => console.log("📡 Sin conexión"));
 
         window.onload = () => {
             inicializarDatos();
             scrollMonitor();
-
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log("Error SW:", err));
-            }
+            registrarServiceWorker();
 
             if (esModoApp()) {
                 const btn = document.getElementById('btn-instalar');
