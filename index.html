@@ -720,13 +720,7 @@
                     guardarTimeout(timeoutId);
                 }
                 
-                document.getElementById('sos-status-text').innerHTML = "✅ ALERTA COMPLETA<br>📍 UBICACIÓN ENVIADA<br><br>🔄 VOLVIENDO...";
-                
-                const timeoutVuelta = setTimeout(() => {
-                    detenerSOS();
-                    window.location.href = window.location.href;
-                }, 2500);
-                guardarTimeout(timeoutVuelta);
+                document.getElementById('sos-status-text').innerHTML = "✅ ALERTA COMPLETA<br>📍 UBICACIÓN ENVIADA<br><br>📱 Volvé a la app cuando termines";
                 
             }, (err) => {
                 let errorMsg = "";
@@ -748,13 +742,7 @@
                     guardarTimeout(timeoutId);
                 }
                 
-                document.getElementById('sos-status-text').innerHTML = "⚠️ ALERTA ENVIADA<br>❌ UBICACIÓN NO DISPONIBLE<br><br>🔄 VOLVIENDO...";
-                
-                const timeoutVuelta = setTimeout(() => {
-                    detenerSOS();
-                    window.location.href = window.location.href;
-                }, 2500);
-                guardarTimeout(timeoutVuelta);
+                document.getElementById('sos-status-text').innerHTML = "⚠️ ALERTA ENVIADA<br>❌ UBICACIÓN NO DISPONIBLE<br><br>📱 Volvé a la app cuando termines";
             }, { enableHighAccuracy: true, timeout: 10000 });
         }
 
@@ -945,7 +933,6 @@
         window.addEventListener('online', () => console.log("📡 Conexión recuperada"));
         window.addEventListener('offline', () => console.log("📡 Sin conexión"));
 
-        // Conectar botones de términos después de cargar el DOM
         document.addEventListener('DOMContentLoaded', function() {
             const btnAceptar = document.getElementById('btn-aceptar-terminos');
             const btnRechazar = document.getElementById('btn-rechazar-terminos');
