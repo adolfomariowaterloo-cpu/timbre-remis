@@ -271,9 +271,122 @@
             color: #ffcc00;
             margin-top: 10px;
         }
+
+        /* Estilos del modal de términos */
+        .modal-terminos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-terminos-content {
+            background: #111;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            border-top: 4px solid var(--rojo-accion);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .modal-terminos-content h2 {
+            color: var(--rojo-accion);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .terminos-texto {
+            color: #ddd;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        .terminos-texto ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        .terminos-texto li {
+            margin-bottom: 12px;
+            list-style: none;
+            position: relative;
+            padding-left: 25px;
+        }
+        .terminos-texto li:before {
+            content: "⚠️";
+            position: absolute;
+            left: 0;
+            font-size: 14px;
+        }
+        .terminos-texto li:first-child:before { content: "📌"; }
+        .terminos-texto li:nth-child(2):before { content: "🔧"; }
+        .terminos-texto li:nth-child(3):before { content: "❓"; }
+        .terminos-texto li:nth-child(4):before { content: "🆘"; }
+        .terminos-texto li:nth-child(5):before { content: "👤"; }
+        .terminos-botones {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .btn-terminos {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-terminos:active { transform: scale(0.98); }
+        #btn-aceptar-terminos {
+            background: var(--verde-wa);
+            color: white;
+        }
+        .btn-rechazar {
+            background: #333;
+            color: #aaa;
+            border: 1px solid #555;
+        }
+        .terminos-aviso {
+            text-align: center;
+            font-size: 11px;
+            color: #ffaa00;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
+
+    <!-- MODAL DE TÉRMINOS Y CONDICIONES -->
+    <div id="modal-terminos" class="modal-terminos" style="display: none;">
+        <div class="modal-terminos-content">
+            <h2>📋 Términos de uso</h2>
+            <div class="terminos-texto">
+                <p>Al utilizar esta aplicación, el usuario acepta que:</p>
+                <ul>
+                    <li>✅ Acción Remis actúa únicamente como <strong>intermediario informativo</strong> entre usuarios y prestadores de servicios.</li>
+                    <li>✅ Los servicios ofrecidos por terceros (plomeros, electricistas, mecánicos, etc.) son <strong>independientes y ajenos</strong> a Acción Remis.</li>
+                    <li>✅ Acción Remis <strong>no garantiza la calidad, disponibilidad ni resultado</strong> de dichos servicios.</li>
+                    <li>✅ El uso del botón de emergencia (SOS) es una herramienta complementaria que depende de la conectividad, permisos del dispositivo y aplicaciones externas, por lo que <strong>no se asegura su funcionamiento en todos los casos</strong>.</li>
+                    <li>✅ El usuario asume la <strong>responsabilidad del uso</strong> de la aplicación y de los servicios contactados a través de la misma.</li>
+                </ul>
+            </div>
+            <div class="terminos-botones">
+                <button class="btn-terminos" id="btn-aceptar-terminos">✅ ACEPTAR Y CONTINUAR</button>
+                <button class="btn-terminos btn-rechazar" id="btn-rechazar-terminos">❌ NO ACEPTAR</button>
+            </div>
+            <div class="terminos-aviso">⚠️ Para usar la aplicación es necesario aceptar los términos.</div>
+        </div>
+    </div>
 
     <div id="sos-overlay">
         <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
@@ -360,6 +473,7 @@
         </div>
         <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+        <button class="btn" style="background:#444; margin-top: 10px;" onclick="mostrarTerminos()">📋 VER TÉRMINOS DE USO</button>
     </div>
 
     <div class="container hidden" id="view-servicios">
@@ -558,7 +672,6 @@
             if (!numero || !validarNumero(numero)) return false;
             if (!verificarInternet()) return false;
             const numeroLimpio = limpiarNumero(numero);
-            // Usar window.open con _blank es más seguro que location.href
             window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
             return true;
         }
@@ -586,7 +699,6 @@
             const nombre = limpiarTexto(localStorage.getItem('acc_ape') || "Persona");
             const alertaMsg = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} ha activado el botón de pánico.\n📍 Enviando ubicación en segundos...\n📞 COMUNICARSE URGENTE.`;
             
-            // Enviar solo al contacto principal automáticamente (más confiable que múltiples ventanas)
             if (validarNumero(c1)) {
                 abrirWhatsAppSeguro(c1, alertaMsg);
             } else if (validarNumero(c2)) {
@@ -597,12 +709,10 @@
             
             document.getElementById('sos-status-text').innerHTML = "📡 ALERTA ENVIADA<br>📍 OBTENIENDO UBICACIÓN...";
             
-            // Obtener ubicación
             navigator.geolocation.getCurrentPosition(p => {
                 const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                 const ubicacionMsg = `📍 UBICACIÓN EN TIEMPO REAL\n\n${nombre} se encuentra en:\n${url}\n\n🚨 SITUACIÓN DE EMERGENCIA - ACTUAR RÁPIDO`;
                 
-                // Enviar ubicación al mismo contacto que recibió la alerta
                 if (validarNumero(c1)) {
                     const timeoutId = setTimeout(() => {
                         abrirWhatsAppSeguro(c1, ubicacionMsg);
@@ -733,7 +843,6 @@
             box.innerHTML = "";
             try {
                 if (qrInstance) {
-                    // Intentar limpiar instancia previa
                     qrInstance.clear();
                 }
             } catch(e) {}
@@ -765,6 +874,41 @@
             }
         }
 
+        // ==================== TÉRMINOS Y CONDICIONES ====================
+        function mostrarTerminos() {
+            const modal = document.getElementById('modal-terminos');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function ocultarTerminos() {
+            const modal = document.getElementById('modal-terminos');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function aceptarTerminos() {
+            try {
+                localStorage.setItem('terminos_aceptados', 'true');
+                localStorage.setItem('terminos_fecha', new Date().toISOString());
+            } catch(e) {}
+            ocultarTerminos();
+        }
+
+        function rechazarTerminos() {
+            alert("❌ Para usar Acción Remis debes aceptar los términos de uso.\n\nLa aplicación se cerrará.");
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.close();
+            }
+        }
+
+        function verificarTerminos() {
+            const yaAcepto = localStorage.getItem('terminos_aceptados');
+            if (yaAcepto !== 'true') {
+                mostrarTerminos();
+            }
+        }
+
         // ==================== SERVICE WORKER ====================
         function registrarServiceWorker() {
             if ('serviceWorker' in navigator) {
@@ -775,7 +919,6 @@
                     })
                     .catch(err => console.log("⚠️ Error SW:", err));
                 
-                // Controlar actualizaciones
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
                     console.log("🔄 Service Worker actualizado");
                     window.location.reload();
@@ -801,6 +944,15 @@
         window.addEventListener('scroll', scrollMonitor);
         window.addEventListener('online', () => console.log("📡 Conexión recuperada"));
         window.addEventListener('offline', () => console.log("📡 Sin conexión"));
+
+        // Conectar botones de términos después de cargar el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnAceptar = document.getElementById('btn-aceptar-terminos');
+            const btnRechazar = document.getElementById('btn-rechazar-terminos');
+            if (btnAceptar) btnAceptar.onclick = aceptarTerminos;
+            if (btnRechazar) btnRechazar.onclick = rechazarTerminos;
+            verificarTerminos();
+        });
 
         window.onload = () => {
             inicializarDatos();
