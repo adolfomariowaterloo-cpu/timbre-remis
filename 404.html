@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <meta name="theme-color" content="#000000">
+    <title>Acción Remis - Cdelu Oficial</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Acción Remis">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --rojo-accion: #ff2b2b;
+            --negro: #000000;
+            --gris-oscuro: #121212;
+            --verde-wa: #25D366;
+            --azul-info: #2a9df4;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--negro);
+            color: white;
+            line-height: 1.6;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
+            40% {transform: translateY(-10px) translateX(-50%);}
+            60% {transform: translateY(-5px) translateX(-50%);}
+        }
+
+        header { 
+            padding: 30px 20px; 
+            background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%); 
+            border-bottom: 2px solid var(--rojo-accion);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        header img { 
+            width: 130px; 
+            filter: drop-shadow(0 0 10px rgba(255,0,0,0.5));
+            border-radius: 8px;
+        }
+        header h1 { 
+            color: white; 
+            margin-top: 10px; 
+            font-size: 22px; 
+            letter-spacing: 2px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .container {
+            padding: 20px 15px 120px;
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: calc(100vh - 150px);
+        }
+        .hidden { display: none !important; }
+
+        .btn {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+            background: #222;
+        }
+        .btn:active { transform: scale(0.96); filter: brightness(1.2); }
+
+        .btn-remis { background: linear-gradient(135deg, #ff2b2b 0%, #8b0000 100%); }
+        .btn-serv { background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%); }
+        .btn-farm { background: linear-gradient(135deg, #4CAF50 0%, #1B5E20 100%); }
+        .btn-event { background: linear-gradient(135deg, #FF9800 0%, #E65100 100%); }
+        .btn-sos { background: linear-gradient(135deg, #9C27B0 0%, #4A148C 100%); }
+        .btn-guia { background: #222; border: 1px solid #444; }
+        .btn-back { background: #333; margin-top: 25px; font-size: 15px; border: 1px dashed #666; }
+        .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,87,34,0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255,87,34,0); }
+        }
+
+        .sub-label { font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px; }
+
+        .card { 
+            background: #111; 
+            padding: 20px; 
+            border-radius: 20px; 
+            margin-bottom: 20px; 
+            border-top: 3px solid var(--rojo-accion);
+        }
+        .card h3 { 
+            margin-bottom: 15px; 
+            font-size: 16px; 
+            color: var(--rojo-accion); 
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+
+        .list-item {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: #1a1a1a; 
+            padding: 15px; 
+            border-radius: 12px; 
+            margin-bottom: 10px;
+        }
+        .call-action { 
+            background: var(--verde-wa); 
+            border: none; 
+            border-radius: 10px; 
+            padding: 10px 15px; 
+            color: white; 
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        input {
+            width: 100%; 
+            padding: 16px; 
+            border-radius: 12px; 
+            border: 2px solid #333;
+            background: #0a0a0a; 
+            color: white; 
+            font-size: 16px; /* Previene zoom automático en iOS */
+            margin-bottom: 15px;
+        }
+        label { display: block; font-size: 13px; color: #aaa; margin-left: 10px; margin-bottom: 6px; }
+
+        #sos-overlay {
+            position: fixed; inset: 0; background: rgba(183, 28, 28, 0.98);
+            z-index: 9999; display: none; flex-direction: column;
+            justify-content: center; align-items: center; padding: 40px; text-align: center;
+        }
+
+        #panic-trigger { 
+            position: fixed; 
+            bottom: calc(30px + env(safe-area-inset-bottom)); 
+            right: 25px; 
+            z-index: 1500;
+            width: 80px;
+            height: 80px;
+        }
+        #panic-circle {
+            width: 80px; height: 80px; background: #ff0000; border-radius: 50%;
+            border: 5px solid white; display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        .panic-label { 
+            position: absolute; 
+            top: -25px; 
+            width: 100px; 
+            text-align: center; 
+            left: -10px; 
+            font-size: 11px; 
+            font-weight: 900; 
+            color: #ff0000; 
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            padding: 2px 5px;
+        }
+
+        #scroll-arrow {
+            position: fixed; 
+            bottom: 120px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            z-index: 2000; 
+            animation: bounce 2s infinite; 
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            padding: 5px;
+            display: none;
+            pointer-events: none;
+            font-size: 30px;
+        }
+
+        .modal { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 10000; 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            flex-direction: column; 
+        }
+        #qr-box { background: white; padding: 20px; border-radius: 15px; }
+        .close-modal {
+            margin-top: 20px;
+            background: #ff2b2b;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+        }
+        .sos-buttons { display: flex; flex-direction: column; gap: 15px; width: 100%; margin: 20px 0; }
+        .sos-buttons button { width: 100%; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        .warning-text { font-size: 12px; color: #ffcc00; margin-top: 10px; }
+        .sos-status { font-size: 14px; margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="sos-overlay">
+        <div style="font-size: 80px;">🆘</div>
+        <h2 style="font-size: 28px;">¡PÁNICO ACTIVADO!</h2>
+        <p style="margin: 20px 0;">Se envió alerta urgente a tu contacto principal.</p>
+        <div class="sos-status" id="sos-status-text">📱 Enviando alerta...</div>
+        <div class="sos-buttons">
+            <button style="background:#ff9800; color:white;" onclick="enviarSOSManual(2)">📢 AVISAR A CONTACTO 2</button>
+            <button style="background:#e91e63; color:white;" onclick="enviarSOSManual(3)">📢 AVISAR A CONTACTO 3</button>
+            <button style="background:#2196F3; color:white;" onclick="reenviarAlertaATodos()">📢 AVISAR A TODOS</button>
+        </div>
+        <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; background: black;">CANCELAR</button>
+        <div class="warning-text">⚠️ Mantené presionado 2 segundos el círculo rojo</div>
+    </div>
+
+    <div id="scroll-arrow">↓</div>
+
+    <header>
+        <img src="logo.png" alt="Acción Remis" onerror="this.src='https://via.placeholder.com/130x80/ff2b2b/ffffff?text=ACCION'">
+        <h1>Acción Remis</h1>
+    </header>
+
+    <div class="container" id="view-main">
+        <button id="btn-instalar" class="btn btn-install hidden" onclick="instalarApp()">📲 INSTALAR APP GRATIS</button>
+        <button class="btn btn-remis" onclick="navegar('view-remis')">🚕 PEDIR UN REMIS</button>
+        <button class="btn btn-serv" onclick="navegar('view-servicios')">🛠️ SERVICIOS DOMICILIARIOS</button>
+        <a href="https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/" target="_blank" class="btn btn-farm">💊 FARMACIAS DE TURNO</a>
+        <a href="https://www.instagram.com/eventos.cdelu/" target="_blank" class="btn btn-event">🎟️ EVENTOS CDELU</a>
+        <button class="btn btn-sos" onclick="navegar('view-emergencias')">🚑 EMERGENCIAS Y SALUD</button>
+        <button class="btn btn-guia" onclick="navegar('view-guia')">🏢 GUÍA ÚTIL CIUDAD</button>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <button class="btn btn-guia" style="background:var(--verde-wa);" onclick="compartirApp()">📲 COMPARTIR</button>
+            <button class="btn btn-guia" style="background:#444;" onclick="navegar('view-config')">⚙️ AJUSTES</button>
+        </div>
+        <button class="btn" style="background:#333;" onclick="enviarQueja()">📩 SUGERENCIAS</button>
+    </div>
+
+    <div class="container hidden" id="view-remis">
+        <h2>Solicitar Móvil</h2>
+        <button class="btn btn-remis" onclick="solicitar('casa')">🏠 MI CASA<span class="sub-label" id="lbl-casa">...</span></button>
+        <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('trab')">💼 MI TRABAJO<span class="sub-label" id="lbl-trab">...</span></button>
+        <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('fav')">⭐ FAVORITO<span class="sub-label" id="lbl-fav">...</span></button>
+        <button class="btn btn-serv" onclick="enviarUbicacionRemis()">📍 ENVIAR UBICACIÓN ACTUAL</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
+    </div>
+
+    <div class="container hidden" id="view-config">
+        <h2>⚙️ Ajustes</h2>
+        <div class="card">
+            <label>👤 Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Juan Pérez">
+            <label>🏠 Casa:</label><input type="text" id="cfg-casa" placeholder="Ej: San Martín 123">
+            <label>💼 Trabajo:</label><input type="text" id="cfg-trab" placeholder="Ej: Av. Argentina 456">
+            <label>⭐ Favorito:</label><input type="text" id="cfg-fav" placeholder="Ej: Plaza Central">
+        </div>
+        <div class="card">
+            <h3>🆘 Contactos SOS (sin 0 ni 15)</h3>
+            <label>📱 Principal:</label><input type="tel" id="cfg-s1" placeholder="Ej: 3442123456">
+            <label>📱 Contacto 2:</label><input type="tel" id="cfg-s2" placeholder="Ej: 3442654321">
+            <label>📱 Contacto 3:</label><input type="tel" id="cfg-s3" placeholder="Ej: 3442789012">
+            <div class="warning-text">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div>
+        </div>
+        <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
+    </div>
+
+    <div class="container hidden" id="view-servicios">
+        <h2>Servicios</h2>
+        <div class="list-item"><span>🔧 MECÁNICO</span><button class="call-action" onclick="call('3442666445')">📞</button></div>
+        <div class="list-item"><span>⚡ ELECTRICISTA</span><button class="call-action" onclick="call('3442401688')">📞</button></div>
+        <div class="list-item"><span>💧 PLOMERO</span><button class="call-action" onclick="call('3442401688')">📞</button></div>
+        <div class="list-item"><span>🚚 FLETE</span><button class="call-action" onclick="call('543442423030')">📞</button></div>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
+    </div>
+
+    <div class="container hidden" id="view-emergencias">
+        <h2>Emergencias</h2>
+        <button class="btn btn-sos" style="background:red;" onclick="call('101')">🚔 POLICÍA (101)</button>
+        <button class="btn btn-sos" style="background:red;" onclick="call('100')">🔥 BOMBEROS (100)</button>
+        <button class="btn btn-sos" style="background:red;" onclick="call('107')">🚑 HOSPITAL (107)</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
+    </div>
+
+    <div class="container hidden" id="view-guia">
+        <h2>Guía</h2>
+        <div class="list-item"><span>🚌 TERMINAL</span><button class="call-action" onclick="call('422352')">📞</button></div>
+        <div class="list-item"><span>🏛️ MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞</button></div>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
+    </div>
+
+    <div id="panic-trigger">
+        <div class="panic-label">MANTENER 2s</div>
+        <div id="panic-circle" onmousedown="iniciarRelojPanico()" ontouchstart="iniciarRelojPanico()" onmouseup="detenerRelojPanico()" ontouchend="detenerRelojPanico()">⚠️</div>
+    </div>
+
+    <div id="qr-modal" class="modal">
+        <div id="qr-box"></div>
+        <button class="close-modal" onclick="cerrarModal()">CERRAR</button>
+    </div>
+
+    <script>
+        // ==================== VARIABLES ====================
+        let deferredPrompt;
+        let relojPanico;
+        let sosActivado = false;
+        const WHATSAPP_CENTRAL = "5493442641200";
+
+        // ==================== FUNCIONES BASE ====================
+        function limpiarNumero(numero) {
+            if (!numero) return '';
+            let limpio = numero.toString().replace(/\D/g, '').replace('+', '');
+            if (limpio.startsWith('15')) limpio = limpio.substring(2);
+            if (limpio.startsWith('0')) limpio = limpio.substring(1);
+            return limpio;
+        }
+
+        function esModoApp() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        }
+
+        function navegar(id) {
+            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function call(num) { 
+            window.location.href = "tel:" + num; 
+        }
+
+        // ==================== REMIS ====================
+        function solicitar(tipo) {
+            const dir = localStorage.getItem('acc_' + tipo);
+            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            if(!dir) return alert("⚠️ Configura esta dirección en Ajustes.");
+            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Necesito un móvil en " + dir)}`;
+        }
+
+        function enviarUbicacionRemis() {
+            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            navigator.geolocation.getCurrentPosition(p => {
+                // URL de Google Maps CORREGIDA y funcional
+                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación actual es: " + url)}`;
+            }, () => {
+                alert("⚠️ Por favor, activa el GPS para poder enviarte el móvil.");
+            }, { enableHighAccuracy: true });
+        }
+
+        // ==================== SOS MEJORADO ====================
+        function iniciarRelojPanico() {
+            document.getElementById('panic-circle').style.background = "#ffcc00";
+            relojPanico = setTimeout(activarSOS, 2000);
+        }
+
+        function detenerRelojPanico() {
+            document.getElementById('panic-circle').style.background = "#ff0000";
+            clearTimeout(relojPanico);
+        }
+
+        function activarSOS() {
+            const c1 = localStorage.getItem('acc_s1');
+            if (!c1 || limpiarNumero(c1).length < 6) {
+                alert("⚠️ Configura contacto SOS en Ajustes (número válido)");
+                return;
+            }
+            if (sosActivado) return;
+            sosActivado = true;
+            
+            // Vibración para feedback táctil
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            
+            document.getElementById('sos-overlay').style.display = 'flex';
+            document.getElementById('sos-status-text').innerHTML = "📱 Enviando alerta urgente...";
+            
+            const nombre = localStorage.getItem('acc_ape') || "Persona";
+            const contacto = limpiarNumero(c1);
+            
+            // Mensaje de alerta rápido
+            const alertaMsg = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} ha activado el botón de pánico.\n📍 Enviando ubicación en segundos...\n📞 COMUNICARSE URGENTE.`;
+            window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(alertaMsg)}`, "_blank");
+            
+            document.getElementById('sos-status-text').innerHTML = "📱 Alerta enviada - Obteniendo ubicación...";
+            
+            // Obtener ubicación y enviarla
+            navigator.geolocation.getCurrentPosition(p => {
+                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                const ubicacionMsg = `📍 UBICACIÓN EN TIEMPO REAL\n\n${nombre} se encuentra en:\n${url}\n\n🚨 SITUACIÓN DE EMERGENCIA - ACTUAR RÁPIDO`;
+                setTimeout(() => {
+                    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(ubicacionMsg)}`, "_blank");
+                    document.getElementById('sos-status-text').innerHTML = "✅ Alerta y ubicación enviadas correctamente";
+                }, 1500);
+            }, () => {
+                const errorMsg = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación automática.\n\n📱 Por favor comunicarse URGENTE con ${nombre} para conocer su ubicación.`;
+                setTimeout(() => {
+                    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(errorMsg)}`, "_blank");
+                    document.getElementById('sos-status-text').innerHTML = "⚠️ Alerta enviada, ubicación no disponible";
+                }, 1500);
+            }, { enableHighAccuracy: true, timeout: 10000 });
+        }
+
+        function enviarSOSManual(num) {
+            const contacto = localStorage.getItem('acc_s' + num);
+            if (!contacto || limpiarNumero(contacto).length < 6) return alert("⚠️ Contacto no configurado");
+            const nombre = localStorage.getItem('acc_ape') || "Persona";
+            const msg = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} necesita ayuda URGENTE.\n📞 Por favor comunicarse inmediatamente.`;
+            window.open(`https://wa.me/549${limpiarNumero(contacto)}?text=${encodeURIComponent(msg)}`, "_blank");
+        }
+
+        function reenviarAlertaATodos() {
+            [1,2,3].forEach(n => {
+                const c = localStorage.getItem('acc_s' + n);
+                if(c && limpiarNumero(c).length >= 6) {
+                    setTimeout(() => {
+                        const msg = `🚨 ALERTA: ${localStorage.getItem('acc_ape') || "Persona"} necesita ayuda urgente.`;
+                        window.open(`https://wa.me/549${limpiarNumero(c)}?text=${encodeURIComponent(msg)}`, "_blank");
+                    }, n * 500);
+                }
+            });
+            alert("✅ Alertas reenviadas a todos los contactos");
+        }
+
+        function detenerSOS() {
+            document.getElementById('sos-overlay').style.display = 'none';
+            sosActivado = false;
+        }
+
+        // ==================== AJUSTES ====================
+        function guardarAjustes() {
+            localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
+            localStorage.setItem('acc_casa', document.getElementById('cfg-casa').value);
+            localStorage.setItem('acc_trab', document.getElementById('cfg-trab').value);
+            localStorage.setItem('acc_fav', document.getElementById('cfg-fav').value);
+            localStorage.setItem('acc_s1', limpiarNumero(document.getElementById('cfg-s1').value));
+            localStorage.setItem('acc_s2', limpiarNumero(document.getElementById('cfg-s2').value));
+            localStorage.setItem('acc_s3', limpiarNumero(document.getElementById('cfg-s3').value));
+            alert("✅ Datos guardados correctamente");
+            inicializarDatos();
+            navegar('view-main');
+        }
+
+        function inicializarDatos() {
+            document.getElementById('cfg-ape').value = localStorage.getItem('acc_ape') || "";
+            document.getElementById('cfg-casa').value = localStorage.getItem('acc_casa') || "";
+            document.getElementById('cfg-trab').value = localStorage.getItem('acc_trab') || "";
+            document.getElementById('cfg-fav').value = localStorage.getItem('acc_fav') || "";
+            document.getElementById('cfg-s1').value = localStorage.getItem('acc_s1') || "";
+            document.getElementById('cfg-s2').value = localStorage.getItem('acc_s2') || "";
+            document.getElementById('cfg-s3').value = localStorage.getItem('acc_s3') || "";
+            
+            const lblCasa = document.getElementById('lbl-casa');
+            const lblTrab = document.getElementById('lbl-trab');
+            const lblFav = document.getElementById('lbl-fav');
+            if (lblCasa) lblCasa.innerText = localStorage.getItem('acc_casa') || "No configurado";
+            if (lblTrab) lblTrab.innerText = localStorage.getItem('acc_trab') || "No configurado";
+            if (lblFav) lblFav.innerText = localStorage.getItem('acc_fav') || "No configurado";
+        }
+
+        // ==================== COMPARTIR ====================
+        async function compartirApp() {
+            const url = window.location.href;
+            const titulo = "Acción Remis";
+            const texto = "🚖 Pedí tu remis desde acá:";
+            
+            // Usar API nativa de compartir si está disponible (mejor experiencia)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: titulo,
+                        text: texto,
+                        url: url
+                    });
+                    return;
+                } catch (err) {
+                    console.log("Error al compartir:", err);
+                }
+            }
+            // Fallback a WhatsApp
+            window.location.href = `https://wa.me/?text=${encodeURIComponent(texto + " " + url)}`;
+        }
+
+        function enviarDirecto() {
+            let num = document.getElementById('numero-directo')?.value;
+            if(!num) return alert("Ingresá un número de teléfono");
+            num = limpiarNumero(num);
+            if(num.length < 6) return alert("Número inválido (mínimo 6 dígitos)");
+            const url = window.location.href;
+            window.open(`https://wa.me/549${num}?text=${encodeURIComponent("🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n" + url)}`, "_blank");
+        }
+
+        function mostrarCodigoQR() {
+            const box = document.getElementById('qr-box');
+            if (!box) return;
+            box.innerHTML = "";
+            new QRCode(box, { text: window.location.href, width: 200, height: 200 });
+            document.getElementById('qr-modal').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('qr-modal').style.display = 'none';
+        }
+
+        function enviarQueja() {
+            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola! Soy " + ape + ". Quisiera dejar una sugerencia/reclamo: ")}`;
+        }
+
+        function instalarApp() {
+            if(deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => deferredPrompt = null);
+            } else {
+                alert("📱 Usá 'Agregar a pantalla de inicio' desde el menú del navegador");
+            }
+        }
+
+        // ==================== SCROLL MONITOR ====================
+        function scrollMonitor() {
+            const arrow = document.getElementById('scroll-arrow');
+            if (!arrow) return;
+            const total = document.documentElement.scrollHeight;
+            const current = window.innerHeight + window.pageYOffset;
+            arrow.style.display = (total > window.innerHeight + 60 && current < total - 60) ? 'block' : 'none';
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        window.addEventListener('beforeinstallprompt', (e) => {
+            if(esModoApp()) return;
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('btn-instalar');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        window.addEventListener('scroll', scrollMonitor);
+
+        window.onload = () => {
+            inicializarDatos();
+            scrollMonitor();
+            if(esModoApp()) {
+                const btn = document.getElementById('btn-instalar');
+                if (btn) btn.classList.add('hidden');
+            }
+            if('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            }
+        };
+    </script>
+</body>
+</html>
