@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
     <title>Acción Remis - Cdelu Oficial</title>
     
@@ -27,13 +27,14 @@
             --naranja: #ff5722;
         }
 
-      * { 
-    box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent; 
-    margin: 0; 
-    padding: 0; 
-    touch-action: manipulation;
-}
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; 
+            padding: 0; 
+            touch-action: manipulation;
+        }
+        
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--negro);
@@ -41,6 +42,7 @@
             line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @keyframes bounce {
@@ -146,6 +148,7 @@
             padding: 10px 15px; 
             color: white; 
             font-weight: bold;
+            cursor: pointer;
         }
 
         input {
@@ -168,7 +171,7 @@
 
         #panic-trigger { 
             position: fixed; 
-            bottom: 30px; 
+            bottom: calc(30px + env(safe-area-inset-bottom)); 
             right: 25px; 
             z-index: 1500;
             width: 80px;
@@ -178,8 +181,22 @@
             width: 80px; height: 80px; background: #ff0000; border-radius: 50%;
             border: 5px solid white; display: flex; align-items: center; justify-content: center;
             cursor: pointer; position: relative;
+            transition: background 0.1s ease;
         }
-        .panic-label { position: absolute; top: -25px; width: 100px; text-align: center; left: -10px; font-size: 11px; font-weight: 900; color: #ff0000; text-transform: uppercase; }
+        .panic-label { 
+            position: absolute; 
+            top: -25px; 
+            width: 100px; 
+            text-align: center; 
+            left: -10px; 
+            font-size: 11px; 
+            font-weight: 900; 
+            color: #ff0000; 
+            text-transform: uppercase;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
 
         #scroll-arrow {
             position: fixed; 
@@ -195,8 +212,53 @@
             pointer-events: none;
         }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
-        #qr-box { background: white; padding: 20px; border-radius: 15px; }
+        .modal { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 10000; 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            flex-direction: column; 
+            padding: 20px; 
+        }
+        #qr-box { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 15px;
+            position: relative;
+        }
+        .close-modal {
+            margin-top: 20px;
+            background: #ff2b2b;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .sos-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .sos-buttons button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .warning-text {
+            font-size: 12px;
+            color: #ffcc00;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -205,9 +267,19 @@
         <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
         <h2 style="font-size: 28px; font-weight: 900;">¡PÁNICO ACTIVADO!</h2>
         <p style="margin: 20px 0; font-size: 18px;">Se envió tu ubicación al contacto 1.<br>Avisar a los demás:</p>
-        <button class="btn" style="background:#ff9800" onclick="enviarSOSExtra(2)">AVISAR A CONTACTO 2</button>
-        <button class="btn" style="background:#e91e63" onclick="enviarSOSExtra(3)">AVISAR A CONTACTO 3</button>
+        <div class="sos-buttons">
+            <button class="btn" style="background:#ff9800" onclick="enviarSOS(2)">
+                AVISAR A CONTACTO 2
+            </button>
+            <button class="btn" style="background:#e91e63" onclick="enviarSOS(3)">
+                AVISAR A CONTACTO 3
+            </button>
+            <button class="btn" style="background:#2196F3" onclick="enviarSOSATodos()">
+                AVISAR A TODOS
+            </button>
+        </div>
         <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; border:none; background: black;">CANCELAR ALERTA</button>
+        <div class="warning-text">⚠️ Mantené presionado 2 segundos el círculo rojo para activar SOS</div>
     </div>
 
     <div id="scroll-arrow">
@@ -220,7 +292,7 @@
     </header>
 
     <div class="container" id="view-main">
-        <button id="btn-instalar" class="btn btn-guia" style="display:none;" onclick="instalarApp()">
+        <button id="btn-instalar" class="btn btn-guia hidden" onclick="instalarApp()">
             📲 INSTALAR APP
             <span class="sub-label">Agregar a pantalla principal</span>
         </button>
@@ -272,16 +344,20 @@
     <div class="container hidden" id="view-config">
         <h2>Ajustes Personales</h2>
         <div class="card">
-            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape">
-            <label>Casa:</label><input type="text" id="cfg-casa">
-            <label>Trabajo:</label><input type="text" id="cfg-trab">
-            <label>Lugar Favorito:</label><input type="text" id="cfg-fav">
+            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Juan Pérez">
+            <label>Casa:</label><input type="text" id="cfg-casa" placeholder="Ej: San Martín 123">
+            <label>Trabajo:</label><input type="text" id="cfg-trab" placeholder="Ej: Av. Argentina 456">
+            <label>Lugar Favorito:</label><input type="text" id="cfg-fav" placeholder="Ej: Plaza Central">
         </div>
         <div class="card">
             <h3>Contactos SOS (Sin 0 ni 15)</h3>
-            <label>Principal:</label><input type="number" id="cfg-s1">
-            <label>Contacto 2:</label><input type="number" id="cfg-s2">
-            <label>Contacto 3:</label><input type="number" id="cfg-s3">
+            <label>Principal (se enviará automáticamente):</label>
+            <input type="tel" id="cfg-s1" placeholder="Ej: 3442123456" pattern="[0-9]+">
+            <label>Contacto 2:</label>
+            <input type="tel" id="cfg-s2" placeholder="Ej: 3442654321" pattern="[0-9]+">
+            <label>Contacto 3:</label>
+            <input type="tel" id="cfg-s3" placeholder="Ej: 3442789012" pattern="[0-9]+">
+            <div class="warning-text" style="margin-top: 10px;">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div>
         </div>
         <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
         <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
@@ -327,11 +403,11 @@
         <h2>Compartir App</h2>
         <div class="card" style="text-align:center">
             <label>Enviar a número (sin 0 ni 15):</label>
-<input type="number" id="numero-directo" placeholder="Ej: 3442123456">
-
-<button class="btn" style="background:#25D366" onclick="enviarDirecto()">
-    📲 ENVIAR SIN AGENDAR
-</button>
+            <input type="tel" id="numero-directo" placeholder="Ej: 3442123456" pattern="[0-9]+">
+            <div class="warning-text" style="margin-bottom: 15px;">📱 Solo números, sin 0 ni 15</div>
+            <button class="btn" style="background:#25D366" onclick="enviarDirecto()">
+                📲 ENVIAR SIN AGENDAR
+            </button>
             <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 WHATSAPP</button>
             <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ CÓDIGO QR</button>
         </div>
@@ -339,58 +415,91 @@
     </div>
 
     <div id="panic-trigger">
-        <div class="panic-label">MANTENER</div>
+        <div class="panic-label">MANTENER 2s</div>
         <div id="panic-circle" onmousedown="iniciarRelojPanico()" ontouchstart="iniciarRelojPanico()" onmouseup="detenerRelojPanico()" ontouchend="detenerRelojPanico()">
             <svg viewBox="0 0 24 24" width="45" fill="white"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16" /></svg>
         </div>
     </div>
 
-    <audio id="sos-alarm" loop><source src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
-    <div id="qr-modal" class="modal" onclick="this.style.display='none'"><div id="qr-box"></div><p style="color:white; margin-top:10px">CERRAR</p></div>
+    <div id="qr-modal" class="modal">
+        <div id="qr-box"></div>
+        <button class="close-modal" onclick="cerrarModal()">CERRAR</button>
+    </div>
 
     <script>
         let deferredPrompt;
+        let relojPanico;
+        let ubicacionCache = null;
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-
-    // Mostrar botón (lo que ya tenías)
-    document.getElementById('btn-instalar').style.display = 'block';
-
-    // 👇 NUEVO: cartel automático SOLO la primera vez
-    if (!localStorage.getItem('instalacion_mostrada')) {
-        setTimeout(() => {
-            if (window.confirm("¿Querés instalar Acción Remis en tu celular?")) {
-    setTimeout(() => {
-        instalarApp();
-    }, 500);
-}
-            localStorage.setItem('instalacion_mostrada', 'si');
-        }, 2000); // espera 2 segundos para no ser invasivo
-    }
-});
-
-        function instalarApp() {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                deferredPrompt = null;
-            });
+        // Función para limpiar números de teléfono
+        function limpiarNumero(numero) {
+            if (!numero) return '';
+            // Eliminar todo excepto números
+            let limpio = numero.toString().replace(/\D/g, '');
+            // Eliminar 0 y 15 iniciales si existen
+            if (limpio.startsWith('15')) limpio = limpio.substring(2);
+            if (limpio.startsWith('0')) limpio = limpio.substring(1);
+            return limpio;
         }
 
-        const WHATSAPP_CENTRAL = "5493442641200";
-        let relojPanico;
+        function esModoApp() {
+            return window.matchMedia('(display-mode: standalone)').matches
+                || window.navigator.standalone === true;
+        }
 
+        // Solicitar permisos de ubicación al inicio (opcional pero mejora velocidad)
+        function solicitarPermisosUbicacion() {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        ubicacionCache = position;
+                    },
+                    () => {
+                        console.log("Permiso de ubicación denegado");
+                    }
+                );
+            }
+        }
+
+        // Instalación de la app
+        window.addEventListener('beforeinstallprompt', (e) => {
+            if (esModoApp()) return;
+
+            e.preventDefault();
+            deferredPrompt = e;
+
+            const btn = document.getElementById('btn-instalar');
+            if (btn) btn.classList.remove('hidden');
+
+            setTimeout(() => {
+                if (btn) btn.innerText = "📲 INSTALAR APP (recomendado)";
+            }, 4000);
+        });
+
+        window.addEventListener('appinstalled', () => {
+            localStorage.setItem("app_instalada", "true");
+        });
+
+        // Inicialización
         window.onload = () => {
             inicializarDatos();
             scrollMonitor();
             window.addEventListener('scroll', scrollMonitor);
+            solicitarPermisosUbicacion();
+
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js');
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log("SW registrado"))
+                    .catch(err => console.log("Error SW:", err));
+            }
+
+            if (esModoApp()) {
+                const btn = document.getElementById('btn-instalar');
+                if (btn) btn.classList.add('hidden');
             }
         };
 
+        // Navegación
         function navegar(id) {
             document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
@@ -405,30 +514,33 @@
             arrow.style.display = (total > window.innerHeight + 60 && current < total - 60) ? 'block' : 'none';
         }
 
-        function call(num) { window.location.href = "tel:" + num; }
+        function call(num) { 
+            window.location.href = "tel:" + num; 
+        }
+
+        // Remis
+        const WHATSAPP_CENTRAL = "5493442641200";
 
         function solicitar(tipo) {
             const dir = localStorage.getItem('acc_' + tipo);
             const ape = localStorage.getItem('acc_ape') || "Cliente";
-            if(!dir) return alert("Configura esta dirección en Ajustes.");
+            if(!dir) return alert("⚠️ Configura esta dirección en Ajustes.");
             const msg = `Hola Acción! Soy ${ape}. Necesito un móvil en ${dir}`;
             window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
         }
 
-        function enviarQueja() {
-            const ape = localStorage.getItem('acc_ape') || "Cliente";
-            const msg = `Hola Acción! Soy ${ape}. Quisiera dejar una sugerencia/reclamo: `;
-            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
-        }
-
         function enviarUbicacion() {
-            navigator.geolocation.getCurrentPosition(p => {
-                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                const ape = localStorage.getItem('acc_ape') || "Cliente";
-                window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación actual: " + url)}`;
-            }, () => alert("Activa el GPS"));
+            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            navigator.geolocation.getCurrentPosition(
+                p => {
+                    const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                    window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`;
+                }, 
+                () => alert("⚠️ Activa el GPS y los permisos de ubicación")
+            );
         }
 
+        // SOS
         function iniciarRelojPanico() {
             document.getElementById('panic-circle').style.background = "#ffcc00";
             relojPanico = setTimeout(activarSOS, 2000);
@@ -441,58 +553,83 @@
 
         function activarSOS() {
             const c1 = localStorage.getItem('acc_s1');
-            if(!c1) return alert("Configura SOS en Ajustes.");
-            document.getElementById('sos-alarm').play();
+            if (!c1 || c1.length < 6) {
+                alert("⚠️ Configura al menos un contacto SOS en Ajustes (número válido)");
+                return;
+            }
             document.getElementById('sos-overlay').style.display = 'flex';
-            navigator.geolocation.getCurrentPosition(p => {
-                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                window.location.href = `https://wa.me/549${c1}?text=${encodeURIComponent("🚨 ¡SOS AYUDA! Mi ubicación: " + url)}`;
-            }, () => alert("GPS desactivado"));
+            enviarSOS(1);
         }
 
-       function enviarSOSExtra(num) {
-    const contacto = localStorage.getItem('acc_s' + num);
-    if (!contacto) return alert("Contacto no configurado.");
+        function enviarSOS(num) {
+            let contacto = localStorage.getItem('acc_s' + num);
+            if (!contacto) return;
+            
+            contacto = limpiarNumero(contacto);
+            if (contacto.length < 6) return;
 
-    // Mensaje inicial sin ubicación (sale instantáneo)
-    const mensajeBase = "🚨 ¡SOS AYUDA! Intentando enviar ubicación...";
+            navigator.geolocation.getCurrentPosition(
+                p => {
+                    const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                    const mensaje = armarMensajeSOS(url);
+                    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                },
+                () => {
+                    const mensaje = armarMensajeSOS();
+                    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                }
+            );
+        }
 
-    window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensajeBase)}`, "_blank");
+        function armarMensajeSOS(url = "") {
+            const nombre = localStorage.getItem('acc_ape') || "Persona";
+            let mensaje = `🚨 ALERTA DE EMERGENCIA SOS 🚨\n\n`;
+            mensaje += `${nombre} ha activado la alerta de emergencia y necesita ayuda URGENTE.\n\n`;
+            mensaje += `📱 Por favor comunicarse inmediatamente.\n`;
+            if (url) mensaje += `📍 Ubicación en tiempo real:\n${url}\n\n`;
+            mensaje += `⚠️ Esta es una emergencia real. Actuar rápidamente.`;
+            return mensaje;
+        }
 
-    // Después intenta obtener ubicación
-    navigator.geolocation.getCurrentPosition(
-        p => {
-            const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-            const mensajeUbicacion = "📍 Mi ubicación: " + url;
-
-            setTimeout(() => {
-                window.open(`https://wa.me/549${contacto}?text=${encodeURIComponent(mensajeUbicacion)}`, "_blank");
-            }, 2000);
-        },
-        () => alert("No se pudo obtener ubicación. Activá el GPS.")
-    );
-}
+        function enviarSOSATodos() {
+            [1,2,3].forEach(n => {
+                const contacto = localStorage.getItem('acc_s' + n);
+                if(contacto && limpiarNumero(contacto).length >= 6) enviarSOS(n);
+            });
+        }
 
         function detenerSOS() {
-            document.getElementById('sos-alarm').pause();
             document.getElementById('sos-overlay').style.display = 'none';
         }
 
+        // Ajustes
         function guardarAjustes() {
+            // Limpiar y validar números antes de guardar
+            const s1 = limpiarNumero(document.getElementById('cfg-s1').value);
+            const s2 = limpiarNumero(document.getElementById('cfg-s2').value);
+            const s3 = limpiarNumero(document.getElementById('cfg-s3').value);
+            
+            if (s1 && s1.length < 6) {
+                alert("⚠️ El número de contacto principal debe tener al menos 6 dígitos");
+                return;
+            }
+            
             localStorage.setItem('acc_ape', document.getElementById('cfg-ape').value);
             localStorage.setItem('acc_casa', document.getElementById('cfg-casa').value);
             localStorage.setItem('acc_trab', document.getElementById('cfg-trab').value);
             localStorage.setItem('acc_fav', document.getElementById('cfg-fav').value);
-            localStorage.setItem('acc_s1', document.getElementById('cfg-s1').value);
-            localStorage.setItem('acc_s2', document.getElementById('cfg-s2').value);
-            localStorage.setItem('acc_s3', document.getElementById('cfg-s3').value);
-            alert("Guardado");
+            localStorage.setItem('acc_s1', s1);
+            localStorage.setItem('acc_s2', s2);
+            localStorage.setItem('acc_s3', s3);
+
+            alert("✅ Datos guardados correctamente");
             inicializarDatos();
             navegar('view-main');
         }
 
         function inicializarDatos() {
             const get = (k) => localStorage.getItem(k) || "";
+            
             document.getElementById('cfg-ape').value = get('acc_ape');
             document.getElementById('cfg-casa').value = get('acc_casa');
             document.getElementById('cfg-trab').value = get('acc_trab');
@@ -500,35 +637,69 @@
             document.getElementById('cfg-s1').value = get('acc_s1');
             document.getElementById('cfg-s2').value = get('acc_s2');
             document.getElementById('cfg-s3').value = get('acc_s3');
+
             document.getElementById('lbl-casa').innerText = get('acc_casa') || "No configurado";
             document.getElementById('lbl-trab').innerText = get('acc_trab') || "No configurado";
             document.getElementById('lbl-fav').innerText = get('acc_fav') || "No configurado";
         }
 
+        // Instalación manual
+        function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => deferredPrompt = null);
+            } else {
+                alert("📱 Usá 'Agregar a pantalla de inicio' desde el menú del navegador");
+            }
+        }
+
+        // Compartir
         function compartirWhatsApp() {
             const appUrl = window.location.href;
-            const msg = `🚖 *Acción Remis Cdelu*\n\nTu transporte seguro en un toque. Descargá nuestra App oficial aquí:\n\n${appUrl}`;
+            const msg = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
         }
-function enviarDirecto() {
-    const numero = document.getElementById('numero-directo').value;
 
-    if (!numero) {
-        alert("Ingresá un número");
-        return;
-    }
+        function enviarDirecto() {
+            let numero = document.getElementById('numero-directo').value;
+            
+            if (!numero) {
+                alert("⚠️ Ingresá un número de teléfono");
+                return;
+            }
+            
+            numero = limpiarNumero(numero);
+            if (numero.length < 6) {
+                alert("⚠️ Ingresá un número válido (al menos 6 dígitos)");
+                return;
+            }
+            
+            const appUrl = window.location.href;
+            const mensaje = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
+            window.open(`https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
+        }
 
-    const appUrl = window.location.href;
-
-    const mensaje = `🚖 *Acción Remis Cdelu*\n\nPedí tu remis fácil desde acá:\n${appUrl}`;
-
-   window.open(`https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
-}
         function mostrarCodigoQR() {
             const box = document.getElementById('qr-box');
             box.innerHTML = "";
-            new QRCode(box, { text: window.location.href, width: 200, height: 200 });
+            
+            new QRCode(box, {
+                text: window.location.href,
+                width: 200,
+                height: 200
+            });
+            
             document.getElementById('qr-modal').style.display = 'flex';
+        }
+        
+        function cerrarModal() {
+            document.getElementById('qr-modal').style.display = 'none';
+        }
+
+        function enviarQueja() {
+            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            const msg = `Hola Acción! Soy ${ape}. Quisiera dejar una sugerencia/reclamo: `;
+            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
         }
     </script>
 </body>
