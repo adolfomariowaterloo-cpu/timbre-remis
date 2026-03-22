@@ -360,11 +360,11 @@
         <div class="card">
             <h3>Contactos SOS (Sin 0 ni 15)</h3>
             <label>Principal (se enviará automáticamente):</label>
-            <input type="tel" id="cfg-s1" placeholder="Ej: 3442123456" pattern="[0-9]+">
+            <input type="tel" id="cfg-s1" placeholder="Ej: 3442123456">
             <label>Contacto 2:</label>
-            <input type="tel" id="cfg-s2" placeholder="Ej: 3442654321" pattern="[0-9]+">
+            <input type="tel" id="cfg-s2" placeholder="Ej: 3442654321">
             <label>Contacto 3:</label>
-            <input type="tel" id="cfg-s3" placeholder="Ej: 3442789012" pattern="[0-9]+">
+            <input type="tel" id="cfg-s3" placeholder="Ej: 3442789012">
             <div class="warning-text" style="margin-top: 10px;">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div>
         </div>
         <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
@@ -411,7 +411,7 @@
         <h2>Compartir App</h2>
         <div class="card" style="text-align:center">
             <label>Enviar a número (sin 0 ni 15):</label>
-            <input type="tel" id="numero-directo" placeholder="Ej: 3442123456" pattern="[0-9]+">
+            <input type="tel" id="numero-directo" placeholder="Ej: 3442123456">
             <div class="warning-text" style="margin-bottom: 15px;">📱 Solo números, sin 0 ni 15</div>
             <button class="btn" style="background:#25D366" onclick="enviarDirecto()">
                 📲 ENVIAR SIN AGENDAR
@@ -435,11 +435,13 @@
     </div>
 
     <script>
+        // ==================== VARIABLES GLOBALES ====================
         let deferredPrompt;
         let relojPanico;
-        let ubicacionCache = null;
         let sosActivado = false;
+        const WHATSAPP_CENTRAL = "5493442641200";
 
+        // ==================== FUNCIONES AUXILIARES ====================
         function limpiarNumero(numero) {
             if (!numero) return '';
             let limpio = numero.toString().replace(/\D/g, '');
@@ -449,54 +451,13 @@
         }
 
         function esModoApp() {
-            return window.matchMedia('(display-mode: standalone)').matches
-                || window.navigator.standalone === true;
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         }
-
-        function solicitarPermisosUbicacion() {
-            if ('geolocation' in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => { ubicacionCache = position; },
-                    () => { console.log("Permiso de ubicación denegado"); }
-                );
-            }
-        }
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            if (esModoApp()) return;
-            e.preventDefault();
-            deferredPrompt = e;
-            const btn = document.getElementById('btn-instalar');
-            if (btn) btn.classList.remove('hidden');
-            setTimeout(() => { if (btn) btn.innerText = "📲 INSTALAR APP (recomendado)"; }, 4000);
-        });
-
-        window.addEventListener('appinstalled', () => {
-            localStorage.setItem("app_instalada", "true");
-        });
-
-        window.onload = () => {
-            inicializarDatos();
-            scrollMonitor();
-            window.addEventListener('scroll', scrollMonitor);
-            solicitarPermisosUbicacion();
-
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js')
-                    .then(() => console.log("SW registrado"))
-                    .catch(err => console.log("Error SW:", err));
-            }
-
-            if (esModoApp()) {
-                const btn = document.getElementById('btn-instalar');
-                if (btn) btn.classList.add('hidden');
-            }
-        };
 
         function navegar(id) {
             document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
-            window.scrollTo(0,0);
+            window.scrollTo(0, 0);
             setTimeout(scrollMonitor, 100);
         }
 
@@ -507,10 +468,11 @@
             arrow.style.display = (total > window.innerHeight + 60 && current < total - 60) ? 'block' : 'none';
         }
 
-        function call(num) { window.location.href = "tel:" + num; }
+        function call(num) { 
+            window.location.href = "tel:" + num; 
+        }
 
-        const WHATSAPP_CENTRAL = "5493442641200";
-
+        // ==================== REMIS ====================
         function solicitar(tipo) {
             const dir = localStorage.getItem('acc_' + tipo);
             const ape = localStorage.getItem('acc_ape') || "Cliente";
@@ -530,7 +492,7 @@
             );
         }
 
-        // FUNCIONES SOS MEJORADAS
+        // ==================== SOS MEJORADO ====================
         function iniciarRelojPanico() {
             document.getElementById('panic-circle').style.background = "#ffcc00";
             relojPanico = setTimeout(activarSOS, 2000);
@@ -554,10 +516,8 @@
             document.getElementById('sos-overlay').style.display = 'flex';
             document.getElementById('sos-status-text').innerHTML = "📱 Alerta enviada - Obteniendo ubicación...";
             
-            // PASO 1: Enviar alerta inmediata SIN ubicación (más rápido)
             enviarAlertaInmediata();
             
-            // PASO 2: Obtener ubicación y enviarla
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const url = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
@@ -565,7 +525,6 @@
                     document.getElementById('sos-status-text').innerHTML = "✅ Alerta enviada\n📍 Ubicación enviada";
                 },
                 (error) => {
-                    console.log("Error de geolocalización:", error);
                     enviarFalloUbicacion();
                     document.getElementById('sos-status-text').innerHTML = "⚠️ Alerta enviada\n❌ No se pudo obtener ubicación";
                 }
@@ -633,6 +592,7 @@
             sosActivado = false;
         }
 
+        // ==================== AJUSTES ====================
         function guardarAjustes() {
             const s1 = limpiarNumero(document.getElementById('cfg-s1').value);
             const s2 = limpiarNumero(document.getElementById('cfg-s2').value);
@@ -667,9 +627,56 @@
             document.getElementById('cfg-s2').value = get('acc_s2');
             document.getElementById('cfg-s3').value = get('acc_s3');
 
-            document.getElementById('lbl-casa').innerText = get('acc_casa') || "No configurado";
-            document.getElementById('lbl-trab').innerText = get('acc_trab') || "No configurado";
-            document.getElementById('lbl-fav').innerText = get('acc_fav') || "No configurado";
+            const lblCasa = document.getElementById('lbl-casa');
+            const lblTrab = document.getElementById('lbl-trab');
+            const lblFav = document.getElementById('lbl-fav');
+            if (lblCasa) lblCasa.innerText = get('acc_casa') || "No configurado";
+            if (lblTrab) lblTrab.innerText = get('acc_trab') || "No configurado";
+            if (lblFav) lblFav.innerText = get('acc_fav') || "No configurado";
+        }
+
+        // ==================== COMPARTIR ====================
+        function compartirWhatsApp() {
+            const appUrl = window.location.href;
+            const msg = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
+            window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        }
+
+        function enviarDirecto() {
+            let numero = document.getElementById('numero-directo').value;
+            if (!numero) {
+                alert("⚠️ Ingresá un número de teléfono");
+                return;
+            }
+            numero = limpiarNumero(numero);
+            if (numero.length < 6) {
+                alert("⚠️ Ingresá un número válido (al menos 6 dígitos)");
+                return;
+            }
+            const appUrl = window.location.href;
+            const mensaje = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
+            window.open(`https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
+        }
+
+        function mostrarCodigoQR() {
+            const box = document.getElementById('qr-box');
+            box.innerHTML = "";
+            new QRCode(box, {
+                text: window.location.href,
+                width: 200,
+                height: 200
+            });
+            document.getElementById('qr-modal').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('qr-modal').style.display = 'none';
+        }
+
+        function enviarQueja() {
+            const ape = localStorage.getItem('acc_ape') || "Cliente";
+            const msg = `Hola Acción! Soy ${ape}. Quisiera dejar una sugerencia/reclamo: `;
+            window.location.href = `https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`;
         }
 
         function instalarApp() {
@@ -681,5 +688,33 @@
             }
         }
 
-        function compartirWhatsApp() {
-           
+        // ==================== INSTALACIÓN Y CARGA INICIAL ====================
+        window.addEventListener('beforeinstallprompt', (e) => {
+            if (esModoApp()) return;
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('btn-instalar');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            localStorage.setItem("app_instalada", "true");
+        });
+
+        window.onload = () => {
+            inicializarDatos();
+            scrollMonitor();
+            window.addEventListener('scroll', scrollMonitor);
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log("Error SW:", err));
+            }
+
+            if (esModoApp()) {
+                const btn = document.getElementById('btn-instalar');
+                if (btn) btn.classList.add('hidden');
+            }
+        };
+    </script>
+</body>
+</html>
