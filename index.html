@@ -19,11 +19,11 @@
         :root {
             --rojo-accion: #ff2b2b;
             --negro: #000000;
-            --gris-oscuro: #121212;
             --verde-wa: #25D366;
             --celeste: #2196F3;
             --naranja: #FF9800;
             --violeta: #9C27B0;
+            --verde-farmacia: #4CAF50;
         }
 
         * { 
@@ -52,6 +52,11 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,87,34,0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255,87,34,0); }
         }
 
         header { 
@@ -100,18 +105,22 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            position: relative;
             text-decoration: none;
             text-align: center;
+            background: #222;
         }
         .btn:active { transform: scale(0.96); filter: brightness(1.2); }
 
-        /* Botón principal remis (sin cambios) */
+        /* Botón principal remis */
         .btn-remis { background: linear-gradient(135deg, #ff2b2b 0%, #8b0000 100%); box-shadow: 0 6px 15px rgba(255,43,43,0.3); }
         
         /* Servicios: negro con celeste */
         .btn-serv { background: #111; border: 2px solid var(--celeste); color: var(--celeste); }
         .btn-serv .sub-label { color: var(--celeste); opacity: 0.8; }
+        
+        /* Farmacias: negro con verde */
+        .btn-farmacias { background: #111; border: 2px solid var(--verde-farmacia); color: var(--verde-farmacia); }
+        .btn-farmacias .sub-label { color: var(--verde-farmacia); opacity: 0.8; }
         
         /* Eventos: negro con naranja */
         .btn-event { background: #111; border: 2px solid var(--naranja); color: var(--naranja); }
@@ -125,12 +134,7 @@
         .btn-back { background: #333; margin-top: 25px; font-size: 15px; border: 1px dashed #666; }
         .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); animation: pulse 2s infinite; }
 
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255,87,34,0.7); }
-            50% { box-shadow: 0 0 0 10px rgba(255,87,34,0); }
-        }
-
-        .sub-label { font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px; text-transform: none; }
+        .sub-label { font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px; }
 
         .card { 
             background: #111; 
@@ -199,7 +203,7 @@
         #panic-circle {
             width: 80px; height: 80px; background: #ff0000; border-radius: 50%;
             border: 5px solid white; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; position: relative;
+            cursor: pointer;
             transition: background 0.1s ease;
         }
         .panic-label { 
@@ -211,7 +215,6 @@
             font-size: 11px; 
             font-weight: 900; 
             color: #ff0000; 
-            text-transform: uppercase;
             background: rgba(0,0,0,0.5);
             padding: 2px 5px;
             border-radius: 10px;
@@ -242,12 +245,7 @@
             flex-direction: column; 
             padding: 20px; 
         }
-        #qr-box { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 15px;
-            position: relative;
-        }
+        #qr-box { background: white; padding: 20px; border-radius: 15px; }
         .close-modal {
             margin-top: 20px;
             background: #ff2b2b;
@@ -255,7 +253,6 @@
             padding: 12px 30px;
             border-radius: 25px;
             color: white;
-            font-weight: bold;
             cursor: pointer;
         }
         .sos-status {
@@ -275,11 +272,7 @@
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
-        .warning-text {
-            font-size: 12px;
-            color: #ffcc00;
-            margin-top: 10px;
-        }
+        .warning-text { font-size: 12px; color: #ffcc00; margin-top: 10px; }
 
         /* Modal de términos */
         .modal-terminos {
@@ -304,7 +297,6 @@
             overflow-y: auto;
             padding: 25px;
             border-top: 4px solid var(--rojo-accion);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
         .modal-terminos-content h2 {
             color: var(--rojo-accion);
@@ -312,74 +304,29 @@
             margin-bottom: 20px;
             font-size: 24px;
         }
-        .terminos-texto {
-            color: #ddd;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-        .terminos-texto ul {
-            margin: 15px 0;
-            padding-left: 20px;
-        }
+        .terminos-texto { color: #ddd; font-size: 14px; line-height: 1.6; margin-bottom: 25px; }
+        .terminos-texto ul { margin: 15px 0; padding-left: 20px; }
         .terminos-texto li {
             margin-bottom: 12px;
             list-style: none;
             position: relative;
             padding-left: 25px;
         }
-        .terminos-texto li:before {
-            content: "⚠️";
-            position: absolute;
-            left: 0;
-            font-size: 14px;
-        }
+        .terminos-texto li:before { content: "⚠️"; position: absolute; left: 0; font-size: 14px; }
         .terminos-texto li:first-child:before { content: "📌"; }
         .terminos-texto li:nth-child(2):before { content: "🔧"; }
         .terminos-texto li:nth-child(3):before { content: "❓"; }
         .terminos-texto li:nth-child(4):before { content: "🆘"; }
         .terminos-texto li:nth-child(5):before { content: "👤"; }
-        .terminos-botones {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        .btn-terminos {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        .terminos-botones { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .btn-terminos { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; }
         .btn-terminos:active { transform: scale(0.98); }
-        #btn-aceptar-terminos {
-            background: var(--verde-wa);
-            color: white;
-        }
-        .btn-rechazar {
-            background: #333;
-            color: #aaa;
-            border: 1px solid #555;
-        }
-        .terminos-aviso {
-            text-align: center;
-            font-size: 11px;
-            color: #ffaa00;
-            margin-top: 15px;
-        }
+        #btn-aceptar-terminos { background: var(--verde-wa); color: white; }
+        .btn-rechazar { background: #333; color: #aaa; border: 1px solid #555; }
+        .terminos-aviso { text-align: center; font-size: 11px; color: #ffaa00; margin-top: 15px; }
 
         /* Botón sugerencias dentro de ajustes */
-        .btn-sugerencia {
-            background: #222;
-            border: 1px solid #444;
-            margin-top: 10px;
-            padding: 12px;
-            font-size: 14px;
-        }
+        .btn-sugerencia { background: #222; border: 1px solid #444; margin-top: 10px; padding: 12px; font-size: 14px; }
 
         /* Pantalla de emergencias unificada */
         .emergencia-item {
@@ -391,12 +338,7 @@
             border-radius: 12px;
             margin-bottom: 8px;
         }
-        .emergencia-item span {
-            font-size: 14px;
-        }
-        .seccion-emergencias {
-            margin-bottom: 20px;
-        }
+        .seccion-emergencias { margin-bottom: 20px; }
         .seccion-emergencias h4 {
             color: var(--violeta);
             margin-bottom: 12px;
@@ -408,7 +350,7 @@
 </head>
 <body>
 
-    <!-- MODAL DE TÉRMINOS Y CONDICIONES -->
+    <!-- MODAL DE TÉRMINOS -->
     <div id="modal-terminos" class="modal-terminos" style="display: none;">
         <div class="modal-terminos-content">
             <h2>📋 Términos de uso</h2>
@@ -448,43 +390,45 @@
         <h1>Acción Remis</h1>
     </header>
 
+    <!-- PANTALLA PRINCIPAL -->
     <div class="container" id="view-main">
         <button id="btn-instalar" class="btn btn-install hidden" onclick="instalarApp()">
             📲 INSTALAR APP
             <span class="sub-label">Agregar a pantalla principal</span>
         </button>
         
-        <!-- Botón principal remis -->
         <button class="btn btn-remis" onclick="navegar('view-remis')">
             🚕 PEDIR UN REMIS
             <span class="sub-label">Solicite su móvil en un toque</span>
         </button>
         
-        <!-- Servicios: negro con celeste -->
         <button class="btn btn-serv" onclick="navegar('view-servicios')">
             🛠️ SERVICIOS DOMICILIARIOS
             <span class="sub-label">Oficios y Reparaciones</span>
         </button>
         
-        <!-- Eventos: negro con naranja -->
+        <a href="https://www.elmiercolesdigital.com.ar/servicios/farmacias-de-turno/" target="_blank" class="btn btn-farmacias">
+            💊 FARMACIAS DE TURNO
+            <span class="sub-label">Consultar en El Miércoles Digital</span>
+        </a>
+        
         <a href="https://www.instagram.com/eventos.cdelu/" target="_blank" class="btn btn-event">
             🎟️ EVENTOS CDELU
             <span class="sub-label">Qué hacer hoy en la ciudad</span>
         </a>
         
-        <!-- Emergencias unificada: negro con violeta -->
         <button class="btn btn-emergencias" onclick="navegar('view-emergencias-unificado')">
             🚨 EMERGENCIAS Y GUÍA ÚTIL
             <span class="sub-label">Ambulancias, Seguridad, Servicios Públicos</span>
         </button>
         
-        <!-- Botones secundarios -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
             <button class="btn btn-guia" style="background:var(--verde-wa); color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-share')">📲 COMPARTIR</button>
             <button class="btn btn-guia" style="background:#444; color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-config')">⚙️ AJUSTES</button>
         </div>
     </div>
 
+    <!-- PANTALLA REMIS -->
     <div class="container hidden" id="view-remis">
         <h2 style="margin-bottom:20px; border-left: 5px solid var(--rojo-accion); padding-left: 10px;">Solicitar Móvil</h2>
         <button class="btn btn-remis" onclick="solicitar('casa')">MI CASA<span class="sub-label" id="lbl-casa">...</span></button>
@@ -494,9 +438,65 @@
             <p style="text-align:center; margin-bottom:15px; font-weight:bold;">¿Estás en otro lugar?</p>
             <button class="btn btn-serv" style="background:#2196F3; color:white; border:none;" onclick="enviarUbicacionRemis()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
         </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
     </div>
 
+    <!-- PANTALLA SERVICIOS -->
+    <div class="container hidden" id="view-servicios">
+        <h2>Servicios Domiciliarios</h2>
+        <div class="card">
+            <h3>Oficios y Servicios</h3>
+            <div class="list-item"><span>🔧 MECÁNICO</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442666445'))">📞</button></div>
+            <div class="list-item"><span>⚡ ELECTRICISTA</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442401688'))">📞</button></div>
+            <div class="list-item"><span>💧 PLOMERO</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442401688'))">📞</button></div>
+            <div class="list-item"><span>🚚 FLETE</span><button class="call-action" onclick="ejecutarConTerminos(() => call('543442423030'))">📞</button></div>
+            <div class="list-item"><span>🔥 GASISTA</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442425243'))">📞</button></div>
+            <div class="list-item"><span>✂️ ESTÉTICA / PELUQUERÍA</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442406327'))">📞</button></div>
+            <div class="list-item"><span>👞 ZAPATERO</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442677247'))">📞</button></div>
+        </div>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
+    </div>
+
+    <!-- PANTALLA EMERGENCIAS UNIFICADA -->
+    <div class="container hidden" id="view-emergencias-unificado">
+        <h2 style="color:var(--violeta); border-left: 5px solid var(--violeta); padding-left: 10px; margin-bottom: 20px;">🚨 Emergencias y Guía Útil</h2>
+        
+        <div class="seccion-emergencias">
+            <h4>🚑 AMBULANCIAS</h4>
+            <div class="emergencia-item"><span>🏥 HOSPITAL (Público)</span><button class="call-action" onclick="call('107')">📞 107</button></div>
+            <div class="emergencia-item"><span>🏥 VIDA EMERGENCIA</span><button class="call-action" onclick="call('03442431111')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>🆘 ALERTA EMERGENCIA</span><button class="call-action" onclick="call('03442425294')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>⛪ CÍRCULO CATÓLICO</span><button class="call-action" onclick="call('03442424242')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>🏥 COOPERATIVA MÉDICA</span><button class="call-action" onclick="call('03442427889')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>🏥 CLÍNICA URUGUAY</span><button class="call-action" onclick="call('3442459269')">📞 Llamar</button></div>
+        </div>
+
+        <div class="seccion-emergencias">
+            <h4>👮 SEGURIDAD</h4>
+            <div class="emergencia-item"><span>🚔 POLICÍA</span><button class="call-action" onclick="call('101')">📞 101</button></div>
+            <div class="emergencia-item"><span>👩 COMISARÍA DE LA MUJER</span><button class="call-action" onclick="call('0342430895')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>🔥 BOMBEROS</span><button class="call-action" onclick="call('100')">📞 100</button></div>
+            <div class="emergencia-item"><span>⚓ PREFECTURA</span><button class="call-action" onclick="call('106')">📞 106</button></div>
+        </div>
+
+        <div class="seccion-emergencias">
+            <h4>🔧 SERVICIOS PÚBLICOS</h4>
+            <div class="emergencia-item"><span>🚦 MUNICIPAL (Tránsito)</span><button class="call-action" onclick="call('103')">📞 103</button></div>
+            <div class="emergencia-item"><span>⚡ ENERSA (Cables sueltos)</span><button class="call-action" onclick="call('08007770080')">📞 0800-777-0080</button></div>
+            <div class="emergencia-item"><span>🔥 GASNEA (Emergencia Gas)</span><button class="call-action" onclick="call('0800777427632')">📞 0800-777-427632</button></div>
+        </div>
+
+        <div class="seccion-emergencias">
+            <h4>📞 GUÍA ÚTIL</h4>
+            <div class="emergencia-item"><span>🚌 TERMINAL DE ÓMNIBUS</span><button class="call-action" onclick="call('422352')">📞 422352</button></div>
+            <div class="emergencia-item"><span>🏛️ MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞 427626</button></div>
+            <div class="emergencia-item"><span>📄 REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞 422201</button></div>
+        </div>
+
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
+    </div>
+
+    <!-- PANTALLA AJUSTES -->
     <div class="container hidden" id="view-config">
         <h2>Ajustes Personales</h2>
         <div class="card">
@@ -514,68 +514,11 @@
         </div>
         <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
         <button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
         <button class="btn" style="background:#444; margin-top: 10px;" onclick="mostrarTerminos()">📋 VER TÉRMINOS DE USO</button>
     </div>
 
-    <div class="container hidden" id="view-servicios">
-        <h2>Servicios Domiciliarios</h2>
-        <div class="card">
-            <h3>Oficios y Servicios</h3>
-            <div class="list-item"><span>🔧 MECÁNICO</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442666445'))">📞</button></div>
-            <div class="list-item"><span>⚡ ELECTRICISTA</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442401688'))">📞</button></div>
-            <div class="list-item"><span>💧 PLOMERO</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442401688'))">📞</button></div>
-            <div class="list-item"><span>🚚 FLETE</span><button class="call-action" onclick="ejecutarConTerminos(() => call('543442423030'))">📞</button></div>
-            <div class="list-item"><span>🔥 GASISTA</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442425243'))">📞</button></div>
-            <div class="list-item"><span>✂️ ESTÉTICA / PELUQUERÍA</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442406327'))">📞</button></div>
-            <div class="list-item"><span>👞 ZAPATERO</span><button class="call-action" onclick="ejecutarConTerminos(() => call('3442677247'))">📞</button></div>
-        </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
-    </div>
-
-    <!-- PANTALLA EMERGENCIAS UNIFICADA -->
-    <div class="container hidden" id="view-emergencias-unificado">
-        <h2 style="color:var(--violeta); border-left: 5px solid var(--violeta); padding-left: 10px; margin-bottom: 20px;">🚨 Emergencias y Guía Útil</h2>
-        
-        <!-- Ambulancias -->
-        <div class="seccion-emergencias">
-            <h4>🚑 AMBULANCIAS</h4>
-            <div class="emergencia-item"><span>🏥 HOSPITAL (Público)</span><button class="call-action" onclick="call('107')">📞 107</button></div>
-            <div class="emergencia-item"><span>🏥 VIDA EMERGENCIA</span><button class="call-action" onclick="call('03442431111')">📞 Llamar</button></div>
-            <div class="emergencia-item"><span>🆘 ALERTA EMERGENCIA</span><button class="call-action" onclick="call('03442425294')">📞 Llamar</button></div>
-            <div class="emergencia-item"><span>⛪ CÍRCULO CATÓLICO</span><button class="call-action" onclick="call('03442424242')">📞 Llamar</button></div>
-            <div class="emergencia-item"><span>🏥 COOPERATIVA MÉDICA</span><button class="call-action" onclick="call('03442427889')">📞 Llamar</button></div>
-            <div class="emergencia-item"><span>🏥 CLÍNICA URUGUAY</span><button class="call-action" onclick="call('3442459269')">📞 Llamar</button></div>
-        </div>
-
-        <!-- Seguridad -->
-        <div class="seccion-emergencias">
-            <h4>👮 SEGURIDAD</h4>
-            <div class="emergencia-item"><span>🚔 POLICÍA</span><button class="call-action" onclick="call('101')">📞 101</button></div>
-            <div class="emergencia-item"><span>👩 COMISARÍA DE LA MUJER</span><button class="call-action" onclick="call('0342430895')">📞 Llamar</button></div>
-            <div class="emergencia-item"><span>🔥 BOMBEROS</span><button class="call-action" onclick="call('100')">📞 100</button></div>
-            <div class="emergencia-item"><span>⚓ PREFECTURA</span><button class="call-action" onclick="call('106')">📞 106</button></div>
-        </div>
-
-        <!-- Servicios Públicos -->
-        <div class="seccion-emergencias">
-            <h4>🔧 SERVICIOS PÚBLICOS</h4>
-            <div class="emergencia-item"><span>🚦 MUNICIPAL (Tránsito)</span><button class="call-action" onclick="call('103')">📞 103</button></div>
-            <div class="emergencia-item"><span>⚡ ENERSA (Cables sueltos)</span><button class="call-action" onclick="call('08007770080')">📞 0800-777-0080</button></div>
-            <div class="emergencia-item"><span>🔥 GASNEA (Emergencia Gas)</span><button class="call-action" onclick="call('0800777427632')">📞 0800-777-427632</button></div>
-        </div>
-
-        <!-- Guía Útil -->
-        <div class="seccion-emergencias">
-            <h4>📞 GUÍA ÚTIL</h4>
-            <div class="emergencia-item"><span>🚌 TERMINAL DE ÓMNIBUS</span><button class="call-action" onclick="call('422352')">📞 422352</button></div>
-            <div class="emergencia-item"><span>🏛️ MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞 427626</button></div>
-            <div class="emergencia-item"><span>📄 REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞 422201</button></div>
-        </div>
-
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER AL MENÚ</button>
-    </div>
-
+    <!-- PANTALLA COMPARTIR -->
     <div class="container hidden" id="view-share">
         <h2>Compartir App</h2>
         <div class="card" style="text-align:center">
@@ -586,7 +529,7 @@
             <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 WHATSAPP</button>
             <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ CÓDIGO QR</button>
         </div>
-        <button class="btn btn-back" onclick="navegar('view-main')">VOLVER</button>
+        <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
     </div>
 
     <div id="panic-trigger">
@@ -646,31 +589,28 @@
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         }
 
-        function guardarTimeout(id) {
-            timeoutsSOS.push(id);
+        function guardarTimeout(id) { timeoutsSOS.push(id); }
+        function limpiarTimeoutsSOS() { timeoutsSOS.forEach(id => clearTimeout(id)); timeoutsSOS = []; }
+
+        // ==================== CONTROL DEL BOTÓN DE ATRÁS ====================
+        function configurarBotonAtras() {
+            window.history.pushState({ page: "main" }, "", window.location.href);
+            window.addEventListener('popstate', function(event) {
+                // Si no estamos en la pantalla principal, volvemos a ella
+                const mainDiv = document.getElementById('view-main');
+                if (mainDiv && mainDiv.classList.contains('hidden')) {
+                    navegar('view-main');
+                    // Volver a agregar el estado para que siga funcionando
+                    window.history.pushState({ page: "main" }, "", window.location.href);
+                }
+            });
         }
 
-        function limpiarTimeoutsSOS() {
-            timeoutsSOS.forEach(id => clearTimeout(id));
-            timeoutsSOS = [];
-        }
-
-        // ==================== TÉRMINOS Y CONDICIONES ====================
-        function verificarTerminos() {
-            const yaAcepto = localStorage.getItem('terminos_aceptados');
-            return yaAcepto === 'true';
-        }
-
-        function mostrarTerminos() {
-            const modal = document.getElementById('modal-terminos');
-            if (modal) modal.style.display = 'flex';
-        }
-
-        function ocultarTerminos() {
-            const modal = document.getElementById('modal-terminos');
-            if (modal) modal.style.display = 'none';
-        }
-
+        // ==================== TÉRMINOS ====================
+        function verificarTerminos() { return localStorage.getItem('terminos_aceptados') === 'true'; }
+        function mostrarTerminos() { document.getElementById('modal-terminos').style.display = 'flex'; }
+        function ocultarTerminos() { document.getElementById('modal-terminos').style.display = 'none'; }
+        
         function aceptarTerminos() {
             try {
                 localStorage.setItem('terminos_aceptados', 'true');
@@ -682,12 +622,12 @@
                 window.accionPendiente = null;
             }
         }
-
+        
         function rechazarTerminos() {
             ocultarTerminos();
             window.accionPendiente = null;
         }
-
+        
         function ejecutarConTerminos(funcion) {
             if (verificarTerminos()) {
                 funcion();
@@ -704,6 +644,8 @@
             if (destino) destino.classList.remove('hidden');
             window.scrollTo(0, 0);
             setTimeout(scrollMonitor, 100);
+            // Actualizar el historial para que el botón atrás funcione correctamente
+            window.history.pushState({ page: id }, "", window.location.href);
         }
 
         function scrollMonitor() {
@@ -752,17 +694,10 @@
         function manejarErrorUbicacion(err) {
             let mensaje = "";
             switch(err.code) {
-                case err.PERMISSION_DENIED:
-                    mensaje = "⚠️ Permiso de ubicación denegado. Activá el GPS en ajustes.";
-                    break;
-                case err.POSITION_UNAVAILABLE:
-                    mensaje = "⚠️ Ubicación no disponible. Intentá de nuevo.";
-                    break;
-                case err.TIMEOUT:
-                    mensaje = "⚠️ La ubicación tardó demasiado. Verificá la señal GPS.";
-                    break;
-                default:
-                    mensaje = "⚠️ No se pudo obtener la ubicación. Activá el GPS.";
+                case err.PERMISSION_DENIED: mensaje = "⚠️ Permiso de ubicación denegado. Activá el GPS en ajustes."; break;
+                case err.POSITION_UNAVAILABLE: mensaje = "⚠️ Ubicación no disponible. Intentá de nuevo."; break;
+                case err.TIMEOUT: mensaje = "⚠️ La ubicación tardó demasiado. Verificá la señal GPS."; break;
+                default: mensaje = "⚠️ No se pudo obtener la ubicación. Activá el GPS.";
             }
             alert(mensaje);
         }
@@ -781,15 +716,13 @@
         function abrirWhatsAppSeguro(numero, mensaje) {
             if (!numero || !validarNumero(numero)) return false;
             if (!verificarInternet()) return false;
-            const numeroLimpio = limpiarNumero(numero);
-            window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+            window.open(`https://wa.me/549${limpiarNumero(numero)}?text=${encodeURIComponent(mensaje)}`, "_blank");
             return true;
         }
 
         function activarSOS() {
             ejecutarConTerminos(() => {
                 if (!verificarInternet()) return;
-                
                 const c1 = localStorage.getItem('acc_s1');
                 const c2 = localStorage.getItem('acc_s2');
                 const c3 = localStorage.getItem('acc_s3');
@@ -798,10 +731,8 @@
                     alert("⚠️ Configurá al menos un contacto SOS válido en Ajustes");
                     return;
                 }
-                
                 if (sosActivado) return;
                 sosActivado = true;
-                
                 if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
                 
                 document.getElementById('sos-overlay').style.display = 'flex';
@@ -810,49 +741,26 @@
                 const nombre = limpiarTexto(localStorage.getItem('acc_ape') || "Persona");
                 const alertaMsg = `🚨 ¡ALERTA DE EMERGENCIA! 🚨\n\n${nombre} ha activado el botón de pánico.\n📍 Enviando ubicación en segundos...\n📞 COMUNICARSE URGENTE.`;
                 
-                if (validarNumero(c1)) {
-                    abrirWhatsAppSeguro(c1, alertaMsg);
-                } else if (validarNumero(c2)) {
-                    abrirWhatsAppSeguro(c2, alertaMsg);
-                } else if (validarNumero(c3)) {
-                    abrirWhatsAppSeguro(c3, alertaMsg);
-                }
+                if (validarNumero(c1)) abrirWhatsAppSeguro(c1, alertaMsg);
+                else if (validarNumero(c2)) abrirWhatsAppSeguro(c2, alertaMsg);
+                else if (validarNumero(c3)) abrirWhatsAppSeguro(c3, alertaMsg);
                 
                 document.getElementById('sos-status-text').innerHTML = "📡 ALERTA ENVIADA<br>📍 OBTENIENDO UBICACIÓN...";
                 
                 navigator.geolocation.getCurrentPosition(p => {
                     const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                     const ubicacionMsg = `📍 UBICACIÓN EN TIEMPO REAL\n\n${nombre} se encuentra en:\n${url}\n\n🚨 SITUACIÓN DE EMERGENCIA - ACTUAR RÁPIDO`;
-                    
                     if (validarNumero(c1)) {
-                        const timeoutId = setTimeout(() => {
-                            abrirWhatsAppSeguro(c1, ubicacionMsg);
-                        }, 1500);
+                        const timeoutId = setTimeout(() => abrirWhatsAppSeguro(c1, ubicacionMsg), 1500);
                         guardarTimeout(timeoutId);
                     }
-                    
                     document.getElementById('sos-status-text').innerHTML = "✅ ALERTA COMPLETA<br>📍 UBICACIÓN ENVIADA<br><br>📱 Volvé a la app cuando termines";
-                    
                 }, (err) => {
-                    let errorMsg = "";
-                    switch(err.code) {
-                        case err.PERMISSION_DENIED:
-                            errorMsg = `⚠️ ${nombre} activó el botón de pánico pero el GPS está desactivado.\n\n📱 Por favor comunicarse URGENTE con ${nombre}.`;
-                            break;
-                        case err.TIMEOUT:
-                            errorMsg = `⚠️ ${nombre} activó el botón de pánico pero no se pudo obtener la ubicación (timeout).\n\n📱 Comunicarse URGENTE.`;
-                            break;
-                        default:
-                            errorMsg = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación.\n\n📱 Por favor comunicarse URGENTE.`;
-                    }
-                    
+                    let errorMsg = `⚠️ ${nombre} activó el botón de pánico pero NO se pudo obtener la ubicación.\n\n📱 Por favor comunicarse URGENTE.`;
                     if (validarNumero(c1)) {
-                        const timeoutId = setTimeout(() => {
-                            abrirWhatsAppSeguro(c1, errorMsg);
-                        }, 1500);
+                        const timeoutId = setTimeout(() => abrirWhatsAppSeguro(c1, errorMsg), 1500);
                         guardarTimeout(timeoutId);
                     }
-                    
                     document.getElementById('sos-status-text').innerHTML = "⚠️ ALERTA ENVIADA<br>❌ UBICACIÓN NO DISPONIBLE<br><br>📱 Volvé a la app cuando termines";
                 }, { enableHighAccuracy: true, timeout: 10000 });
             });
@@ -871,12 +779,10 @@
                     const s1 = limpiarNumero(document.getElementById('cfg-s1').value);
                     const s2 = limpiarNumero(document.getElementById('cfg-s2').value);
                     const s3 = limpiarNumero(document.getElementById('cfg-s3').value);
-                    
                     if (s1 && s1.length < 6 && s1.length > 0) {
                         alert("⚠️ El número de contacto principal debe tener al menos 6 dígitos");
                         return;
                     }
-                    
                     localStorage.setItem('acc_ape', limpiarTexto(document.getElementById('cfg-ape').value));
                     localStorage.setItem('acc_casa', limpiarTexto(document.getElementById('cfg-casa').value));
                     localStorage.setItem('acc_trab', limpiarTexto(document.getElementById('cfg-trab').value));
@@ -884,20 +790,15 @@
                     localStorage.setItem('acc_s1', s1);
                     localStorage.setItem('acc_s2', s2);
                     localStorage.setItem('acc_s3', s3);
-
                     alert("✅ Datos guardados correctamente");
                     inicializarDatos();
                     navegar('view-main');
-                } catch(e) {
-                    alert("❌ Error al guardar datos");
-                    console.error(e);
-                }
+                } catch(e) { alert("❌ Error al guardar datos"); }
             });
         }
 
         function inicializarDatos() {
             const get = (k) => localStorage.getItem(k) || "";
-            
             document.getElementById('cfg-ape').value = get('acc_ape');
             document.getElementById('cfg-casa').value = get('acc_casa');
             document.getElementById('cfg-trab').value = get('acc_trab');
@@ -905,7 +806,6 @@
             document.getElementById('cfg-s1').value = get('acc_s1');
             document.getElementById('cfg-s2').value = get('acc_s2');
             document.getElementById('cfg-s3').value = get('acc_s3');
-
             const lblCasa = document.getElementById('lbl-casa');
             const lblTrab = document.getElementById('lbl-trab');
             const lblFav = document.getElementById('lbl-fav');
@@ -918,9 +818,7 @@
         function compartirWhatsApp() {
             ejecutarConTerminos(() => {
                 if (!verificarInternet()) return;
-                const appUrl = window.location.href;
-                const msg = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+                window.open(`https://wa.me/?text=${encodeURIComponent("🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n" + window.location.href)}`, "_blank");
             });
         }
 
@@ -928,18 +826,10 @@
             ejecutarConTerminos(() => {
                 if (!verificarInternet()) return;
                 let numero = document.getElementById('numero-directo').value;
-                if (!numero) {
-                    alert("⚠️ Ingresá un número de teléfono");
-                    return;
-                }
+                if (!numero) { alert("⚠️ Ingresá un número de teléfono"); return; }
                 numero = limpiarNumero(numero);
-                if (!validarNumero(numero)) {
-                    alert("⚠️ Ingresá un número válido (entre 6 y 15 dígitos, sin 0 ni 15)");
-                    return;
-                }
-                const appUrl = window.location.href;
-                const mensaje = `🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n${appUrl}`;
-                window.open(`https://wa.me/549${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                if (!validarNumero(numero)) { alert("⚠️ Ingresá un número válido (entre 6 y 15 dígitos, sin 0 ni 15)"); return; }
+                window.open(`https://wa.me/549${numero}?text=${encodeURIComponent("🚖 Acción Remis Cdelu\n\nPedí tu remis desde acá:\n" + window.location.href)}`, "_blank");
             });
         }
 
@@ -947,29 +837,18 @@
             const box = document.getElementById('qr-box');
             if (!box) return;
             box.innerHTML = "";
-            try {
-                if (qrInstance) {
-                    qrInstance.clear();
-                }
-            } catch(e) {}
-            qrInstance = new QRCode(box, {
-                text: window.location.href,
-                width: 200,
-                height: 200
-            });
+            try { if (qrInstance) qrInstance.clear(); } catch(e) {}
+            qrInstance = new QRCode(box, { text: window.location.href, width: 200, height: 200 });
             document.getElementById('qr-modal').style.display = 'flex';
         }
 
-        function cerrarModal() {
-            document.getElementById('qr-modal').style.display = 'none';
-        }
+        function cerrarModal() { document.getElementById('qr-modal').style.display = 'none'; }
 
         function enviarQueja() {
             ejecutarConTerminos(() => {
                 if (!verificarInternet()) return;
                 const ape = limpiarTexto(localStorage.getItem('acc_ape') || "Cliente");
-                const msg = `Hola Acción! Soy ${ape}. Quisiera dejar una sugerencia/reclamo: `;
-                window.open(`https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent(msg)}`, "_blank");
+                window.open(`https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola! Soy " + ape + ". Quisiera dejar una sugerencia/reclamo: ")}`, "_blank");
             });
         }
 
@@ -986,16 +865,9 @@
         function registrarServiceWorker() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => {
-                        console.log("✅ Service Worker registrado:", reg);
-                        reg.update();
-                    })
+                    .then(reg => { console.log("✅ Service Worker registrado"); reg.update(); })
                     .catch(err => console.log("⚠️ Error SW:", err));
-                
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    console.log("🔄 Service Worker actualizado");
-                    window.location.reload();
-                });
+                navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload());
             }
         }
 
@@ -1004,16 +876,10 @@
             if (esModoApp()) return;
             e.preventDefault();
             deferredPrompt = e;
-            const btn = document.getElementById('btn-instalar');
-            if (btn) btn.classList.remove('hidden');
+            document.getElementById('btn-instalar')?.classList.remove('hidden');
         });
 
-        window.addEventListener('appinstalled', () => {
-            try {
-                localStorage.setItem("app_instalada", "true");
-            } catch(e) {}
-        });
-
+        window.addEventListener('appinstalled', () => { try { localStorage.setItem("app_instalada", "true"); } catch(e) {} });
         window.addEventListener('scroll', scrollMonitor);
         window.addEventListener('online', () => console.log("📡 Conexión recuperada"));
         window.addEventListener('offline', () => console.log("📡 Sin conexión"));
@@ -1023,17 +889,14 @@
             const btnRechazar = document.getElementById('btn-rechazar-terminos');
             if (btnAceptar) btnAceptar.onclick = aceptarTerminos;
             if (btnRechazar) btnRechazar.onclick = rechazarTerminos;
+            configurarBotonAtras();
         });
 
         window.onload = () => {
             inicializarDatos();
             scrollMonitor();
             registrarServiceWorker();
-
-            if (esModoApp()) {
-                const btn = document.getElementById('btn-instalar');
-                if (btn) btn.classList.add('hidden');
-            }
+            if (esModoApp()) document.getElementById('btn-instalar')?.classList.add('hidden');
         };
     </script>
 </body>
