@@ -16,7 +16,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        /* (estilos igual que antes, no cambian) */
         :root {
             --rojo-accion: #ff2b2b;
             --negro: #000000;
@@ -108,6 +107,7 @@
             text-decoration: none;
             text-align: center;
             background: #222;
+            padding: 15px; /* Tamaño uniforme para todos los botones */
         }
         .btn:active { transform: scale(0.96); filter: brightness(1.2); }
 
@@ -179,7 +179,7 @@
         }
         label { display: block; font-size: 13px; color: #aaa; margin-left: 10px; margin-bottom: 6px; }
 
-        /* Nuevo botón pánico con menú */
+        /* Botón pánico con menú */
         #panic-trigger {
             position: fixed;
             bottom: calc(30px + env(safe-area-inset-bottom));
@@ -201,6 +201,8 @@
             transition: all 0.2s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             font-size: 40px;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
         .panic-circle:active { transform: scale(0.95); }
 
@@ -355,7 +357,7 @@
     <div id="sos-overlay">
         <div style="font-size: 80px; margin-bottom: 20px;">🆘</div>
         <h2 style="font-size: 28px; font-weight: 900;">¡AYUDA EN CAMINO!</h2>
-        <div class="sos-status" id="sos-status-text">🚨 Enviando alerta a tus contactos...</div>
+        <div class="sos-status" id="sos-status-text">🚨 Enviando alerta...</div>
         <div class="spinner"></div>
         <button class="btn btn-back" onclick="detenerSOS()" style="width:80%; background: black; margin-top: 20px;">CANCELAR</button>
         <div class="warning-text">⚠️ Mantené presionado 2 segundos el círculo rojo para activar SOS</div>
@@ -498,9 +500,9 @@
         <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
     </div>
 
-    <!-- Botón pánico nuevo -->
+    <!-- Botón pánico -->
     <div id="panic-trigger">
-        <div id="panic-circle" class="panic-circle">🆘</div>
+        <div id="panic-circle" class="panic-circle">⚠️</div>
         <div id="panic-menu" class="panic-menu hidden">
             <div class="panic-option" data-type="danger">
                 <span class="panic-icon">🔴</span>
@@ -601,7 +603,6 @@
             });
         }
 
-        // Guardar configuración de remis (dentro de la pantalla remis)
         function guardarConfigRemis() {
             ejecutarConTerminos(() => {
                 try {
@@ -620,7 +621,6 @@
             document.getElementById('lbl-casa').innerText = get('acc_casa') || "No configurado";
             document.getElementById('lbl-op1').innerText = get('acc_op1') || "No configurado";
             document.getElementById('lbl-op2').innerText = get('acc_op2') || "No configurado";
-            // También actualizar los inputs de la sección remis si están visibles
             const apeInput = document.getElementById('cfg-ape');
             const casaInput = document.getElementById('cfg-casa');
             const op1Input = document.getElementById('cfg-op1');
@@ -631,7 +631,6 @@
             if (op2Input) op2Input.value = get('acc_op2');
         }
 
-        // Guardar configuración de pánico (desde pantalla ajustes)
         function guardarAjustesPanico() {
             ejecutarConTerminos(() => {
                 try {
@@ -650,7 +649,6 @@
             });
         }
 
-        // Cargar todos los datos al inicio
         function inicializarDatos() {
             const get = (k) => localStorage.getItem(k) || "";
             // Remis
@@ -681,21 +679,28 @@
             }
         }
 
-        // ==================== NUEVO SISTEMA DE PÁNICO ====================
-        function togglePanicoMenu() {
-            const menu = document.getElementById('panic-menu');
-            if (menu) menu.classList.toggle('hidden');
-        }
+        // ==================== NUEVO SISTEMA DE PÁNICO CON GRUPO ====================
+        let tiempoEsperaGlobal = 12;
 
-        function enviarWhatsAppConUbicacion(destino, textoBase) {
-            navigator.geolocation.getCurrentPosition(p => {
-                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                const mensaje = `${textoBase}\n\n📍 Ubicación:\n${url}`;
-                window.open(`https://wa.me/${destino}?text=${encodeURIComponent(mensaje)}`, "_blank");
-            }, () => {
-                const mensaje = `${textoBase}\n\n⚠️ No se pudo obtener ubicación. Por favor llamar para coordinar.`;
-                window.open(`https://wa.me/${destino}?text=${encodeURIComponent(mensaje)}`, "_blank");
-            }, { enableHighAccuracy: true, timeout: 8000 });
+        function enviarMensajeGrupo(tipo, nombre, ubicacionUrl = "") {
+            const grupoLink = localStorage.getItem('acc_grupo_wa');
+            if (!grupoLink) return false;
+            let mensaje = "";
+            if (tipo === 'danger') {
+                mensaje = `🔴 ¡ALERTA MÁXIMA! 🔴\n\n${nombre} ha activado el botón de PELIGRO INMEDIATO.\nNecesita ayuda URGENTE.`;
+            } else if (tipo === 'medical') {
+                mensaje = `🟠 EMERGENCIA MÉDICA 🟠\n\n${nombre} necesita asistencia médica URGENTE.`;
+            } else if (tipo === 'warning') {
+                mensaje = `🟡 SITUACIÓN SOSPECHOSA 🟡\n\n${nombre} activó el botón de aviso.\nNo pudo comunicarse por teléfono.`;
+            }
+            if (ubicacionUrl) {
+                mensaje += `\n\n📍 Ubicación:\n${ubicacionUrl}`;
+            } else {
+                mensaje += `\n\n⚠️ No se pudo obtener ubicación. Por favor llamar para coordinar.`;
+            }
+            // Abrir el grupo directamente con el mensaje preescrito
+            window.open(`${grupoLink}?text=${encodeURIComponent(mensaje)}`, "_blank");
+            return true;
         }
 
         function activarPanico(tipo) {
@@ -704,13 +709,29 @@
 
                 const nombre = limpiarTexto(localStorage.getItem('acc_ape') || "Persona");
                 const contactoPrincipal = localStorage.getItem('acc_s1');
-                const grupoLink = localStorage.getItem('acc_grupo_wa') || "";
+                const grupoLink = localStorage.getItem('acc_grupo_wa');
                 const tiempoEspera = parseInt(localStorage.getItem('acc_tiempo_espera') || "12");
+                tiempoEsperaGlobal = tiempoEspera;
+
+                // Función para obtener ubicación y enviar al grupo
+                const obtenerUbicacionYEnviarGrupo = (tipoMsg) => {
+                    navigator.geolocation.getCurrentPosition(p => {
+                        const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                        enviarMensajeGrupo(tipoMsg, nombre, url);
+                    }, () => {
+                        enviarMensajeGrupo(tipoMsg, nombre, "");
+                    }, { enableHighAccuracy: true, timeout: 8000 });
+                };
 
                 if (tipo === 'danger') {
+                    // Llamar a policía
                     call('101');
                     document.getElementById('sos-overlay').style.display = 'flex';
                     document.getElementById('sos-status-text').innerHTML = "🔴 Llamando a POLICÍA (101)...";
+                    // Enviar mensaje al grupo inmediatamente (si existe)
+                    if (grupoLink) {
+                        obtenerUbicacionYEnviarGrupo('danger');
+                    }
                     setTimeout(() => { document.getElementById('sos-overlay').style.display = 'none'; }, 3000);
                 }
                 else if (tipo === 'medical') {
@@ -720,6 +741,9 @@
                     call(numEmergencia);
                     document.getElementById('sos-overlay').style.display = 'flex';
                     document.getElementById('sos-status-text').innerHTML = "🟠 Llamando a EMERGENCIA MÉDICA...";
+                    if (grupoLink) {
+                        obtenerUbicacionYEnviarGrupo('medical');
+                    }
                     setTimeout(() => { document.getElementById('sos-overlay').style.display = 'none'; }, 3000);
                 }
                 else if (tipo === 'warning') {
@@ -732,12 +756,21 @@
                     document.getElementById('sos-overlay').style.display = 'flex';
                     document.getElementById('sos-status-text').innerHTML = `🟡 Llamando a ${numeroLimpio}... Esperando respuesta ${tiempoEspera} segundos.`;
                     
+                    // Esperar y luego enviar WhatsApp al grupo (si existe) o al contacto principal
                     setTimeout(() => {
-                        const mensajeBase = `🟡 AVISO DE SITUACIÓN SOSPECHOSA\n\n${nombre} activó el botón de pánico.\nNo pudo comunicarse por teléfono. Por favor contactarse URGENTE.`;
-                        if (grupoLink && grupoLink.trim() !== "") {
-                            window.open(grupoLink, "_blank");
+                        if (grupoLink) {
+                            obtenerUbicacionYEnviarGrupo('warning');
                         } else {
-                            enviarWhatsAppConUbicacion(`549${numeroLimpio}`, mensajeBase);
+                            // Usar contacto principal para WhatsApp (con ubicación)
+                            const mensajeBase = `🟡 AVISO DE SITUACIÓN SOSPECHOSA\n\n${nombre} activó el botón de pánico.\nNo pudo comunicarse por teléfono. Por favor contactarse URGENTE.`;
+                            navigator.geolocation.getCurrentPosition(p => {
+                                const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                                const mensaje = `${mensajeBase}\n\n📍 Ubicación:\n${url}`;
+                                window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                            }, () => {
+                                const mensaje = `${mensajeBase}\n\n⚠️ No se pudo obtener ubicación. Por favor llamar para coordinar.`;
+                                window.open(`https://wa.me/549${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+                            }, { enableHighAccuracy: true, timeout: 8000 });
                         }
                         document.getElementById('sos-status-text').innerHTML = "✅ Mensaje enviado.";
                         setTimeout(() => { document.getElementById('sos-overlay').style.display = 'none'; }, 3000);
@@ -745,6 +778,11 @@
                 }
                 togglePanicoMenu();
             });
+        }
+
+        function togglePanicoMenu() {
+            const menu = document.getElementById('panic-menu');
+            if (menu) menu.classList.toggle('hidden');
         }
 
         // ==================== COMPARTIR ====================
