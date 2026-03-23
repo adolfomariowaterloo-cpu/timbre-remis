@@ -16,6 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
+        /* (estilos igual que antes, no cambian) */
         :root {
             --rojo-accion: #ff2b2b;
             --negro: #000000;
@@ -110,7 +111,6 @@
         }
         .btn:active { transform: scale(0.96); filter: brightness(1.2); }
 
-        /* Tamaños de botones */
         .btn-remis { padding: 20px; background: linear-gradient(135deg, #ff2b2b 0%, #8b0000 100%); box-shadow: 0 6px 15px rgba(255,43,43,0.3); }
         .btn-serv, .btn-farmacias, .btn-event, .btn-emergencias { padding: 15px; }
         .btn-guia { padding: 15px; font-size: 14px; background: #222; border: 1px solid #444; }
@@ -118,7 +118,6 @@
         .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); animation: pulse 2s infinite; padding: 20px; }
         .btn-sugerencia { background: #222; border: 1px solid #444; margin-top: 15px; padding: 12px; font-size: 14px; }
 
-        /* Estilos de color */
         .btn-serv { background: #111; border: 2px solid var(--celeste); color: var(--celeste); }
         .btn-serv .sub-label { color: var(--celeste); opacity: 0.8; }
         .btn-farmacias { background: #111; border: 2px solid var(--verde-farmacia); color: var(--verde-farmacia); }
@@ -384,7 +383,7 @@
         </div>
     </div>
 
-    <!-- Pantalla Remis -->
+    <!-- Pantalla Remis (con configuración integrada) -->
     <div class="container hidden" id="view-remis">
         <h2 style="margin-bottom:20px; border-left: 5px solid var(--rojo-accion); padding-left: 10px;">Solicitar Móvil</h2>
         <button class="btn btn-remis" onclick="solicitar('casa')">🏠 CASA<span class="sub-label" id="lbl-casa">...</span></button>
@@ -394,6 +393,18 @@
             <p style="text-align:center; margin-bottom:15px; font-weight:bold;">¿Estás en otro lugar?</p>
             <button class="btn btn-serv" style="background:#2196F3; color:white; border:none;" onclick="enviarUbicacionRemis()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
         </div>
+        
+        <!-- Nueva sección: Configuración remis (dentro del submenú) -->
+        <div class="card">
+            <h3>⚙️ Configuración remis</h3>
+            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Juan Pérez">
+            <label>🏠 Casa:</label><input type="text" id="cfg-casa" placeholder="Dirección principal">
+            <label>📍 Opcional 1:</label><input type="text" id="cfg-op1" placeholder="Dirección secundaria">
+            <label>📍 Opcional 2:</label><input type="text" id="cfg-op2" placeholder="Dirección terciaria">
+            <button class="btn btn-sugerencia" onclick="guardarConfigRemis()">💾 GUARDAR DATOS REMIS</button>
+            <button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button>
+        </div>
+        
         <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
     </div>
 
@@ -443,21 +454,9 @@
         <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
     </div>
 
-    <!-- Pantalla Ajustes (nueva estructura) -->
+    <!-- Pantalla Ajustes (solo pánico) -->
     <div class="container hidden" id="view-config">
         <h2>Ajustes</h2>
-        <!-- Sección Remis -->
-        <div class="card">
-            <h3>🚕 Configuración para pedir remis</h3>
-            <label>Apellido y Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Juan Pérez">
-            <label>🏠 Casa:</label><input type="text" id="cfg-casa" placeholder="Dirección principal">
-            <label>📍 Opcional 1:</label><input type="text" id="cfg-op1" placeholder="Dirección secundaria">
-            <label>📍 Opcional 2:</label><input type="text" id="cfg-op2" placeholder="Dirección terciaria">
-            <button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button>
-            <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
-        </div>
-
-        <!-- Sección Pánico -->
         <div class="card">
             <h3>🆘 Configuración del botón de pánico</h3>
             <label>📞 Número de emergencia médica (por defecto 107):</label>
@@ -479,7 +478,9 @@
                 <label>Contacto 3:</label><input type="tel" id="cfg-s3" placeholder="Ej: 3442789012">
                 <div class="warning-text">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div>
             </div>
-            <button class="btn" style="background:var(--verde-wa); margin-top: 15px;" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
+            <button class="btn" style="background:var(--verde-wa); margin-top: 15px;" onclick="guardarAjustesPanico()">💾 GUARDAR CAMBIOS</button>
+            <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
+            <button class="btn" style="background:#444; margin-top: 10px;" onclick="mostrarTerminos()">📋 VER TÉRMINOS DE USO</button>
         </div>
     </div>
 
@@ -529,9 +530,6 @@
         // ==================== VARIABLES GLOBALES ====================
         let deferredPrompt;
         let qrInstance = null;
-        let tiempoEsperaActual = 12;
-        let grupoEnlaceActual = "";
-        let emergenciaMedicaActual = "107";
         const WHATSAPP_CENTRAL = "5493442641200";
 
         // ==================== FUNCIONES UTILITARIAS ====================
@@ -586,7 +584,7 @@
             ejecutarConTerminos(() => {
                 if (!verificarInternet()) return;
                 const dir = localStorage.getItem('acc_' + tipo);
-                if(!dir) { alert("⚠️ Configurá esta dirección en Ajustes."); navegar('view-config'); return; }
+                if(!dir) { alert("⚠️ Configurá esta dirección en Ajustes (dentro de Remis)."); navegar('view-remis'); return; }
                 const ape = limpiarTexto(localStorage.getItem('acc_ape') || "Cliente");
                 window.open(`https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Necesito un móvil en " + dir)}`, "_blank");
             });
@@ -601,6 +599,86 @@
                     window.open(`https://wa.me/${WHATSAPP_CENTRAL}?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`, "_blank");
                 }, () => alert("⚠️ Activá el GPS"));
             });
+        }
+
+        // Guardar configuración de remis (dentro de la pantalla remis)
+        function guardarConfigRemis() {
+            ejecutarConTerminos(() => {
+                try {
+                    localStorage.setItem('acc_ape', limpiarTexto(document.getElementById('cfg-ape').value));
+                    localStorage.setItem('acc_casa', limpiarTexto(document.getElementById('cfg-casa').value));
+                    localStorage.setItem('acc_op1', limpiarTexto(document.getElementById('cfg-op1').value));
+                    localStorage.setItem('acc_op2', limpiarTexto(document.getElementById('cfg-op2').value));
+                    alert("✅ Datos de remis guardados");
+                    actualizarLabelsRemis();
+                } catch(e) { alert("❌ Error al guardar"); }
+            });
+        }
+
+        function actualizarLabelsRemis() {
+            const get = (k) => localStorage.getItem(k) || "";
+            document.getElementById('lbl-casa').innerText = get('acc_casa') || "No configurado";
+            document.getElementById('lbl-op1').innerText = get('acc_op1') || "No configurado";
+            document.getElementById('lbl-op2').innerText = get('acc_op2') || "No configurado";
+            // También actualizar los inputs de la sección remis si están visibles
+            const apeInput = document.getElementById('cfg-ape');
+            const casaInput = document.getElementById('cfg-casa');
+            const op1Input = document.getElementById('cfg-op1');
+            const op2Input = document.getElementById('cfg-op2');
+            if (apeInput) apeInput.value = get('acc_ape');
+            if (casaInput) casaInput.value = get('acc_casa');
+            if (op1Input) op1Input.value = get('acc_op1');
+            if (op2Input) op2Input.value = get('acc_op2');
+        }
+
+        // Guardar configuración de pánico (desde pantalla ajustes)
+        function guardarAjustesPanico() {
+            ejecutarConTerminos(() => {
+                try {
+                    let emergencia = document.getElementById('cfg-emergencia-medica').value.trim();
+                    if (emergencia === "") emergencia = "107";
+                    localStorage.setItem('acc_emergencia_medica', emergencia);
+                    localStorage.setItem('acc_grupo_wa', document.getElementById('cfg-grupo-wa').value.trim());
+                    let tiempo = parseInt(document.getElementById('cfg-tiempo-espera').value);
+                    if (isNaN(tiempo) || tiempo < 3) tiempo = 12;
+                    localStorage.setItem('acc_tiempo_espera', tiempo);
+                    localStorage.setItem('acc_s1', limpiarNumero(document.getElementById('cfg-s1').value));
+                    localStorage.setItem('acc_s2', limpiarNumero(document.getElementById('cfg-s2').value));
+                    localStorage.setItem('acc_s3', limpiarNumero(document.getElementById('cfg-s3').value));
+                    alert("✅ Datos de pánico guardados");
+                } catch(e) { alert("❌ Error al guardar"); }
+            });
+        }
+
+        // Cargar todos los datos al inicio
+        function inicializarDatos() {
+            const get = (k) => localStorage.getItem(k) || "";
+            // Remis
+            const apeInput = document.getElementById('cfg-ape');
+            const casaInput = document.getElementById('cfg-casa');
+            const op1Input = document.getElementById('cfg-op1');
+            const op2Input = document.getElementById('cfg-op2');
+            if (apeInput) apeInput.value = get('acc_ape');
+            if (casaInput) casaInput.value = get('acc_casa');
+            if (op1Input) op1Input.value = get('acc_op1');
+            if (op2Input) op2Input.value = get('acc_op2');
+            actualizarLabelsRemis();
+
+            // Pánico
+            document.getElementById('cfg-emergencia-medica').value = get('acc_emergencia_medica') || "107";
+            document.getElementById('cfg-grupo-wa').value = get('acc_grupo_wa');
+            document.getElementById('cfg-tiempo-espera').value = get('acc_tiempo_espera') || "12";
+            document.getElementById('cfg-s1').value = get('acc_s1');
+            document.getElementById('cfg-s2').value = get('acc_s2');
+            document.getElementById('cfg-s3').value = get('acc_s3');
+            
+            const check = document.getElementById('cfg-grupo-check');
+            const ayuda = document.getElementById('ayuda-grupo');
+            if (check && ayuda) {
+                check.checked = (get('acc_grupo_wa') !== "");
+                ayuda.style.display = check.checked ? 'none' : 'block';
+                check.onchange = () => { ayuda.style.display = check.checked ? 'none' : 'block'; };
+            }
         }
 
         // ==================== NUEVO SISTEMA DE PÁNICO ====================
@@ -630,7 +708,6 @@
                 const tiempoEspera = parseInt(localStorage.getItem('acc_tiempo_espera') || "12");
 
                 if (tipo === 'danger') {
-                    // Llamar a policía
                     call('101');
                     document.getElementById('sos-overlay').style.display = 'flex';
                     document.getElementById('sos-status-text').innerHTML = "🔴 Llamando a POLICÍA (101)...";
@@ -646,31 +723,20 @@
                     setTimeout(() => { document.getElementById('sos-overlay').style.display = 'none'; }, 3000);
                 }
                 else if (tipo === 'warning') {
-                    // Opción 3: llama al contacto principal, espera y envía WhatsApp
                     if (!contactoPrincipal || !validarNumero(contactoPrincipal)) {
                         alert("⚠️ No hay contacto principal configurado. Configurá un contacto en Ajustes.");
                         return;
                     }
                     const numeroLimpio = limpiarNumero(contactoPrincipal);
-                    // Iniciar llamada
                     call(numeroLimpio);
                     document.getElementById('sos-overlay').style.display = 'flex';
                     document.getElementById('sos-status-text').innerHTML = `🟡 Llamando a ${numeroLimpio}... Esperando respuesta ${tiempoEspera} segundos.`;
                     
-                    // Esperar tiempo configurado y si no se atendió, enviar WhatsApp
                     setTimeout(() => {
                         const mensajeBase = `🟡 AVISO DE SITUACIÓN SOSPECHOSA\n\n${nombre} activó el botón de pánico.\nNo pudo comunicarse por teléfono. Por favor contactarse URGENTE.`;
                         if (grupoLink && grupoLink.trim() !== "") {
-                            // Extraer el código del grupo del link (ej: https://chat.whatsapp.com/XXXXXX)
-                            let grupoId = grupoLink;
-                            if (grupoLink.includes("chat.whatsapp.com/")) {
-                                grupoId = grupoLink.split("chat.whatsapp.com/")[1];
-                            }
-                            window.open(`https://wa.me/?text=${encodeURIComponent(mensajeBase)}`, "_blank");
-                            // En realidad para abrir el grupo específico necesitamos abrir el link del grupo
                             window.open(grupoLink, "_blank");
                         } else {
-                            // Usar contacto principal para WhatsApp
                             enviarWhatsAppConUbicacion(`549${numeroLimpio}`, mensajeBase);
                         }
                         document.getElementById('sos-status-text').innerHTML = "✅ Mensaje enviado.";
@@ -679,80 +745,6 @@
                 }
                 togglePanicoMenu();
             });
-        }
-
-        // Eventos del menú de pánico
-        document.addEventListener('DOMContentLoaded', function() {
-            const panicCircle = document.getElementById('panic-circle');
-            const panicCancel = document.querySelector('.panic-cancel');
-            const panicOptions = document.querySelectorAll('.panic-option');
-            if (panicCircle) panicCircle.onclick = togglePanicoMenu;
-            if (panicCancel) panicCancel.onclick = togglePanicoMenu;
-            panicOptions.forEach(opt => {
-                opt.onclick = () => {
-                    const type = opt.getAttribute('data-type');
-                    activarPanico(type);
-                };
-            });
-        });
-
-        // ==================== AJUSTES ====================
-        function guardarAjustes() {
-            ejecutarConTerminos(() => {
-                try {
-                    // Datos remis
-                    localStorage.setItem('acc_ape', limpiarTexto(document.getElementById('cfg-ape').value));
-                    localStorage.setItem('acc_casa', limpiarTexto(document.getElementById('cfg-casa').value));
-                    localStorage.setItem('acc_op1', limpiarTexto(document.getElementById('cfg-op1').value));
-                    localStorage.setItem('acc_op2', limpiarTexto(document.getElementById('cfg-op2').value));
-                    
-                    // Datos pánico
-                    let emergencia = document.getElementById('cfg-emergencia-medica').value.trim();
-                    if (emergencia === "") emergencia = "107";
-                    localStorage.setItem('acc_emergencia_medica', emergencia);
-                    localStorage.setItem('acc_grupo_wa', document.getElementById('cfg-grupo-wa').value.trim());
-                    let tiempo = parseInt(document.getElementById('cfg-tiempo-espera').value);
-                    if (isNaN(tiempo) || tiempo < 3) tiempo = 12;
-                    localStorage.setItem('acc_tiempo_espera', tiempo);
-                    
-                    // Contactos SOS
-                    localStorage.setItem('acc_s1', limpiarNumero(document.getElementById('cfg-s1').value));
-                    localStorage.setItem('acc_s2', limpiarNumero(document.getElementById('cfg-s2').value));
-                    localStorage.setItem('acc_s3', limpiarNumero(document.getElementById('cfg-s3').value));
-                    
-                    alert("✅ Datos guardados correctamente");
-                    inicializarDatos();
-                    navegar('view-main');
-                } catch(e) { alert("❌ Error al guardar"); }
-            });
-        }
-
-        function inicializarDatos() {
-            const get = (k) => localStorage.getItem(k) || "";
-            document.getElementById('cfg-ape').value = get('acc_ape');
-            document.getElementById('cfg-casa').value = get('acc_casa');
-            document.getElementById('cfg-op1').value = get('acc_op1');
-            document.getElementById('cfg-op2').value = get('acc_op2');
-            document.getElementById('cfg-emergencia-medica').value = get('acc_emergencia_medica') || "107";
-            document.getElementById('cfg-grupo-wa').value = get('acc_grupo_wa');
-            document.getElementById('cfg-tiempo-espera').value = get('acc_tiempo_espera') || "12";
-            document.getElementById('cfg-s1').value = get('acc_s1');
-            document.getElementById('cfg-s2').value = get('acc_s2');
-            document.getElementById('cfg-s3').value = get('acc_s3');
-            
-            // Mostrar ayuda si el checkbox no está marcado
-            const check = document.getElementById('cfg-grupo-check');
-            const ayuda = document.getElementById('ayuda-grupo');
-            if (check && ayuda) {
-                check.checked = (get('acc_grupo_wa') !== "");
-                ayuda.style.display = check.checked ? 'none' : 'block';
-                check.onchange = () => { ayuda.style.display = check.checked ? 'none' : 'block'; };
-            }
-            
-            // Labels de remis
-            document.getElementById('lbl-casa').innerText = get('acc_casa') || "No configurado";
-            document.getElementById('lbl-op1').innerText = get('acc_op1') || "No configurado";
-            document.getElementById('lbl-op2').innerText = get('acc_op2') || "No configurado";
         }
 
         // ==================== COMPARTIR ====================
@@ -813,6 +805,18 @@
             if (btnAceptar) btnAceptar.onclick = aceptarTerminos;
             if (btnRechazar) btnRechazar.onclick = rechazarTerminos;
             configurarBotonAtras();
+            // Eventos del menú de pánico
+            const panicCircle = document.getElementById('panic-circle');
+            const panicCancel = document.querySelector('.panic-cancel');
+            const panicOptions = document.querySelectorAll('.panic-option');
+            if (panicCircle) panicCircle.onclick = togglePanicoMenu;
+            if (panicCancel) panicCancel.onclick = togglePanicoMenu;
+            panicOptions.forEach(opt => {
+                opt.onclick = () => {
+                    const type = opt.getAttribute('data-type');
+                    activarPanico(type);
+                };
+            });
         });
 
         window.onload = () => {
