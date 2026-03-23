@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
     <title>Acción Remis - Cdelu Oficial</title>
     <link rel="manifest" href="manifest.json">
@@ -12,6 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Acción Remis">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         :root {
             --rojo-accion: #ff2b2b;
@@ -102,7 +103,7 @@
         input { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid #333; background: #0a0a0a; color: white; font-size: 16px; margin-bottom: 15px; }
         label { display: block; font-size: 13px; color: #aaa; margin-left: 10px; margin-bottom: 6px; }
 
-        /* Botón pánico con menú y progreso */
+        /* Botón pánico con menú */
         #panic-trigger {
             position: fixed;
             bottom: calc(30px + env(safe-area-inset-bottom));
@@ -257,7 +258,7 @@
         </div>
     </div>
 
-    <!-- Pantalla remis -->
+    <!-- Pantalla remis (con configuración integrada) -->
     <div class="container hidden" id="view-remis">
         <h2 style="border-left:5px solid var(--rojo-accion); padding-left:10px;">Solicitar Móvil</h2>
         <button class="btn btn-remis" onclick="solicitar('casa')">🏠 CASA<span class="sub-label" id="lbl-casa">...</span></button>
@@ -445,7 +446,7 @@
             if (check && ayuda) { check.checked = (get('acc_grupo_wa') !== ""); ayuda.style.display = check.checked ? 'none' : 'block'; check.onchange = () => ayuda.style.display = check.checked ? 'none' : 'block'; }
         }
 
-        // ==================== PÁNICO ====================
+        // ==================== PÁNICO CON LONG PRESS ====================
         function startPanicPress(e) {
             e.preventDefault();
             const menu = document.getElementById('panic-menu');
@@ -462,13 +463,15 @@
                     clearInterval(panicProgressInterval);
                     progressDiv.style.display = 'none';
                     activarPanico('danger');
-                    const m = document.getElementById('panic-menu');
-                    if (m) m.classList.remove('show');
+                    const menu = document.getElementById('panic-menu');
+                    if (menu) menu.classList.remove('show');
                 }
             }, 30);
+            panicTimer = setTimeout(() => {}, 3000);
         }
         function endPanicPress(e) {
             e.preventDefault();
+            clearTimeout(panicTimer);
             clearInterval(panicProgressInterval);
             const progressDiv = document.getElementById('panic-progress');
             progressDiv.style.display = 'none';
@@ -480,6 +483,7 @@
             panicStartTime = 0;
         }
 
+        // Copia mensaje al portapapeles y abre el grupo
         function enviarMensajeGrupo(tipo, nombre, ubicacionUrl = "") {
             const grupoLink = localStorage.getItem('acc_grupo_wa');
             if (!grupoLink) return false;
@@ -489,7 +493,16 @@
             else if (tipo === 'warning') mensaje = `🟡 SITUACIÓN SOSPECHOSA 🟡\n\n${nombre} activó el botón de aviso.\nPor favor contactarse.`;
             if (ubicacionUrl) mensaje += `\n\n📍 Ubicación:\n${ubicacionUrl}`;
             else mensaje += `\n\n⚠️ No se pudo obtener ubicación. Por favor llamar.`;
-            window.open(`${grupoLink}?text=${encodeURIComponent(mensaje)}`, "_blank");
+            
+            // Copiar al portapapeles
+            navigator.clipboard.writeText(mensaje).then(() => {
+                // Abrir el grupo
+                window.open(grupoLink, "_blank");
+                alert("✅ Mensaje de emergencia copiado al portapapeles.\n\nAbrirás el grupo de WhatsApp. Pega el mensaje y envialo.");
+            }).catch(() => {
+                window.open(grupoLink, "_blank");
+                alert("⚠️ No se pudo copiar automáticamente. Copiá manualmente este mensaje:\n\n" + mensaje);
+            });
             return true;
         }
 
@@ -530,7 +543,7 @@
                         if (contactoPrincipal && validarNumero(contactoPrincipal)) {
                             call(limpiarNumero(contactoPrincipal));
                             document.getElementById('sos-overlay').style.display = 'flex';
-                            document.getElementById('sos-status-text').innerHTML = `🟡 Llamando... (mensaje enviado al grupo)`;
+                            document.getElementById('sos-status-text').innerHTML = `🟡 Llamando... (mensaje listo para enviar al grupo)`;
                             setTimeout(() => document.getElementById('sos-overlay').style.display = 'none', 4000);
                         } else alert("⚠️ No hay contacto principal configurado.");
                     } else {
@@ -566,9 +579,10 @@
         function instalarApp() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => deferredPrompt = null); } else alert("📱 Usá 'Agregar a pantalla de inicio'"); }
         function registrarServiceWorker() { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 
-        // ==================== EVENTOS ====================
+        // ==================== EVENTOS INICIALES ====================
         window.addEventListener('beforeinstallprompt', (e) => { if (esModoApp()) return; e.preventDefault(); deferredPrompt = e; document.getElementById('btn-instalar')?.classList.remove('hidden'); });
         window.addEventListener('appinstalled', () => {});
+        window.addEventListener('scroll', () => { const a = document.getElementById('scroll-arrow'); if (a) a.style.display = (document.documentElement.scrollHeight > window.innerHeight + 60 && window.innerHeight + window.pageYOffset < document.documentElement.scrollHeight - 60) ? 'block' : 'none'; });
         document.addEventListener('DOMContentLoaded', () => {
             configurarBotonAtras();
             inicializarDatos();
