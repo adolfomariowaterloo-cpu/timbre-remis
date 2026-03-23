@@ -1,35 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Acción Remis - Test</title>
-    <style>
-        body { background: black; color: white; font-family: sans-serif; padding: 20px; }
-        .btn { display: block; margin: 10px 0; padding: 15px; background: red; color: white; text-align: center; border-radius: 10px; text-decoration: none; }
-        #panic-menu { display: none; position: fixed; bottom: 100px; right: 20px; background: #333; padding: 10px; border-radius: 10px; }
-        #panic-menu.show { display: block; }
-    </style>
-</head>
-<body>
-    <div id="view-main">
-        <button class="btn" onclick="alert('Remis')">PEDIR REMIS</button>
-        <button class="btn" onclick="alert('Servicios')">SERVICIOS</button>
-        <div id="panic-trigger" style="position: fixed; bottom: 20px; right: 20px; background: red; width: 60px; height: 60px; border-radius: 50%; cursor: pointer;"></div>
-        <div id="panic-menu">
-            <div>PELIGRO INMEDIATO</div>
-            <div>EMERGENCIA MÉDICA</div>
-            <div>SITUACIÓN SOSPECHOSA</div>
-            <div>CANCELAR</div>
-        </div>
-    </div>
-    <script>
-        document.getElementById('panic-trigger').onclick = () => {
-            document.getElementById('panic-menu').classList.toggle('show');
-        };
-        document.querySelectorAll('#panic-menu div').forEach(el => {
-            el.onclick = () => alert('Acción: ' + el.innerText);
-        });
-    </script>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Test</title></head>
+<body style="background:black; color:white; text-align:center; padding:20px;">
+    <h1>Acción Remis</h1>
+    <button style="padding:15px; margin:10px; background:red; color:white; border:none;">PEDIR REMIS</button>
+    <button style="padding:15px; margin:10px; background:#444; color:white; border:none;">SERVICIOS</button>
+    <p>Si ves esto, la página se actualizó.</p>
 </body>
 </html>
