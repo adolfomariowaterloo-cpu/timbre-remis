@@ -112,18 +112,18 @@
         .btn:active { transform: scale(0.96); filter: brightness(1.2); }
 
         .btn-remis { background: linear-gradient(135deg, #ff2b2b 0%, #8b0000 100%); box-shadow: 0 6px 15px rgba(255,43,43,0.3); }
-        .btn-serv { background: #111; border: 2px solid var(--celeste); color: var(--celeste); }
+        .btn-serv { background: #111; border: 2px solid var(--celeste); color: var(--celeste); padding: 15px; }
         .btn-serv .sub-label { color: var(--celeste); opacity: 0.8; }
-        .btn-farmacias { background: #111; border: 2px solid var(--verde-farmacia); color: var(--verde-farmacia); }
+        .btn-farmacias { background: #111; border: 2px solid var(--verde-farmacia); color: var(--verde-farmacia); padding: 15px; }
         .btn-farmacias .sub-label { color: var(--verde-farmacia); opacity: 0.8; }
-        .btn-event { background: #111; border: 2px solid var(--naranja); color: var(--naranja); }
+        .btn-event { background: #111; border: 2px solid var(--naranja); color: var(--naranja); padding: 15px; }
         .btn-event .sub-label { color: var(--naranja); opacity: 0.8; }
-        .btn-emergencias { background: #111; border: 2px solid var(--violeta); color: var(--violeta); }
+        .btn-emergencias { background: #111; border: 2px solid var(--violeta); color: var(--violeta); padding: 20px; }
         .btn-emergencias .sub-label { color: var(--violeta); opacity: 0.8; }
-        .btn-guia { background: #222; border: 1px solid #444; }
-        .btn-back { background: #333; margin-top: 25px; font-size: 15px; border: 1px dashed #666; }
-        .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); animation: pulse 2s infinite; }
-        .btn-sugerencia { background: #222; border: 1px solid #444; margin-top: 10px; padding: 12px; font-size: 14px; }
+        .btn-guia { background: #222; border: 1px solid #444; padding: 15px; font-size: 14px; }
+        .btn-back { background: #333; margin-top: 25px; font-size: 15px; border: 1px dashed #666; padding: 15px; }
+        .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); animation: pulse 2s infinite; padding: 20px; }
+        .btn-sugerencia { background: #222; border: 1px solid #444; margin-top: 15px; padding: 12px; font-size: 14px; }
 
         .sub-label { font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px; }
 
@@ -336,8 +336,8 @@
         <a href="https://www.instagram.com/eventos.cdelu/" target="_blank" class="btn btn-event">🎟️ EVENTOS CDELU<span class="sub-label">Qué hacer hoy en la ciudad</span></a>
         <button class="btn btn-emergencias" onclick="navegar('view-emergencias-unificado')">🚨 EMERGENCIAS Y GUÍA ÚTIL<span class="sub-label">Ambulancias, Seguridad, Servicios Públicos</span></button>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
-            <button class="btn btn-guia" style="background:var(--verde-wa); color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-share')">📲 COMPARTIR</button>
-            <button class="btn btn-guia" style="background:#444; color:white; border:none; padding:15px; font-size:14px;" onclick="navegar('view-config')">⚙️ AJUSTES</button>
+            <button class="btn btn-guia" style="background:var(--verde-wa); color:white; border:none;" onclick="navegar('view-share')">📲 COMPARTIR</button>
+            <button class="btn btn-guia" style="background:#444; color:white; border:none;" onclick="navegar('view-config')">⚙️ AJUSTES</button>
         </div>
     </div>
 
@@ -351,6 +351,7 @@
             <button class="btn btn-serv" style="background:#2196F3; color:white; border:none;" onclick="enviarUbicacionRemis()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
         </div>
         <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
+        <button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button>
     </div>
 
     <div class="container hidden" id="view-servicios">
@@ -413,7 +414,6 @@
             <div class="warning-text">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div>
         </div>
         <button class="btn" style="background:var(--verde-wa)" onclick="guardarAjustes()">💾 GUARDAR CAMBIOS</button>
-        <button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button>
         <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
         <button class="btn" style="background:#444; margin-top: 10px;" onclick="mostrarTerminos()">📋 VER TÉRMINOS DE USO</button>
     </div>
