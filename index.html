@@ -48,7 +48,12 @@
             top: 0;
             z-index: 1000;
         }
-        header img { width: 130px; filter: drop-shadow(0 0 10px rgba(255,0,0,0.5)); border-radius: 8px; }
+        header img { 
+            width: 130px; 
+            filter: drop-shadow(0 0 10px rgba(255,0,0,0.5)); 
+            border-radius: 8px;
+            display: inline-block; /* asegura visibilidad */
+        }
         header h1 { color: white; margin-top: 10px; font-size: 22px; font-weight: 900; text-transform: uppercase; }
 
         .container {
@@ -80,15 +85,14 @@
         }
         .btn:active { transform: scale(0.96); filter: brightness(1.2); }
 
-        /* Ajustes de tamaño solicitados */
         .btn-remis { padding: 21px 20px; background: linear-gradient(135deg, #ff2b2b 0%, #8b0000 100%); box-shadow: 0 6px 15px rgba(255,43,43,0.3); }
         .btn-serv, .btn-farmacias, .btn-event, .btn-emergencias { padding: 15px 14px; }
         .btn-guia { padding: 15px; font-size: 14px; background: #222; border: 1px solid #444; }
-        .btn-back { background: none; border: none; color: white; font-size: 14px; text-align: center; margin-top: 20px; padding: 8px; text-decoration: underline; cursor: pointer; }
+        .btn-back { background: none; border: none; color: white; font-size: 18px; text-align: center; margin-top: 20px; padding: 8px; text-decoration: underline; cursor: pointer; }
         .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); animation: pulse 2s infinite; padding: 20px; }
         .btn-sugerencia { background: #222; border: 1px solid #444; margin-top: 15px; padding: 12px; font-size: 14px; }
 
-        /* Estilos de color */
+        /* Colores */
         .btn-serv { background: #111; border: 2px solid var(--celeste); color: var(--celeste); }
         .btn-farmacias { background: #111; border: 2px solid var(--verde-farmacia); color: var(--verde-farmacia); }
         .btn-event { background: #111; border: 2px solid var(--naranja); color: var(--naranja); }
@@ -105,7 +109,7 @@
         input { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid #333; background: #0a0a0a; color: white; font-size: 16px; margin-bottom: 15px; }
         label { display: block; font-size: 13px; color: #aaa; margin-left: 10px; margin-bottom: 6px; }
 
-        /* Botón pánico con menú */
+        /* Botón pánico sin long press */
         #panic-trigger {
             position: fixed;
             bottom: calc(30px + env(safe-area-inset-bottom));
@@ -130,19 +134,7 @@
             position: relative;
             z-index: 2;
         }
-        .panic-progress {
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: conic-gradient(#ffcc00 0deg, rgba(255,204,0,0.3) 0deg);
-            transition: all 0.05s linear;
-            pointer-events: none;
-            z-index: 1;
-            display: none;
-        }
+        .panic-circle:active { transform: scale(0.95); }
         .panic-menu {
             position: absolute;
             bottom: 90px;
@@ -223,7 +215,7 @@
         .seccion-emergencias h4 { color: var(--violeta); margin-bottom: 12px; font-size: 16px; border-left: 3px solid var(--violeta); padding-left: 10px; }
         .warning-text { font-size: 12px; color: #ffcc00; margin-top: 10px; }
 
-        /* Flecha de scroll */
+        /* Flechas de scroll más grandes */
         #scroll-arrow {
             position: fixed;
             bottom: 120px;
@@ -231,16 +223,21 @@
             transform: translateX(-50%);
             z-index: 2000;
             animation: bounce 2s infinite;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.2);
             border-radius: 50%;
-            padding: 5px;
+            padding: 12px;
             display: none;
             pointer-events: none;
+            font-size: 32px;
+            width: 56px;
+            height: 56px;
+            text-align: center;
+            line-height: 1;
         }
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
-            40% {transform: translateY(-10px) translateX(-50%);}
-            60% {transform: translateY(-5px) translateX(-50%);}
+            40% {transform: translateY(-15px) translateX(-50%);}
+            60% {transform: translateY(-8px) translateX(-50%);}
         }
     </style>
 </head>
@@ -285,60 +282,77 @@
         </div>
     </div>
 
-    <!-- Pantalla remis (con configuración integrada) -->
+    <!-- Pantalla remis -->
     <div class="container hidden" id="view-remis">
         <h2 style="border-left:5px solid var(--rojo-accion); padding-left:10px;">Solicitar Móvil</h2>
-        <button class="btn btn-remis" onclick="solicitar('casa')">🏠 CASA<span class="sub-label" id="lbl-casa">...</span></button>
-        <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('op1')">📍 OPCIONAL 1<span class="sub-label" id="lbl-op1">...</span></button>
-        <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('op2')">📍 OPCIONAL 2<span class="sub-label" id="lbl-op2">...</span></button>
+        <button class="btn btn-remis" id="btn-casa" onclick="solicitar('casa')">🏠 CASA<span class="sub-label" id="lbl-casa">...</span></button>
+        <button class="btn btn-remis" style="background:#1565C0" id="btn-op1" onclick="solicitar('op1')">📍 OPCIONAL 1<span class="sub-label" id="lbl-op1">...</span></button>
+        <button class="btn btn-remis" style="background:#4527A0" id="btn-op2" onclick="solicitar('op2')">📍 OPCIONAL 2<span class="sub-label" id="lbl-op2">...</span></button>
         <div class="card"><p style="text-align:center; font-weight:bold;">¿Estás en otro lugar?</p><button class="btn btn-serv" style="background:#2196F3; color:white;" onclick="enviarUbicacionRemis()">📍 ENVIAR MI UBICACIÓN ACTUAL</button>
-        <button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button></div>
-        <div class="card"><h3>⚙️ Configuración remis</h3><label>Apellido y Nombre:</label><input type="text" id="cfg-ape"><label>🏠 Casa:</label><input type="text" id="cfg-casa"><label>📍 Opcional 1:</label><input type="text" id="cfg-op1"><label>📍 Opcional 2:</label><input type="text" id="cfg-op2"><button class="btn" style="background:var(--verde-wa)" onclick="guardarConfigRemis()">💾 GUARDAR DATOS REMIS</button></div>
+        <button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button>
+        <button class="btn btn-sugerencia" onclick="alert('🧮 Calculadora de tarifa - Próximamente')">🧮 CALCULADORA DE TARIFA (en construcción)</button></div>
+        <div class="card"><h3>⚙️ Configuración remis</h3><label>Apellido y Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Juan Pérez" oninput="guardarRemisAuto()"><label>🏠 Casa:</label><input type="text" id="cfg-casa" placeholder="Dirección principal" oninput="guardarRemisAuto()"><label>📍 Opcional 1:</label><input type="text" id="cfg-op1" placeholder="Dirección secundaria" oninput="guardarRemisAuto()"><label>📍 Opcional 2:</label><input type="text" id="cfg-op2" placeholder="Dirección terciaria" oninput="guardarRemisAuto()"></div>
         <div class="btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</div>
     </div>
 
-    <!-- Pantalla servicios (sin botón volver) -->
+    <!-- Pantalla servicios -->
     <div class="container hidden" id="view-servicios">
         <h2>Servicios Domiciliarios</h2>
         <div class="card"><h3>Oficios y Servicios</h3>
-            <div class="list-item"><span>🔧 MECÁNICO</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('3442666445'))">📞</button></div>
-            <div class="list-item"><span>⚡ ELECTRICISTA</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('3442401688'))">📞</button></div>
-            <div class="list-item"><span>💧 PLOMERO</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('3442401688'))">📞</button></div>
-            <div class="list-item"><span>🚚 FLETE</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('543442423030'))">📞</button></div>
-            <div class="list-item"><span>🔥 GASISTA</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('3442425243'))">📞</button></div>
-            <div class="list-item"><span>✂️ ESTÉTICA</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('3442406327'))">📞</button></div>
-            <div class="list-item"><span>👞 ZAPATERO</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('3442677247'))">📞</button></div>
+            <div class="list-item"><span>🔧 MECÁNICO</span><button class="call-action" onclick="ejecutarConTerminos(()=>callYVolver('3442666445'))">📞</button></div>
+            <div class="list-item"><span>⚡ ELECTRICISTA</span><button class="call-action" onclick="ejecutarConTerminos(()=>callYVolver('3442401688'))">📞</button></div>
+            <div class="list-item"><span>💧 PLOMERO</span><button class="call-action" onclick="ejecutarConTerminos(()=>callYVolver('3442401688'))">📞</button></div>
+            <div class="list-item"><span>🚚 FLETE</span><button class="call-action" onclick="ejecutarConTerminos(()=>callYVolver('543442423030'))">📞</button></div>
+            <div class="list-item"><span>🔥 GASISTA</span><button class="call-action" onclick="ejecutarConTerminos(()=>callYVolver('3442425243'))">📞</button></div>
+            <div class="list-item"><span>✂️ ESTÉTICA</span><button class="call-action" onclick="ejecutarConTerminos(()=>callYVolver('3442406327'))">📞</button></div>
+            <div class="list-item"><span>👞 ZAPATERO</span><button class="call-action" onclick="ejecutarConTerminos(()=>callYVolver('3442677247'))">📞</button></div>
         </div>
-        <!-- Botón volver eliminado -->
     </div>
 
-    <!-- Pantalla emergencias unificada (sin botón volver) -->
+    <!-- Pantalla emergencias unificada -->
     <div class="container hidden" id="view-emergencias-unificado">
         <h2 style="color:var(--violeta)">🚨 Emergencias y Guía Útil</h2>
-        <div class="seccion-emergencias"><h4>🚑 AMBULANCIAS</h4><div class="emergencia-item"><span>🏥 HOSPITAL (Público)</span><button class="call-action" onclick="call('107')">📞 107</button></div><div class="emergencia-item"><span>🏥 VIDA EMERGENCIA</span><button class="call-action" onclick="call('03442431111')">📞 Llamar</button></div><div class="emergencia-item"><span>🆘 ALERTA EMERGENCIA</span><button class="call-action" onclick="call('03442425294')">📞 Llamar</button></div><div class="emergencia-item"><span>⛪ CÍRCULO CATÓLICO</span><button class="call-action" onclick="call('03442424242')">📞 Llamar</button></div><div class="emergencia-item"><span>🏥 COOPERATIVA MÉDICA</span><button class="call-action" onclick="call('03442427889')">📞 Llamar</button></div><div class="emergencia-item"><span>🏥 CLÍNICA URUGUAY</span><button class="call-action" onclick="call('3442459269')">📞 Llamar</button></div></div>
-        <div class="seccion-emergencias"><h4>👮 SEGURIDAD</h4><div class="emergencia-item"><span>🚔 POLICÍA</span><button class="call-action" onclick="call('101')">📞 101</button></div><div class="emergencia-item"><span>👩 COMISARÍA DE LA MUJER</span><button class="call-action" onclick="call('0342430895')">📞 Llamar</button></div><div class="emergencia-item"><span>🔥 BOMBEROS</span><button class="call-action" onclick="call('100')">📞 100</button></div><div class="emergencia-item"><span>⚓ PREFECTURA</span><button class="call-action" onclick="call('106')">📞 106</button></div></div>
-        <div class="seccion-emergencias"><h4>🔧 SERVICIOS PÚBLICOS</h4><div class="emergencia-item"><span>🚦 MUNICIPAL (Tránsito)</span><button class="call-action" onclick="call('103')">📞 103</button></div><div class="emergencia-item"><span>⚡ ENERSA (Cables sueltos)</span><button class="call-action" onclick="call('08007770080')">📞 0800-777-0080</button></div><div class="emergencia-item"><span>🔥 GASNEA (Emergencia Gas)</span><button class="call-action" onclick="call('0800777427632')">📞 0800-777-427632</button></div></div>
-        <div class="seccion-emergencias"><h4>📞 GUÍA ÚTIL</h4><div class="emergencia-item"><span>🚌 TERMINAL</span><button class="call-action" onclick="call('422352')">📞 422352</button></div><div class="emergencia-item"><span>🏛️ MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞 427626</button></div><div class="emergencia-item"><span>📄 REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞 422201</button></div></div>
-        <!-- Botón volver eliminado -->
+        <div class="seccion-emergencias"><h4>🚑 AMBULANCIAS</h4>
+            <div class="emergencia-item"><span>🏥 HOSPITAL (Público)</span><button class="call-action" onclick="callYVolver('107')">📞 107</button></div>
+            <div class="emergencia-item"><span>🏥 VIDA EMERGENCIA</span><button class="call-action" onclick="callYVolver('03442431111')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>🆘 ALERTA EMERGENCIA</span><button class="call-action" onclick="callYVolver('03442425294')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>⛪ CÍRCULO CATÓLICO</span><button class="call-action" onclick="callYVolver('03442424242')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>🏥 COOPERATIVA MÉDICA</span><button class="call-action" onclick="callYVolver('03442427889')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>🏥 CLÍNICA URUGUAY</span><button class="call-action" onclick="callYVolver('3442459269')">📞 Llamar</button></div>
+        </div>
+        <div class="seccion-emergencias"><h4>👮 SEGURIDAD</h4>
+            <div class="emergencia-item"><span>🚔 POLICÍA</span><button class="call-action" onclick="callYVolver('101')">📞 101</button></div>
+            <div class="emergencia-item"><span>👩 COMISARÍA DE LA MUJER</span><button class="call-action" onclick="callYVolver('0342430895')">📞 Llamar</button></div>
+            <div class="emergencia-item"><span>🔥 BOMBEROS</span><button class="call-action" onclick="callYVolver('100')">📞 100</button></div>
+            <div class="emergencia-item"><span>⚓ PREFECTURA</span><button class="call-action" onclick="callYVolver('106')">📞 106</button></div>
+        </div>
+        <div class="seccion-emergencias"><h4>🔧 SERVICIOS PÚBLICOS</h4>
+            <div class="emergencia-item"><span>🚦 MUNICIPAL (Tránsito)</span><button class="call-action" onclick="callYVolver('103')">📞 103</button></div>
+            <div class="emergencia-item"><span>⚡ ENERSA (Cables sueltos)</span><button class="call-action" onclick="callYVolver('08007770080')">📞 0800-777-0080</button></div>
+            <div class="emergencia-item"><span>🔥 GASNEA (Emergencia Gas)</span><button class="call-action" onclick="callYVolver('0800777427632')">📞 0800-777-427632</button></div>
+        </div>
+        <div class="seccion-emergencias"><h4>📞 GUÍA ÚTIL</h4>
+            <div class="emergencia-item"><span>🚌 TERMINAL</span><button class="call-action" onclick="callYVolver('422352')">📞 422352</button></div>
+            <div class="emergencia-item"><span>🏛️ MUNICIPALIDAD</span><button class="call-action" onclick="callYVolver('427626')">📞 427626</button></div>
+            <div class="emergencia-item"><span>📄 REGISTRO CIVIL</span><button class="call-action" onclick="callYVolver('422201')">📞 422201</button></div>
+        </div>
     </div>
 
-    <!-- Pantalla ajustes (solo pánico, 2 contactos) -->
+    <!-- Pantalla ajustes (pánico simplificado) -->
     <div class="container hidden" id="view-config">
         <h2>Ajustes</h2>
         <div class="card"><h3>🆘 Configuración del botón de pánico</h3>
             <label>📞 Número de emergencia médica (por defecto 107):</label><input type="tel" id="cfg-emergencia-medica" placeholder="107">
-            <label>🔗 Enlace del grupo de WhatsApp (opcional):</label><input type="url" id="cfg-grupo-wa" placeholder="https://chat.whatsapp.com/...">
-            <label>⏱️ Tiempo de espera (segundos):</label><input type="number" id="cfg-tiempo-espera" value="12">
-            <label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="cfg-grupo-check"> ✅ Ya creé el grupo de WhatsApp</label>
-            <div class="warning-text" id="ayuda-grupo">💡 Para crear un grupo: abrí WhatsApp, creá un grupo con tus contactos, luego copiá el enlace de invitación y pegálo arriba.</div>
-            <div class="card"><h3>📞 Contactos de respaldo (SOS)</h3><label>Principal:</label><input type="tel" id="cfg-s1"><label>Contacto 2:</label><input type="tel" id="cfg-s2"><div class="warning-text">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div></div>
+            <label>🔗 Enlace del grupo de WhatsApp (obligatorio para alertas grupales):</label><input type="url" id="cfg-grupo-wa" placeholder="https://chat.whatsapp.com/...">
+            <div class="warning-text" id="ayuda-grupo">💡 Para que las alertas lleguen al grupo, pegá aquí el enlace de invitación de tu grupo de WhatsApp.</div>
+            <div class="card"><h3>📞 Contactos de respaldo (SOS)</h3><label>Principal (se usará si no hay grupo o como respaldo):</label><input type="tel" id="cfg-s1"><label>Contacto 2:</label><input type="tel" id="cfg-s2"><div class="warning-text">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div></div>
             <button class="btn" style="background:var(--verde-wa); margin-top:15px;" onclick="guardarAjustesPanico()">💾 GUARDAR CAMBIOS</button>
             <div class="btn-back" onclick="navegar('view-main')">⬅ VOLVER</div>
             <button class="btn" style="background:#444; margin-top:10px;" onclick="mostrarTerminos()">📋 VER TÉRMINOS DE USO</button>
         </div>
     </div>
 
-    <!-- Pantalla compartir (idéntica) -->
+    <!-- Pantalla compartir -->
     <div class="container hidden" id="view-share">
         <h2>Compartir App</h2>
         <div class="card" style="text-align:center">
@@ -350,9 +364,8 @@
         <div class="btn-back" onclick="navegar('view-main')">⬅ VOLVER</div>
     </div>
 
-    <!-- Botón pánico -->
+    <!-- Botón pánico (solo menú, sin long press) -->
     <div id="panic-trigger">
-        <div id="panic-progress" class="panic-progress"></div>
         <div id="panic-circle" class="panic-circle">⚠️</div>
         <div id="panic-menu" class="panic-menu">
             <div class="panic-option" data-type="danger"><span class="panic-icon">🔴</span><span class="panic-text">PELIGRO INMEDIATO</span><span class="panic-desc">Robo / violencia / riesgo de vida</span></div>
@@ -375,7 +388,7 @@
 
     <div id="qr-modal" class="modal-custom"><div id="qr-box" style="background:white; padding:20px; border-radius:15px;"></div><button class="close-modal" onclick="cerrarModal()">CERRAR</button></div>
 
-    <!-- Flecha de scroll -->
+    <!-- Flecha de scroll más grande -->
     <div id="scroll-arrow">↓</div>
 
     <script>
@@ -395,10 +408,8 @@
                 return em ? em : "107";
             },
             getGrupoWA: () => Storage.get('acc_grupo_wa'),
-            getTiempoEspera: () => {
-                let t = parseInt(Storage.get('acc_tiempo_espera'));
-                return isNaN(t) || t < 3 ? 12 : t;
-            },
+            // Tiempo de espera fijo 10 segundos
+            getTiempoEspera: () => 10,
             getContacto1: () => Storage.get('acc_s1'),
             getContacto2: () => Storage.get('acc_s2'),
             guardarConfigRemis: (nombre, casa, op1, op2) => {
@@ -407,18 +418,48 @@
                 Storage.set('acc_casa', casa);
                 Storage.set('acc_op1', op1);
                 Storage.set('acc_op2', op2);
+                // Actualizar los botones de domicilio
+                actualizarBotonesDomicilio();
             },
-            guardarConfigPanico: (emergencia, grupo, tiempo, s1, s2) => {
+            guardarConfigPanico: (emergencia, grupo, s1, s2) => {
                 Storage.set('acc_emergencia_medica', emergencia || "107");
                 let grupoLimpio = grupo.trim();
                 const urlMatch = grupoLimpio.match(/(https?:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]+)/);
                 if (urlMatch) grupoLimpio = urlMatch[1];
                 Storage.set('acc_grupo_wa', grupoLimpio);
-                Storage.set('acc_tiempo_espera', tiempo);
                 Storage.set('acc_s1', s1);
                 Storage.set('acc_s2', s2);
             }
         };
+
+        // ==================== FUNCIONES DE ACTUALIZACIÓN VISUAL ====================
+        function actualizarBotonesDomicilio() {
+            const casa = Storage.getCasa();
+            const op1 = Storage.getOpcional1();
+            const op2 = Storage.getOpcional2();
+            document.getElementById('lbl-casa').innerText = casa ? casa : "No configurado";
+            document.getElementById('lbl-op1').innerText = op1 ? op1 : "No configurado";
+            document.getElementById('lbl-op2').innerText = op2 ? op2 : "No configurado";
+            // También actualizar los textos de los botones con la dirección si existe
+            const btnCasa = document.getElementById('btn-casa');
+            const btnOp1 = document.getElementById('btn-op1');
+            const btnOp2 = document.getElementById('btn-op2');
+            if (btnCasa) btnCasa.innerHTML = `🏠 CASA${casa ? `: ${casa}` : ''}<span class="sub-label" id="lbl-casa">${casa ? casa : "No configurado"}</span>`;
+            if (btnOp1) btnOp1.innerHTML = `📍 OPCIONAL 1${op1 ? `: ${op1}` : ''}<span class="sub-label" id="lbl-op1">${op1 ? op1 : "No configurado"}</span>`;
+            if (btnOp2) btnOp2.innerHTML = `📍 OPCIONAL 2${op2 ? `: ${op2}` : ''}<span class="sub-label" id="lbl-op2">${op2 ? op2 : "No configurado"}</span>`;
+        }
+
+        function guardarRemisAuto() {
+            let nombre = Utils.limpiarTexto(document.getElementById('cfg-ape').value);
+            if (nombre === "0") nombre = "";
+            Storage.guardarConfigRemis(
+                nombre,
+                Utils.limpiarTexto(document.getElementById('cfg-casa').value),
+                Utils.limpiarTexto(document.getElementById('cfg-op1').value),
+                Utils.limpiarTexto(document.getElementById('cfg-op2').value)
+            );
+            // No mostrar alert para no molestar
+        }
 
         // ==================== MÓDULO DE LIMPIEZA Y VALIDACIÓN ====================
         const Utils = {
@@ -441,6 +482,30 @@
             esModoApp: () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true,
             call: (num) => { if (Utils.verificarInternet()) window.location.href = "tel:" + num; }
         };
+
+        // Función para llamar y luego volver al menú principal al regresar
+        let llamadaEnProgreso = false;
+        function callYVolver(num) {
+            if (!Utils.verificarInternet()) return;
+            llamadaEnProgreso = true;
+            Utils.call(num);
+            // No navegamos inmediatamente; esperamos a que vuelva
+        }
+
+        // Detectar cuando se vuelve a la app después de una llamada
+        window.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && llamadaEnProgreso) {
+                llamadaEnProgreso = false;
+                // Si estamos en servicios o emergencias, volvemos al menú principal
+                const mainDiv = document.getElementById('view-main');
+                const serviciosDiv = document.getElementById('view-servicios');
+                const emergenciasDiv = document.getElementById('view-emergencias-unificado');
+                if (serviciosDiv && !serviciosDiv.classList.contains('hidden') ||
+                    emergenciasDiv && !emergenciasDiv.classList.contains('hidden')) {
+                    UI.navegar('view-main');
+                }
+            }
+        });
 
         // ==================== MÓDULO DE TÉRMINOS ====================
         const Terminos = {
@@ -548,8 +613,46 @@
                     const nombre = Storage.getNombre();
                     const grupoLink = Storage.getGrupoWA();
                     const tieneGrupo = grupoLink && grupoLink.trim() !== "";
-                    const tiempoEspera = Storage.getTiempoEspera();
+                    const tiempoEspera = Storage.getTiempoEspera(); // fijo 10 segundos
 
+                    // Validar configuración mínima para el tipo
+                    if (tipo === 'danger' && !tieneGrupo) {
+                        alert("⚠️ Para usar el botón de PELIGRO INMEDIATO es necesario tener un grupo de WhatsApp configurado.");
+                        UI.navegar('view-config');
+                        return;
+                    }
+                    if (tipo === 'medical' && !tieneGrupo) {
+                        alert("⚠️ Para usar EMERGENCIA MÉDICA es necesario tener un grupo de WhatsApp configurado.");
+                        UI.navegar('view-config');
+                        return;
+                    }
+                    if (tipo === 'warning' && !tieneGrupo) {
+                        // Si no hay grupo, usamos contacto principal como respaldo (sin grupo)
+                        const contactoPrincipal = Storage.getContacto1();
+                        if (!contactoPrincipal || !Utils.validarNumero(contactoPrincipal)) {
+                            alert("⚠️ No hay contacto principal configurado. Configurá un contacto en Ajustes o un grupo de WhatsApp.");
+                            UI.navegar('view-config');
+                            return;
+                        }
+                        const num = Utils.limpiarNumero(contactoPrincipal);
+                        Utils.call(num);
+                        UI.mostrarOverlaySOS(`🟡 Llamando a ${num}... Esperando ${tiempoEspera}s.`);
+                        setTimeout(() => {
+                            const mensajeBase = `🟡 AVISO DE SITUACIÓN SOSPECHOSA\n\n${nombre} activó el botón de pánico.\nNo pudo comunicarse. Contactarse URGENTE.`;
+                            navigator.geolocation.getCurrentPosition(
+                                p => {
+                                    const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                                    window.open(`https://wa.me/549${num}?text=${encodeURIComponent(mensajeBase + "\n\n📍 Ubicación:\n" + url)}`, "_blank");
+                                },
+                                () => window.open(`https://wa.me/549${num}?text=${encodeURIComponent(mensajeBase + "\n\n⚠️ Sin ubicación. Llamar.")}`, "_blank"),
+                                { enableHighAccuracy: true, timeout: 8000 }
+                            );
+                            UI.ocultarOverlaySOS();
+                        }, tiempoEspera * 1000);
+                        return;
+                    }
+
+                    // Si hay grupo, manejamos las acciones con ubicación y modal
                     const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
                         navigator.geolocation.getCurrentPosition(
                             pos => {
@@ -564,12 +667,10 @@
                     if (tipo === 'danger') {
                         Utils.call('101');
                         UI.mostrarOverlaySOS("🔴 Llamando a POLICÍA (101)...");
-                        if (tieneGrupo) {
-                            manejarConUbicacion(
-                                (url) => UI.mostrarModalMensaje(Panico.generarMensaje('danger', nombre, url), grupoLink),
-                                () => UI.mostrarModalMensaje(Panico.generarMensaje('danger', nombre, ""), grupoLink)
-                            );
-                        }
+                        manejarConUbicacion(
+                            (url) => UI.mostrarModalMensaje(Panico.generarMensaje('danger', nombre, url), grupoLink),
+                            () => UI.mostrarModalMensaje(Panico.generarMensaje('danger', nombre, ""), grupoLink)
+                        );
                         setTimeout(() => UI.ocultarOverlaySOS(), 3000);
                     }
                     else if (tipo === 'medical') {
@@ -577,100 +678,22 @@
                         if (!numEmergencia) numEmergencia = "107";
                         Utils.call(numEmergencia);
                         UI.mostrarOverlaySOS("🟠 Llamando a EMERGENCIA MÉDICA...");
-                        if (tieneGrupo) {
-                            manejarConUbicacion(
-                                (url) => UI.mostrarModalMensaje(Panico.generarMensaje('medical', nombre, url), grupoLink),
-                                () => UI.mostrarModalMensaje(Panico.generarMensaje('medical', nombre, ""), grupoLink)
-                            );
-                        }
+                        manejarConUbicacion(
+                            (url) => UI.mostrarModalMensaje(Panico.generarMensaje('medical', nombre, url), grupoLink),
+                            () => UI.mostrarModalMensaje(Panico.generarMensaje('medical', nombre, ""), grupoLink)
+                        );
                         setTimeout(() => UI.ocultarOverlaySOS(), 3000);
-                    }
-                    else if (tipo === 'warning') {
-                        const contactoPrincipal = Storage.getContacto1();
-                        if (tieneGrupo) {
-                            manejarConUbicacion(
-                                (url) => {
-                                    UI.mostrarModalMensaje(Panico.generarMensaje('warning', nombre, url), grupoLink);
-                                    if (contactoPrincipal && Utils.validarNumero(contactoPrincipal)) {
-                                        Utils.call(Utils.limpiarNumero(contactoPrincipal));
-                                        UI.mostrarOverlaySOS(`🟡 Llamando a contacto... (mensaje listo)`);
-                                        setTimeout(() => UI.ocultarOverlaySOS(), 4000);
-                                    } else alert("⚠️ No hay contacto principal configurado.");
-                                },
-                                () => {
-                                    UI.mostrarModalMensaje(Panico.generarMensaje('warning', nombre, ""), grupoLink);
-                                    if (contactoPrincipal && Utils.validarNumero(contactoPrincipal)) {
-                                        Utils.call(Utils.limpiarNumero(contactoPrincipal));
-                                        UI.mostrarOverlaySOS(`🟡 Llamando a contacto... (mensaje listo)`);
-                                        setTimeout(() => UI.ocultarOverlaySOS(), 4000);
-                                    } else alert("⚠️ No hay contacto principal configurado.");
-                                }
-                            );
-                        } else {
-                            if (!contactoPrincipal || !Utils.validarNumero(contactoPrincipal)) {
-                                alert("⚠️ Configurá un contacto principal en Ajustes.");
-                                return;
-                            }
-                            const num = Utils.limpiarNumero(contactoPrincipal);
-                            Utils.call(num);
-                            UI.mostrarOverlaySOS(`🟡 Llamando a ${num}... Esperando ${tiempoEspera}s.`);
-                            setTimeout(() => {
-                                const mensajeBase = `🟡 AVISO DE SITUACIÓN SOSPECHOSA\n\n${nombre} activó el botón de pánico.\nNo pudo comunicarse. Contactarse URGENTE.`;
-                                navigator.geolocation.getCurrentPosition(
-                                    p => {
-                                        const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                                        window.open(`https://wa.me/549${num}?text=${encodeURIComponent(mensajeBase + "\n\n📍 Ubicación:\n" + url)}`, "_blank");
-                                    },
-                                    () => window.open(`https://wa.me/549${num}?text=${encodeURIComponent(mensajeBase + "\n\n⚠️ Sin ubicación. Llamar.")}`, "_blank"),
-                                    { enableHighAccuracy: true, timeout: 8000 }
-                                );
-                                UI.ocultarOverlaySOS();
-                            }, tiempoEspera * 1000);
-                        }
                     }
                 });
             },
             configurarEventos: () => {
                 const panicCircle = document.getElementById('panic-circle');
                 const panicMenu = document.getElementById('panic-menu');
-                const progressDiv = document.getElementById('panic-progress');
-                let pressTimer = null, progressInterval = null, pressStart = 0;
-
-                const iniciar = (e) => {
+                // Al tocar el círculo, mostrar/ocultar menú
+                panicCircle.addEventListener('click', (e) => {
                     e.preventDefault();
-                    if (panicMenu.classList.contains('show')) return;
-                    pressStart = Date.now();
-                    const duracion = 3000;
-                    progressDiv.style.display = 'block';
-                    progressInterval = setInterval(() => {
-                        const elapsed = Date.now() - pressStart;
-                        const percent = Math.min(100, (elapsed / duracion) * 100);
-                        const deg = (percent / 100) * 360;
-                        progressDiv.style.background = `conic-gradient(#ffcc00 ${deg}deg, rgba(255,204,0,0.3) 0deg)`;
-                        if (percent >= 100) {
-                            clearInterval(progressInterval);
-                            progressDiv.style.display = 'none';
-                            Panico.activar('danger');
-                            panicMenu.classList.remove('show');
-                        }
-                    }, 30);
-                    pressTimer = setTimeout(() => {}, duracion);
-                };
-                const cancelar = () => {
-                    clearTimeout(pressTimer);
-                    clearInterval(progressInterval);
-                    progressDiv.style.display = 'none';
-                    progressDiv.style.background = `conic-gradient(#ffcc00 0deg, rgba(255,204,0,0.3) 0deg)`;
-                    const elapsed = Date.now() - pressStart;
-                    if (elapsed < 300) {
-                        panicMenu.classList.toggle('show');
-                    }
-                    pressStart = 0;
-                };
-                panicCircle.addEventListener('touchstart', iniciar);
-                panicCircle.addEventListener('touchend', cancelar);
-                panicCircle.addEventListener('mousedown', iniciar);
-                panicCircle.addEventListener('mouseup', cancelar);
+                    panicMenu.classList.toggle('show');
+                });
                 document.querySelector('.panic-cancel').onclick = () => panicMenu.classList.remove('show');
                 document.querySelectorAll('.panic-option').forEach(opt => {
                     opt.onclick = () => {
@@ -717,55 +740,26 @@
             }
         };
 
-        // ==================== MÓDULO DE CONFIGURACIÓN (actualización de vistas) ====================
+        // ==================== MÓDULO DE CONFIGURACIÓN ====================
         const Config = {
-            actualizarLabelsRemis: () => {
-                document.getElementById('lbl-casa').innerText = Storage.getCasa() || "No configurado";
-                document.getElementById('lbl-op1').innerText = Storage.getOpcional1() || "No configurado";
-                document.getElementById('lbl-op2').innerText = Storage.getOpcional2() || "No configurado";
+            cargarDatos: () => {
+                actualizarBotonesDomicilio();
                 document.getElementById('cfg-ape').value = Storage.get('acc_ape');
                 document.getElementById('cfg-casa').value = Storage.getCasa();
                 document.getElementById('cfg-op1').value = Storage.getOpcional1();
                 document.getElementById('cfg-op2').value = Storage.getOpcional2();
-            },
-            cargarDatos: () => {
-                Config.actualizarLabelsRemis();
                 document.getElementById('cfg-emergencia-medica').value = Storage.getEmergenciaMedica();
                 document.getElementById('cfg-grupo-wa').value = Storage.getGrupoWA();
-                document.getElementById('cfg-tiempo-espera').value = Storage.getTiempoEspera();
                 document.getElementById('cfg-s1').value = Storage.getContacto1();
                 document.getElementById('cfg-s2').value = Storage.getContacto2();
-                const check = document.getElementById('cfg-grupo-check');
-                const ayuda = document.getElementById('ayuda-grupo');
-                if (check && ayuda) {
-                    check.checked = (Storage.getGrupoWA() !== "");
-                    ayuda.style.display = check.checked ? 'none' : 'block';
-                    check.onchange = () => ayuda.style.display = check.checked ? 'none' : 'block';
-                }
-            },
-            guardarRemis: () => {
-                // No pedir términos aquí
-                let nombre = Utils.limpiarTexto(document.getElementById('cfg-ape').value);
-                if (nombre === "0") nombre = "";
-                Storage.guardarConfigRemis(
-                    nombre,
-                    Utils.limpiarTexto(document.getElementById('cfg-casa').value),
-                    Utils.limpiarTexto(document.getElementById('cfg-op1').value),
-                    Utils.limpiarTexto(document.getElementById('cfg-op2').value)
-                );
-                alert("✅ Datos de remis guardados");
-                Config.actualizarLabelsRemis();
             },
             guardarPanico: () => {
                 Terminos.ejecutarConTerminos(() => {
                     let emerg = document.getElementById('cfg-emergencia-medica').value.trim();
                     let grupo = document.getElementById('cfg-grupo-wa').value.trim();
-                    let tiempo = parseInt(document.getElementById('cfg-tiempo-espera').value);
-                    if (isNaN(tiempo) || tiempo < 3) tiempo = 12;
                     Storage.guardarConfigPanico(
                         emerg,
                         grupo,
-                        tiempo,
                         Utils.limpiarNumero(document.getElementById('cfg-s1').value),
                         Utils.limpiarNumero(document.getElementById('cfg-s2').value)
                     );
@@ -818,12 +812,12 @@
             } else alert("📱 Usá 'Agregar a pantalla de inicio'");
         };
 
-        // Exponer funciones globales necesarias para los onclick del HTML
+        // Exponer funciones globales
         window.navegar = UI.navegar;
         window.solicitar = Remis.solicitar;
         window.enviarUbicacionRemis = Remis.enviarUbicacion;
-        window.call = Utils.call;
-        window.guardarConfigRemis = Config.guardarRemis;
+        window.callYVolver = callYVolver;
+        window.guardarConfigRemis = guardarRemisAuto; // se usa oninput
         window.guardarAjustesPanico = Config.guardarPanico;
         window.compartirWhatsApp = Compartir.whatsapp;
         window.enviarDirecto = Compartir.directo;
