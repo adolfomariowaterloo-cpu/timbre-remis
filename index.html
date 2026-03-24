@@ -101,6 +101,7 @@
         .call-action { background: var(--verde-wa); border: none; border-radius: 10px; padding: 10px 15px; color: white; font-weight: bold; cursor: pointer; }
 
         input { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid #333; background: #0a0a0a; color: white; font-size: 16px; margin-bottom: 15px; }
+        input::placeholder { color: #666; }
         label { display: block; font-size: 13px; color: #aaa; margin-left: 10px; margin-bottom: 6px; }
 
         /* Botón pánico con menú */
@@ -270,7 +271,7 @@
         <button class="btn btn-remis" style="background:#1565C0" onclick="solicitar('op1')">📍 OPCIONAL 1<span class="sub-label" id="lbl-op1">...</span></button>
         <button class="btn btn-remis" style="background:#4527A0" onclick="solicitar('op2')">📍 OPCIONAL 2<span class="sub-label" id="lbl-op2">...</span></button>
         <div class="card"><p style="text-align:center; font-weight:bold;">¿Estás en otro lugar?</p><button class="btn btn-serv" style="background:#2196F3; color:white;" onclick="enviarUbicacionRemis()">📍 ENVIAR MI UBICACIÓN ACTUAL</button></div>
-        <div class="card"><h3>⚙️ Configuración remis</h3><label>Apellido y Nombre:</label><input type="text" id="cfg-ape"><label>🏠 Casa:</label><input type="text" id="cfg-casa"><label>📍 Opcional 1:</label><input type="text" id="cfg-op1"><label>📍 Opcional 2:</label><input type="text" id="cfg-op2"><button class="btn btn-sugerencia" onclick="guardarConfigRemis()">💾 GUARDAR DATOS REMIS</button><button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button></div>
+        <div class="card"><h3>⚙️ Configuración remis</h3><label>Apellido y Nombre:</label><input type="text" id="cfg-ape" placeholder="Ej: Juan Pérez"><label>🏠 Casa:</label><input type="text" id="cfg-casa" placeholder="Dirección principal"><label>📍 Opcional 1:</label><input type="text" id="cfg-op1" placeholder="Dirección secundaria"><label>📍 Opcional 2:</label><input type="text" id="cfg-op2" placeholder="Dirección terciaria"><button class="btn btn-sugerencia" onclick="guardarConfigRemis()">💾 GUARDAR DATOS REMIS</button><button class="btn btn-sugerencia" onclick="enviarQueja()">📩 SUGERENCIAS / CONTACTAR OPERADOR</button></div>
         <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</button>
     </div>
 
@@ -308,7 +309,7 @@
             <label>⏱️ Tiempo de espera (segundos):</label><input type="number" id="cfg-tiempo-espera" value="12">
             <label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="cfg-grupo-check"> ✅ Ya creé el grupo de WhatsApp</label>
             <div class="warning-text" id="ayuda-grupo">💡 Para crear un grupo: abrí WhatsApp, creá un grupo con tus contactos, luego copiá el enlace de invitación y pegálo arriba.</div>
-            <div class="card"><h3>📞 Contactos de respaldo (SOS)</h3><label>Principal:</label><input type="tel" id="cfg-s1"><label>Contacto 2:</label><input type="tel" id="cfg-s2"><label>Contacto 3:</label><input type="tel" id="cfg-s3"><div class="warning-text">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div></div>
+            <div class="card"><h3>📞 Contactos de respaldo (SOS)</h3><label>Principal:</label><input type="tel" id="cfg-s1" placeholder="Ej: 3442123456"><label>Contacto 2:</label><input type="tel" id="cfg-s2" placeholder="Ej: 3442654321"><label>Contacto 3:</label><input type="tel" id="cfg-s3" placeholder="Ej: 3442789012"><div class="warning-text">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div></div>
             <button class="btn" style="background:var(--verde-wa); margin-top:15px;" onclick="guardarAjustesPanico()">💾 GUARDAR CAMBIOS</button>
             <button class="btn btn-back" onclick="navegar('view-main')">⬅ VOLVER</button>
             <button class="btn" style="background:#444; margin-top:10px;" onclick="mostrarTerminos()">📋 VER TÉRMINOS DE USO</button>
@@ -319,7 +320,7 @@
     <div class="container hidden" id="view-share">
         <h2>Compartir App</h2>
         <div class="card" style="text-align:center">
-            <label>Enviar a número (sin 0 ni 15):</label><input type="tel" id="numero-directo"><div class="warning-text">📱 Solo números, sin 0 ni 15</div>
+            <label>Enviar a número (sin 0 ni 15):</label><input type="tel" id="numero-directo" placeholder="Ej: 3442123456"><div class="warning-text">📱 Solo números, sin 0 ni 15</div>
             <button class="btn" style="background:#25D366" onclick="enviarDirecto()">📲 ENVIAR SIN AGENDAR</button>
             <button class="btn" style="background:var(--verde-wa)" onclick="compartirWhatsApp()">📤 WHATSAPP</button>
             <button class="btn" style="background:white; color:black" onclick="mostrarCodigoQR()">🖼️ CÓDIGO QR</button>
@@ -345,6 +346,7 @@
             <h3 style="color:var(--rojo-accion); margin-bottom:15px;">📋 Mensaje de emergencia</h3>
             <p id="mensaje-copia" style="background:#222; padding:10px; border-radius:12px; text-align:left;"></p>
             <button id="btn-copiar-mensaje" class="btn" style="background:var(--verde-wa); margin-top:15px;">📋 COPIAR MENSAJE</button>
+            <button id="btn-abrir-grupo" class="btn" style="background:var(--verde-wa); margin-top:10px;">📱 ABRIR GRUPO DE WHATSAPP</button>
             <button id="btn-cerrar-modal-copy" class="btn btn-back" style="margin-top:10px;">CERRAR</button>
         </div>
     </div>
@@ -356,7 +358,6 @@
         let deferredPrompt, qrInstance = null;
         const WHATSAPP_CENTRAL = "5493442641200";
         let panicTimer = null, panicProgressInterval = null, panicStartTime = 0;
-        let mensajePendiente = "";
 
         // ==================== UTILITARIAS ====================
         function limpiarTexto(t) { return t ? t.toString().trim().replace(/\n/g, ' ') : ''; }
@@ -412,7 +413,7 @@
         function guardarConfigRemis() {
             ejecutarConTerminos(() => {
                 let nombre = limpiarTexto(document.getElementById('cfg-ape').value);
-                if (nombre === "0") nombre = ""; // evitar que quede un 0
+                if (nombre === "0") nombre = "";
                 localStorage.setItem('acc_ape', nombre);
                 localStorage.setItem('acc_casa', limpiarTexto(document.getElementById('cfg-casa').value));
                 localStorage.setItem('acc_op1', limpiarTexto(document.getElementById('cfg-op1').value));
@@ -501,30 +502,32 @@
             panicStartTime = 0;
         }
 
-        // Mostrar modal con mensaje para copiar manualmente
-        function mostrarModalMensaje(mensaje, callbackAbrirGrupo) {
+        // Mostrar modal con mensaje y botones para copiar y abrir grupo
+        function mostrarModalMensaje(mensaje, grupoLink) {
             const modal = document.getElementById('modal-copy');
             const p = document.getElementById('mensaje-copia');
             p.innerText = mensaje;
             modal.style.display = 'flex';
             const btnCopiar = document.getElementById('btn-copiar-mensaje');
+            const btnAbrir = document.getElementById('btn-abrir-grupo');
             const btnCerrar = document.getElementById('btn-cerrar-modal-copy');
-            const copiarHandler = () => {
+            const cerrarModal = () => modal.style.display = 'none';
+            btnCopiar.onclick = () => {
                 navigator.clipboard.writeText(mensaje).then(() => {
                     alert("✅ Mensaje copiado al portapapeles");
-                    modal.style.display = 'none';
-                    if (callbackAbrirGrupo) callbackAbrirGrupo();
                 }).catch(() => {
-                    alert("❌ No se pudo copiar. Copiá el mensaje manualmente.");
+                    alert("❌ No se pudo copiar. Copiá manualmente el mensaje.");
                 });
             };
-            const cerrarHandler = () => {
-                modal.style.display = 'none';
-                btnCopiar.removeEventListener('click', copiarHandler);
-                btnCerrar.removeEventListener('click', cerrarHandler);
+            btnAbrir.onclick = () => {
+                if (grupoLink && grupoLink.trim() !== "") {
+                    window.open(grupoLink, "_blank");
+                } else {
+                    alert("⚠️ No hay enlace de grupo configurado. Configuralo en Ajustes.");
+                }
+                cerrarModal();
             };
-            btnCopiar.onclick = copiarHandler;
-            btnCerrar.onclick = cerrarHandler;
+            btnCerrar.onclick = cerrarModal;
         }
 
         function activarPanico(tipo) {
@@ -554,10 +557,10 @@
                         navigator.geolocation.getCurrentPosition(p => {
                             const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                             const msg = generarMensaje('danger', url);
-                            mostrarModalMensaje(msg, () => window.open(grupoLink, "_blank"));
+                            mostrarModalMensaje(msg, grupoLink);
                         }, () => {
                             const msg = generarMensaje('danger', "");
-                            mostrarModalMensaje(msg, () => window.open(grupoLink, "_blank"));
+                            mostrarModalMensaje(msg, grupoLink);
                         }, { enableHighAccuracy: true, timeout: 8000 });
                     }
                     setTimeout(() => document.getElementById('sos-overlay').style.display = 'none', 3000);
@@ -572,39 +575,34 @@
                         navigator.geolocation.getCurrentPosition(p => {
                             const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                             const msg = generarMensaje('medical', url);
-                            mostrarModalMensaje(msg, () => window.open(grupoLink, "_blank"));
+                            mostrarModalMensaje(msg, grupoLink);
                         }, () => {
                             const msg = generarMensaje('medical', "");
-                            mostrarModalMensaje(msg, () => window.open(grupoLink, "_blank"));
+                            mostrarModalMensaje(msg, grupoLink);
                         }, { enableHighAccuracy: true, timeout: 8000 });
                     }
                     setTimeout(() => document.getElementById('sos-overlay').style.display = 'none', 3000);
                 } else if (tipo === 'warning') {
                     if (tieneGrupo) {
-                        // Mostrar modal y luego llamar
                         navigator.geolocation.getCurrentPosition(p => {
                             const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                             const msg = generarMensaje('warning', url);
-                            mostrarModalMensaje(msg, () => {
-                                window.open(grupoLink, "_blank");
-                                if (contactoPrincipal && validarNumero(contactoPrincipal)) {
-                                    call(limpiarNumero(contactoPrincipal));
-                                    document.getElementById('sos-overlay').style.display = 'flex';
-                                    document.getElementById('sos-status-text').innerHTML = `🟡 Llamando a contacto...`;
-                                    setTimeout(() => document.getElementById('sos-overlay').style.display = 'none', 4000);
-                                }
-                            });
+                            mostrarModalMensaje(msg, grupoLink);
+                            if (contactoPrincipal && validarNumero(contactoPrincipal)) {
+                                call(limpiarNumero(contactoPrincipal));
+                                document.getElementById('sos-overlay').style.display = 'flex';
+                                document.getElementById('sos-status-text').innerHTML = `🟡 Llamando a contacto...`;
+                                setTimeout(() => document.getElementById('sos-overlay').style.display = 'none', 4000);
+                            }
                         }, () => {
                             const msg = generarMensaje('warning', "");
-                            mostrarModalMensaje(msg, () => {
-                                window.open(grupoLink, "_blank");
-                                if (contactoPrincipal && validarNumero(contactoPrincipal)) {
-                                    call(limpiarNumero(contactoPrincipal));
-                                    document.getElementById('sos-overlay').style.display = 'flex';
-                                    document.getElementById('sos-status-text').innerHTML = `🟡 Llamando a contacto...`;
-                                    setTimeout(() => document.getElementById('sos-overlay').style.display = 'none', 4000);
-                                }
-                            });
+                            mostrarModalMensaje(msg, grupoLink);
+                            if (contactoPrincipal && validarNumero(contactoPrincipal)) {
+                                call(limpiarNumero(contactoPrincipal));
+                                document.getElementById('sos-overlay').style.display = 'flex';
+                                document.getElementById('sos-status-text').innerHTML = `🟡 Llamando a contacto...`;
+                                setTimeout(() => document.getElementById('sos-overlay').style.display = 'none', 4000);
+                            }
                         }, { enableHighAccuracy: true, timeout: 8000 });
                     } else {
                         if (!contactoPrincipal || !validarNumero(contactoPrincipal)) { alert("⚠️ Configurá un contacto principal en Ajustes."); return; }
