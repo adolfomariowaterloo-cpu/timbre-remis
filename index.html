@@ -52,7 +52,7 @@
             width: 130px; 
             filter: drop-shadow(0 0 10px rgba(255,0,0,0.5)); 
             border-radius: 8px;
-            display: inline-block; /* asegura visibilidad */
+            display: inline-block;
         }
         header h1 { color: white; margin-top: 10px; font-size: 22px; font-weight: 900; text-transform: uppercase; }
 
@@ -92,7 +92,6 @@
         .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); animation: pulse 2s infinite; padding: 20px; }
         .btn-sugerencia { background: #222; border: 1px solid #444; margin-top: 15px; padding: 12px; font-size: 14px; }
 
-        /* Colores */
         .btn-serv { background: #111; border: 2px solid var(--celeste); color: var(--celeste); }
         .btn-farmacias { background: #111; border: 2px solid var(--verde-farmacia); color: var(--verde-farmacia); }
         .btn-event { background: #111; border: 2px solid var(--naranja); color: var(--naranja); }
@@ -214,8 +213,9 @@
         .seccion-emergencias { margin-bottom: 20px; }
         .seccion-emergencias h4 { color: var(--violeta); margin-bottom: 12px; font-size: 16px; border-left: 3px solid var(--violeta); padding-left: 10px; }
         .warning-text { font-size: 12px; color: #ffcc00; margin-top: 10px; }
+        .privacy-note { font-size: 11px; color: #888; margin-top: 15px; text-align: center; border-top: 1px solid #333; padding-top: 10px; }
 
-        /* Flechas de scroll más grandes */
+        /* Flecha de scroll más grande */
         #scroll-arrow {
             position: fixed;
             bottom: 120px;
@@ -347,6 +347,10 @@
             <div class="warning-text" id="ayuda-grupo">💡 Para que las alertas lleguen al grupo, pegá aquí el enlace de invitación de tu grupo de WhatsApp.</div>
             <div class="card"><h3>📞 Contactos de respaldo (SOS)</h3><label>Principal (se usará si no hay grupo o como respaldo):</label><input type="tel" id="cfg-s1"><label>Contacto 2:</label><input type="tel" id="cfg-s2"><div class="warning-text">📱 Solo números, sin 0 ni 15 (Ej: 3442123456)</div></div>
             <button class="btn" style="background:var(--verde-wa); margin-top:15px;" onclick="guardarAjustesPanico()">💾 GUARDAR CAMBIOS</button>
+            <div class="privacy-note">
+                🔒 Todos los datos se guardan únicamente en este dispositivo (localStorage).<br>
+                No se envían a servidores externos. Tu información es privada.
+            </div>
             <div class="btn-back" onclick="navegar('view-main')">⬅ VOLVER</div>
             <button class="btn" style="background:#444; margin-top:10px;" onclick="mostrarTerminos()">📋 VER TÉRMINOS DE USO</button>
         </div>
@@ -408,8 +412,7 @@
                 return em ? em : "107";
             },
             getGrupoWA: () => Storage.get('acc_grupo_wa'),
-            // Tiempo de espera fijo 10 segundos
-            getTiempoEspera: () => 10,
+            getTiempoEspera: () => 10, // fijo 10 segundos
             getContacto1: () => Storage.get('acc_s1'),
             getContacto2: () => Storage.get('acc_s2'),
             guardarConfigRemis: (nombre, casa, op1, op2) => {
@@ -418,7 +421,6 @@
                 Storage.set('acc_casa', casa);
                 Storage.set('acc_op1', op1);
                 Storage.set('acc_op2', op2);
-                // Actualizar los botones de domicilio
                 actualizarBotonesDomicilio();
             },
             guardarConfigPanico: (emergencia, grupo, s1, s2) => {
@@ -437,10 +439,14 @@
             const casa = Storage.getCasa();
             const op1 = Storage.getOpcional1();
             const op2 = Storage.getOpcional2();
-            document.getElementById('lbl-casa').innerText = casa ? casa : "No configurado";
-            document.getElementById('lbl-op1').innerText = op1 ? op1 : "No configurado";
-            document.getElementById('lbl-op2').innerText = op2 ? op2 : "No configurado";
-            // También actualizar los textos de los botones con la dirección si existe
+            const lblCasa = document.getElementById('lbl-casa');
+            const lblOp1 = document.getElementById('lbl-op1');
+            const lblOp2 = document.getElementById('lbl-op2');
+            if (lblCasa) lblCasa.innerText = casa ? casa : "No configurado";
+            if (lblOp1) lblOp1.innerText = op1 ? op1 : "No configurado";
+            if (lblOp2) lblOp2.innerText = op2 ? op2 : "No configurado";
+            
+            // Actualizar texto de los botones
             const btnCasa = document.getElementById('btn-casa');
             const btnOp1 = document.getElementById('btn-op1');
             const btnOp2 = document.getElementById('btn-op2');
@@ -489,7 +495,6 @@
             if (!Utils.verificarInternet()) return;
             llamadaEnProgreso = true;
             Utils.call(num);
-            // No navegamos inmediatamente; esperamos a que vuelva
         }
 
         // Detectar cuando se vuelve a la app después de una llamada
@@ -591,7 +596,7 @@
                     navigator.geolocation.getCurrentPosition(p => {
                         const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
                         window.open(`https://wa.me/5493442641200?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`, "_blank");
-                    }, () => alert("⚠️ Activá el GPS"));
+                    }, () => alert("⚠️ Por favor, activá el GPS para enviar tu ubicación exacta."));
                 });
             }
         };
@@ -615,69 +620,109 @@
                     const tieneGrupo = grupoLink && grupoLink.trim() !== "";
                     const tiempoEspera = Storage.getTiempoEspera(); // fijo 10 segundos
 
-                    // Validar configuración mínima para el tipo
-                    if (tipo === 'danger' && !tieneGrupo) {
-                        alert("⚠️ Para usar el botón de PELIGRO INMEDIATO es necesario tener un grupo de WhatsApp configurado.");
-                        UI.navegar('view-config');
-                        return;
-                    }
-                    if (tipo === 'medical' && !tieneGrupo) {
-                        alert("⚠️ Para usar EMERGENCIA MÉDICA es necesario tener un grupo de WhatsApp configurado.");
-                        UI.navegar('view-config');
-                        return;
-                    }
-                    if (tipo === 'warning' && !tieneGrupo) {
-                        // Si no hay grupo, usamos contacto principal como respaldo (sin grupo)
-                        const contactoPrincipal = Storage.getContacto1();
-                        if (!contactoPrincipal || !Utils.validarNumero(contactoPrincipal)) {
-                            alert("⚠️ No hay contacto principal configurado. Configurá un contacto en Ajustes o un grupo de WhatsApp.");
-                            UI.navegar('view-config');
-                            return;
-                        }
-                        const num = Utils.limpiarNumero(contactoPrincipal);
-                        Utils.call(num);
-                        UI.mostrarOverlaySOS(`🟡 Llamando a ${num}... Esperando ${tiempoEspera}s.`);
-                        setTimeout(() => {
-                            const mensajeBase = `🟡 AVISO DE SITUACIÓN SOSPECHOSA\n\n${nombre} activó el botón de pánico.\nNo pudo comunicarse. Contactarse URGENTE.`;
-                            navigator.geolocation.getCurrentPosition(
-                                p => {
-                                    const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                                    window.open(`https://wa.me/549${num}?text=${encodeURIComponent(mensajeBase + "\n\n📍 Ubicación:\n" + url)}`, "_blank");
+                    // Caso particular: SITUACIÓN SOSPECHOSA (amarillo)
+                    if (tipo === 'warning') {
+                        if (tieneGrupo) {
+                            // Con grupo: mostrar modal con mensaje y luego llamar al contacto principal
+                            const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
+                                navigator.geolocation.getCurrentPosition(
+                                    pos => {
+                                        const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                                        callbackConUbicacion(url);
+                                    },
+                                    err => callbackSinUbicacion(),
+                                    { enableHighAccuracy: true, timeout: 8000 }
+                                );
+                            };
+                            manejarConUbicacion(
+                                (url) => {
+                                    const msg = Panico.generarMensaje('warning', nombre, url);
+                                    UI.mostrarModalMensaje(msg, grupoLink);
                                 },
-                                () => window.open(`https://wa.me/549${num}?text=${encodeURIComponent(mensajeBase + "\n\n⚠️ Sin ubicación. Llamar.")}`, "_blank"),
-                                { enableHighAccuracy: true, timeout: 8000 }
+                                () => {
+                                    const msg = Panico.generarMensaje('warning', nombre, "");
+                                    UI.mostrarModalMensaje(msg, grupoLink);
+                                }
                             );
-                            UI.ocultarOverlaySOS();
-                        }, tiempoEspera * 1000);
+                            // Llamar al contacto principal
+                            const contactoPrincipal = Storage.getContacto1();
+                            if (contactoPrincipal && Utils.validarNumero(contactoPrincipal)) {
+                                Utils.call(Utils.limpiarNumero(contactoPrincipal));
+                                UI.mostrarOverlaySOS(`🟡 Llamando a contacto... (mensaje listo para copiar)`);
+                                setTimeout(() => UI.ocultarOverlaySOS(), 4000);
+                            } else {
+                                alert("⚠️ No hay contacto principal configurado. Configurá un contacto en Ajustes.");
+                            }
+                        } else {
+                            // Sin grupo: usar respaldo con contacto principal
+                            const contactoPrincipal = Storage.getContacto1();
+                            if (!contactoPrincipal || !Utils.validarNumero(contactoPrincipal)) {
+                                alert("⚠️ No hay contacto principal configurado. Configurá un contacto en Ajustes.");
+                                UI.navegar('view-config');
+                                return;
+                            }
+                            const num = Utils.limpiarNumero(contactoPrincipal);
+                            Utils.call(num);
+                            UI.mostrarOverlaySOS(`🟡 Llamando a ${num}... Esperando ${tiempoEspera}s.`);
+                            setTimeout(() => {
+                                const mensajeBase = `🟡 AVISO DE SITUACIÓN SOSPECHOSA\n\n${nombre} activó el botón de pánico.\nNo pudo comunicarse. Contactarse URGENTE.`;
+                                navigator.geolocation.getCurrentPosition(
+                                    p => {
+                                        const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                                        window.open(`https://wa.me/549${num}?text=${encodeURIComponent(mensajeBase + "\n\n📍 Ubicación:\n" + url)}`, "_blank");
+                                    },
+                                    () => window.open(`https://wa.me/549${num}?text=${encodeURIComponent(mensajeBase + "\n\n⚠️ Sin ubicación. Llamar.")}`, "_blank"),
+                                    { enableHighAccuracy: true, timeout: 8000 }
+                                );
+                                UI.ocultarOverlaySOS();
+                            }, tiempoEspera * 1000);
+                        }
                         return;
                     }
 
-                    // Si hay grupo, manejamos las acciones con ubicación y modal
-                    const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
-                        navigator.geolocation.getCurrentPosition(
-                            pos => {
-                                const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                                callbackConUbicacion(url);
-                            },
-                            err => callbackSinUbicacion(),
-                            { enableHighAccuracy: true, timeout: 8000 }
-                        );
-                    };
+                    // Para los casos rojo y naranja: siempre se necesita grupo
+                    if (!tieneGrupo) {
+                        alert("⚠️ Para usar el botón de PELIGRO INMEDIATO o EMERGENCIA MÉDICA es necesario tener un grupo de WhatsApp configurado.");
+                        UI.navegar('view-config');
+                        return;
+                    }
 
+                    // Caso PELIGRO INMEDIATO (rojo)
                     if (tipo === 'danger') {
                         Utils.call('101');
                         UI.mostrarOverlaySOS("🔴 Llamando a POLICÍA (101)...");
+                        const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
+                            navigator.geolocation.getCurrentPosition(
+                                pos => {
+                                    const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                                    callbackConUbicacion(url);
+                                },
+                                err => callbackSinUbicacion(),
+                                { enableHighAccuracy: true, timeout: 8000 }
+                            );
+                        };
                         manejarConUbicacion(
                             (url) => UI.mostrarModalMensaje(Panico.generarMensaje('danger', nombre, url), grupoLink),
                             () => UI.mostrarModalMensaje(Panico.generarMensaje('danger', nombre, ""), grupoLink)
                         );
                         setTimeout(() => UI.ocultarOverlaySOS(), 3000);
                     }
+                    // Caso EMERGENCIA MÉDICA (naranja)
                     else if (tipo === 'medical') {
                         let numEmergencia = Utils.limpiarNumero(Storage.getEmergenciaMedica());
                         if (!numEmergencia) numEmergencia = "107";
                         Utils.call(numEmergencia);
                         UI.mostrarOverlaySOS("🟠 Llamando a EMERGENCIA MÉDICA...");
+                        const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
+                            navigator.geolocation.getCurrentPosition(
+                                pos => {
+                                    const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                                    callbackConUbicacion(url);
+                                },
+                                err => callbackSinUbicacion(),
+                                { enableHighAccuracy: true, timeout: 8000 }
+                            );
+                        };
                         manejarConUbicacion(
                             (url) => UI.mostrarModalMensaje(Panico.generarMensaje('medical', nombre, url), grupoLink),
                             () => UI.mostrarModalMensaje(Panico.generarMensaje('medical', nombre, ""), grupoLink)
@@ -817,7 +862,7 @@
         window.solicitar = Remis.solicitar;
         window.enviarUbicacionRemis = Remis.enviarUbicacion;
         window.callYVolver = callYVolver;
-        window.guardarConfigRemis = guardarRemisAuto; // se usa oninput
+        window.guardarConfigRemis = guardarRemisAuto;
         window.guardarAjustesPanico = Config.guardarPanico;
         window.compartirWhatsApp = Compartir.whatsapp;
         window.enviarDirecto = Compartir.directo;
