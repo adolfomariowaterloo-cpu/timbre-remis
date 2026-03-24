@@ -80,9 +80,9 @@
         }
         .btn:active { transform: scale(0.96); filter: brightness(1.2); }
 
-        /* Tamaños de botones ajustados */
-        .btn-remis { padding: 20px; background: linear-gradient(135deg, #ff2b2b 0%, #8b0000 100%); box-shadow: 0 6px 15px rgba(255,43,43,0.3); }
-        .btn-serv, .btn-farmacias, .btn-event, .btn-emergencias { padding: 15px; }
+        /* Ajustes de tamaño solicitados */
+        .btn-remis { padding: 21px 20px; background: linear-gradient(135deg, #ff2b2b 0%, #8b0000 100%); box-shadow: 0 6px 15px rgba(255,43,43,0.3); }
+        .btn-serv, .btn-farmacias, .btn-event, .btn-emergencias { padding: 15px 14px; }
         .btn-guia { padding: 15px; font-size: 14px; background: #222; border: 1px solid #444; }
         .btn-back { background: none; border: none; color: white; font-size: 14px; text-align: center; margin-top: 20px; padding: 8px; text-decoration: underline; cursor: pointer; }
         .btn-install { background: linear-gradient(135deg, #ff9800, #ff5722); animation: pulse 2s infinite; padding: 20px; }
@@ -223,7 +223,7 @@
         .seccion-emergencias h4 { color: var(--violeta); margin-bottom: 12px; font-size: 16px; border-left: 3px solid var(--violeta); padding-left: 10px; }
         .warning-text { font-size: 12px; color: #ffcc00; margin-top: 10px; }
 
-        /* Flecha de scroll (ya existente) */
+        /* Flecha de scroll */
         #scroll-arrow {
             position: fixed;
             bottom: 120px;
@@ -297,7 +297,7 @@
         <div class="btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</div>
     </div>
 
-    <!-- Pantalla servicios (idéntica) -->
+    <!-- Pantalla servicios (sin botón volver) -->
     <div class="container hidden" id="view-servicios">
         <h2>Servicios Domiciliarios</h2>
         <div class="card"><h3>Oficios y Servicios</h3>
@@ -309,17 +309,17 @@
             <div class="list-item"><span>✂️ ESTÉTICA</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('3442406327'))">📞</button></div>
             <div class="list-item"><span>👞 ZAPATERO</span><button class="call-action" onclick="ejecutarConTerminos(()=>call('3442677247'))">📞</button></div>
         </div>
-        <div class="btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</div>
+        <!-- Botón volver eliminado -->
     </div>
 
-    <!-- Pantalla emergencias unificada (idéntica) -->
+    <!-- Pantalla emergencias unificada (sin botón volver) -->
     <div class="container hidden" id="view-emergencias-unificado">
         <h2 style="color:var(--violeta)">🚨 Emergencias y Guía Útil</h2>
         <div class="seccion-emergencias"><h4>🚑 AMBULANCIAS</h4><div class="emergencia-item"><span>🏥 HOSPITAL (Público)</span><button class="call-action" onclick="call('107')">📞 107</button></div><div class="emergencia-item"><span>🏥 VIDA EMERGENCIA</span><button class="call-action" onclick="call('03442431111')">📞 Llamar</button></div><div class="emergencia-item"><span>🆘 ALERTA EMERGENCIA</span><button class="call-action" onclick="call('03442425294')">📞 Llamar</button></div><div class="emergencia-item"><span>⛪ CÍRCULO CATÓLICO</span><button class="call-action" onclick="call('03442424242')">📞 Llamar</button></div><div class="emergencia-item"><span>🏥 COOPERATIVA MÉDICA</span><button class="call-action" onclick="call('03442427889')">📞 Llamar</button></div><div class="emergencia-item"><span>🏥 CLÍNICA URUGUAY</span><button class="call-action" onclick="call('3442459269')">📞 Llamar</button></div></div>
         <div class="seccion-emergencias"><h4>👮 SEGURIDAD</h4><div class="emergencia-item"><span>🚔 POLICÍA</span><button class="call-action" onclick="call('101')">📞 101</button></div><div class="emergencia-item"><span>👩 COMISARÍA DE LA MUJER</span><button class="call-action" onclick="call('0342430895')">📞 Llamar</button></div><div class="emergencia-item"><span>🔥 BOMBEROS</span><button class="call-action" onclick="call('100')">📞 100</button></div><div class="emergencia-item"><span>⚓ PREFECTURA</span><button class="call-action" onclick="call('106')">📞 106</button></div></div>
         <div class="seccion-emergencias"><h4>🔧 SERVICIOS PÚBLICOS</h4><div class="emergencia-item"><span>🚦 MUNICIPAL (Tránsito)</span><button class="call-action" onclick="call('103')">📞 103</button></div><div class="emergencia-item"><span>⚡ ENERSA (Cables sueltos)</span><button class="call-action" onclick="call('08007770080')">📞 0800-777-0080</button></div><div class="emergencia-item"><span>🔥 GASNEA (Emergencia Gas)</span><button class="call-action" onclick="call('0800777427632')">📞 0800-777-427632</button></div></div>
         <div class="seccion-emergencias"><h4>📞 GUÍA ÚTIL</h4><div class="emergencia-item"><span>🚌 TERMINAL</span><button class="call-action" onclick="call('422352')">📞 422352</button></div><div class="emergencia-item"><span>🏛️ MUNICIPALIDAD</span><button class="call-action" onclick="call('427626')">📞 427626</button></div><div class="emergencia-item"><span>📄 REGISTRO CIVIL</span><button class="call-action" onclick="call('422201')">📞 422201</button></div></div>
-        <div class="btn-back" onclick="navegar('view-main')">⬅ VOLVER AL MENÚ</div>
+        <!-- Botón volver eliminado -->
     </div>
 
     <!-- Pantalla ajustes (solo pánico, 2 contactos) -->
