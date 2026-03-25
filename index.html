@@ -243,7 +243,7 @@
 </head>
 <body>
 
-    <!-- Modal términos (idéntico) -->
+    <!-- Modal términos -->
     <div id="modal-terminos" class="modal-terminos">
         <div class="modal-terminos-content">
             <h2>📋 Términos de uso</h2>
@@ -261,6 +261,17 @@
                 <button class="btn-terminos" id="btn-aceptar-terminos">✅ ACEPTAR Y CONTINUAR</button>
                 <button class="btn-terminos btn-rechazar" id="btn-rechazar-terminos">❌ VOLVER SIN ACEPTAR</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal para pedir nombre si falta -->
+    <div id="modal-nombre" class="modal-custom" style="display: none;">
+        <div class="modal-content">
+            <h3 style="color:var(--rojo-accion); margin-bottom:15px;">📝 Tu nombre</h3>
+            <p>Para personalizar los mensajes, ingresá tu nombre y apellido:</p>
+            <input type="text" id="input-nombre" placeholder="Ej: Juan Pérez" style="margin-top:10px;">
+            <button id="btn-guardar-nombre" class="btn" style="background:var(--verde-wa); margin-top:15px;">✅ GUARDAR Y CONTINUAR</button>
+            <button id="btn-cancelar-nombre" class="btn btn-back" style="margin-top:10px;">❌ CANCELAR</button>
         </div>
     </div>
 
@@ -368,7 +379,7 @@
         <div class="btn-back" onclick="navegar('view-main')">⬅ VOLVER</div>
     </div>
 
-    <!-- Botón pánico (solo menú, sin long press) -->
+    <!-- Botón pánico (solo menú) -->
     <div id="panic-trigger">
         <div id="panic-circle" class="panic-circle">⚠️</div>
         <div id="panic-menu" class="panic-menu">
@@ -402,7 +413,7 @@
             set: (key, val) => localStorage.setItem(key, val),
             getNombre: () => {
                 let n = Storage.get('acc_ape');
-                return (n && n !== "0") ? n : "Persona";
+                return (n && n !== "0") ? n : "";
             },
             getCasa: () => Storage.get('acc_casa'),
             getOpcional1: () => Storage.get('acc_op1'),
@@ -412,7 +423,7 @@
                 return em ? em : "107";
             },
             getGrupoWA: () => Storage.get('acc_grupo_wa'),
-            getTiempoEspera: () => 10, // fijo 10 segundos
+            getTiempoEspera: () => 10,
             getContacto1: () => Storage.get('acc_s1'),
             getContacto2: () => Storage.get('acc_s2'),
             guardarConfigRemis: (nombre, casa, op1, op2) => {
@@ -446,7 +457,6 @@
             if (lblOp1) lblOp1.innerText = op1 ? op1 : "No configurado";
             if (lblOp2) lblOp2.innerText = op2 ? op2 : "No configurado";
             
-            // Actualizar texto de los botones
             const btnCasa = document.getElementById('btn-casa');
             const btnOp1 = document.getElementById('btn-op1');
             const btnOp2 = document.getElementById('btn-op2');
@@ -464,7 +474,6 @@
                 Utils.limpiarTexto(document.getElementById('cfg-op1').value),
                 Utils.limpiarTexto(document.getElementById('cfg-op2').value)
             );
-            // No mostrar alert para no molestar
         }
 
         // ==================== MÓDULO DE LIMPIEZA Y VALIDACIÓN ====================
@@ -489,6 +498,36 @@
             call: (num) => { if (Utils.verificarInternet()) window.location.href = "tel:" + num; }
         };
 
+        // ==================== MÓDULO DE NOMBRE (modal) ====================
+        const NombreModal = {
+            mostrar: (callback) => {
+                const modal = document.getElementById('modal-nombre');
+                const input = document.getElementById('input-nombre');
+                const btnGuardar = document.getElementById('btn-guardar-nombre');
+                const btnCancelar = document.getElementById('btn-cancelar-nombre');
+                input.value = Storage.get('acc_ape'); // precargar si ya había algo
+                modal.style.display = 'flex';
+
+                const guardar = () => {
+                    const nombre = Utils.limpiarTexto(input.value);
+                    if (nombre === "") {
+                        alert("⚠️ Por favor, ingresá tu nombre.");
+                        return;
+                    }
+                    Storage.set('acc_ape', nombre);
+                    modal.style.display = 'none';
+                    if (callback) callback();
+                };
+                const cancelar = () => {
+                    modal.style.display = 'none';
+                    // No ejecutar callback
+                };
+                btnGuardar.onclick = guardar;
+                btnCancelar.onclick = cancelar;
+                input.onkeypress = (e) => { if (e.key === 'Enter') guardar(); };
+            }
+        };
+
         // Función para llamar y luego volver al menú principal al regresar
         let llamadaEnProgreso = false;
         function callYVolver(num) {
@@ -497,11 +536,9 @@
             Utils.call(num);
         }
 
-        // Detectar cuando se vuelve a la app después de una llamada
         window.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && llamadaEnProgreso) {
                 llamadaEnProgreso = false;
-                // Si estamos en servicios o emergencias, volvemos al menú principal
                 const mainDiv = document.getElementById('view-main');
                 const serviciosDiv = document.getElementById('view-servicios');
                 const emergenciasDiv = document.getElementById('view-emergencias-unificado');
@@ -535,7 +572,7 @@
             }
         };
 
-        // ==================== MÓDULO DE UI (navegación, overlays) ====================
+        // ==================== MÓDULO DE UI ====================
         const UI = {
             navegar: (id) => {
                 document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
@@ -584,19 +621,38 @@
                     else if (tipo === 'op1') dir = Storage.getOpcional1();
                     else if (tipo === 'op2') dir = Storage.getOpcional2();
                     if (!dir) { alert("⚠️ Configurá esta dirección en Ajustes (dentro de Remis)."); UI.navegar('view-remis'); return; }
-                    const ape = Storage.getNombre();
-                    const msg = `Hola Acción! Soy ${ape}. Necesito un móvil en ${dir}`;
-                    window.open(`https://wa.me/5493442641200?text=${encodeURIComponent(msg)}`, "_blank");
+                    
+                    const ejecutarPedido = () => {
+                        const ape = Storage.getNombre();
+                        const nombreMostrar = ape ? ape : "Cliente";
+                        const msg = `Hola Acción! Soy ${nombreMostrar}. Necesito un móvil en ${dir}`;
+                        window.open(`https://wa.me/5493442641200?text=${encodeURIComponent(msg)}`, "_blank");
+                    };
+
+                    if (!Storage.getNombre()) {
+                        NombreModal.mostrar(ejecutarPedido);
+                    } else {
+                        ejecutarPedido();
+                    }
                 });
             },
             enviarUbicacion: () => {
                 Terminos.ejecutarConTerminos(() => {
                     if (!Utils.verificarInternet()) return;
-                    const ape = Storage.getNombre();
-                    navigator.geolocation.getCurrentPosition(p => {
-                        const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
-                        window.open(`https://wa.me/5493442641200?text=${encodeURIComponent("Hola Acción! Soy " + ape + ". Mi ubicación: " + url)}`, "_blank");
-                    }, () => alert("⚠️ Por favor, activá el GPS para enviar tu ubicación exacta."));
+                    const ejecutarEnvio = () => {
+                        const ape = Storage.getNombre();
+                        const nombreMostrar = ape ? ape : "Cliente";
+                        navigator.geolocation.getCurrentPosition(p => {
+                            const url = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                            window.open(`https://wa.me/5493442641200?text=${encodeURIComponent("Hola Acción! Soy " + nombreMostrar + ". Mi ubicación: " + url)}`, "_blank");
+                        }, () => alert("⚠️ Por favor, activá el GPS para enviar tu ubicación exacta."));
+                    };
+
+                    if (!Storage.getNombre()) {
+                        NombreModal.mostrar(ejecutarEnvio);
+                    } else {
+                        ejecutarEnvio();
+                    }
                 });
             }
         };
@@ -615,15 +671,13 @@
             activar: (tipo) => {
                 Terminos.ejecutarConTerminos(() => {
                     if (!Utils.verificarInternet()) return;
-                    const nombre = Storage.getNombre();
+                    const nombre = Storage.getNombre() || "Persona";
                     const grupoLink = Storage.getGrupoWA();
                     const tieneGrupo = grupoLink && grupoLink.trim() !== "";
-                    const tiempoEspera = Storage.getTiempoEspera(); // fijo 10 segundos
+                    const tiempoEspera = Storage.getTiempoEspera();
 
-                    // Caso particular: SITUACIÓN SOSPECHOSA (amarillo)
                     if (tipo === 'warning') {
                         if (tieneGrupo) {
-                            // Con grupo: mostrar modal con mensaje y luego llamar al contacto principal
                             const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
                                 navigator.geolocation.getCurrentPosition(
                                     pos => {
@@ -644,17 +698,15 @@
                                     UI.mostrarModalMensaje(msg, grupoLink);
                                 }
                             );
-                            // Llamar al contacto principal
                             const contactoPrincipal = Storage.getContacto1();
                             if (contactoPrincipal && Utils.validarNumero(contactoPrincipal)) {
                                 Utils.call(Utils.limpiarNumero(contactoPrincipal));
                                 UI.mostrarOverlaySOS(`🟡 Llamando a contacto... (mensaje listo para copiar)`);
                                 setTimeout(() => UI.ocultarOverlaySOS(), 4000);
                             } else {
-                                alert("⚠️ No hay contacto principal configurado. Configurá un contacto en Ajustes.");
+                                alert("⚠️ No hay contacto principal configurado.");
                             }
                         } else {
-                            // Sin grupo: usar respaldo con contacto principal
                             const contactoPrincipal = Storage.getContacto1();
                             if (!contactoPrincipal || !Utils.validarNumero(contactoPrincipal)) {
                                 alert("⚠️ No hay contacto principal configurado. Configurá un contacto en Ajustes.");
@@ -680,49 +732,37 @@
                         return;
                     }
 
-                    // Para los casos rojo y naranja: siempre se necesita grupo
                     if (!tieneGrupo) {
                         alert("⚠️ Para usar el botón de PELIGRO INMEDIATO o EMERGENCIA MÉDICA es necesario tener un grupo de WhatsApp configurado.");
                         UI.navegar('view-config');
                         return;
                     }
 
-                    // Caso PELIGRO INMEDIATO (rojo)
+                    const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
+                        navigator.geolocation.getCurrentPosition(
+                            pos => {
+                                const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                                callbackConUbicacion(url);
+                            },
+                            err => callbackSinUbicacion(),
+                            { enableHighAccuracy: true, timeout: 8000 }
+                        );
+                    };
+
                     if (tipo === 'danger') {
                         Utils.call('101');
                         UI.mostrarOverlaySOS("🔴 Llamando a POLICÍA (101)...");
-                        const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
-                            navigator.geolocation.getCurrentPosition(
-                                pos => {
-                                    const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                                    callbackConUbicacion(url);
-                                },
-                                err => callbackSinUbicacion(),
-                                { enableHighAccuracy: true, timeout: 8000 }
-                            );
-                        };
                         manejarConUbicacion(
                             (url) => UI.mostrarModalMensaje(Panico.generarMensaje('danger', nombre, url), grupoLink),
                             () => UI.mostrarModalMensaje(Panico.generarMensaje('danger', nombre, ""), grupoLink)
                         );
                         setTimeout(() => UI.ocultarOverlaySOS(), 3000);
                     }
-                    // Caso EMERGENCIA MÉDICA (naranja)
                     else if (tipo === 'medical') {
                         let numEmergencia = Utils.limpiarNumero(Storage.getEmergenciaMedica());
                         if (!numEmergencia) numEmergencia = "107";
                         Utils.call(numEmergencia);
                         UI.mostrarOverlaySOS("🟠 Llamando a EMERGENCIA MÉDICA...");
-                        const manejarConUbicacion = (callbackConUbicacion, callbackSinUbicacion) => {
-                            navigator.geolocation.getCurrentPosition(
-                                pos => {
-                                    const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                                    callbackConUbicacion(url);
-                                },
-                                err => callbackSinUbicacion(),
-                                { enableHighAccuracy: true, timeout: 8000 }
-                            );
-                        };
                         manejarConUbicacion(
                             (url) => UI.mostrarModalMensaje(Panico.generarMensaje('medical', nombre, url), grupoLink),
                             () => UI.mostrarModalMensaje(Panico.generarMensaje('medical', nombre, ""), grupoLink)
@@ -734,7 +774,6 @@
             configurarEventos: () => {
                 const panicCircle = document.getElementById('panic-circle');
                 const panicMenu = document.getElementById('panic-menu');
-                // Al tocar el círculo, mostrar/ocultar menú
                 panicCircle.addEventListener('click', (e) => {
                     e.preventDefault();
                     panicMenu.classList.toggle('show');
@@ -779,7 +818,7 @@
             sugerencia: () => {
                 Terminos.ejecutarConTerminos(() => {
                     if (!Utils.verificarInternet()) return;
-                    const ape = Storage.getNombre();
+                    const ape = Storage.getNombre() || "Cliente";
                     window.open(`https://wa.me/5493442641200?text=${encodeURIComponent("Hola! Soy " + ape + ". Sugerencia/reclamo: ")}`, "_blank");
                 });
             }
@@ -833,7 +872,6 @@
             if (Utils.esModoApp()) document.getElementById('btn-instalar')?.classList.add('hidden');
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 
-            // Scroll monitor para la flecha
             const scrollArrow = document.getElementById('scroll-arrow');
             window.addEventListener('scroll', () => {
                 if (scrollArrow) {
@@ -842,7 +880,6 @@
             });
         };
 
-        // Eventos de instalación
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             if (Utils.esModoApp()) return;
@@ -874,7 +911,6 @@
         window.rechazarTerminos = Terminos.rechazar;
         window.ejecutarConTerminos = Terminos.ejecutarConTerminos;
         window.detenerSOS = () => UI.ocultarOverlaySOS();
-        // Asignar eventos de términos
         document.getElementById('btn-aceptar-terminos').onclick = Terminos.aceptar;
         document.getElementById('btn-rechazar-terminos').onclick = Terminos.rechazar;
     </script>
